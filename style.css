@@ -33,6 +33,12 @@ header {
 header h1 {
   text-align:center;
 }
+nav ul{
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  margin-top: 10px;
+}
 footer{
   background-color: var(--seal-brown);
   color: white;
