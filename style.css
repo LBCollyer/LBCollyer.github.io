@@ -82,11 +82,15 @@ section {
     justify-content: center;
     align-items: center;
     width: 33%;
-    margin: 0 5px;
+    margin: 0 auto;
 }
 footer{
   background-color: var(--seal-brown);
   color: white;
   text-align: center;
   padding: 20px 0;
+}
+#laurenPic {
+    display: block;
+    margin: 0 auto;
 }
