@@ -1,7 +1,16 @@
-d*{
+:root{
+  dark-moss-green: #606c38ff;
+  pakistan-green: #283618ff;
+  tea-green: #dde56ff;
+  salmon: #e28674ff;
+  seal-brown: #552716ff;
+*{
   font-family: Garamound;
+  box-sizing: border-box;
 }
-
+body{
+  background-color: var(tea-green);
+}
 a {
   background-color: red;
 }
@@ -13,5 +22,7 @@ header h2 {
 }
 header {
   position: fixed;
-  background-color: green;
+  background-color: var(pakistan-green);
+  color: white;
+  padding: 20px 0;
 }
