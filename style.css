@@ -55,6 +55,13 @@ section {
   text-align: center;
   margin-bottom: 20px;
 }
+.project{
+  background-color: var(--salmon);
+  padding: 20px;
+  border-radius:8px;
+  width: 30%
+  box-shadow: 0 4px 8px rbga(0,0,0,0.1);
+}
 footer{
   background-color: var(--seal-brown);
   color: white;
