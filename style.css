@@ -52,7 +52,7 @@ section {
 }
 .container {
   width: 80%;
-  margin: 10px auto;
+  margin: 0px auto;
   max-width: 1200px;
 }
 .section h2 {
@@ -70,6 +70,7 @@ section {
   border-radius:8px;
   width: 30%
   box-shadow: 0 4px 8px rbga(0,0,0,0.1);
+  margin: 10px;
 }
 .project-card h3 {
   margin-bottom: 10px;
