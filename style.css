@@ -27,7 +27,7 @@ a:hover {
 }
 header {
   background-color: var(--pakistan-green);
-  color: white;
+  color: #ffff;
   padding: 20px 0;
 }
 header h1 {
