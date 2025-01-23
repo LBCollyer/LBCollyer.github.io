@@ -75,6 +75,10 @@ section {
 .project-card p {
   font-size: 1rem;
 }
+
+.contact elements {
+  display: inline-block;
+}
 footer{
   background-color: var(--seal-brown);
   color: white;
