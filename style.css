@@ -1,4 +1,4 @@
-*{
+d*{
   font-family: Garamound;
 }
 
@@ -11,4 +11,7 @@ h1 {
 }
 header h2 {
   display: inline-block;
+}
+header {
+  position: fixed;
 }
