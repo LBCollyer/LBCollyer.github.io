@@ -82,7 +82,7 @@ section {
     justify-content: center;
     align-items: center;
     width: 33%;
-    margin: 0 auto;
+    margin: 0 5px;
 }
 footer{
   background-color: var(--seal-brown);
