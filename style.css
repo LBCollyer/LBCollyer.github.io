@@ -69,7 +69,7 @@ section {
   padding: 20px;
   border-radius:8px;
   width: 30%
-  box-shadow: 0 4px 8px rbga(0,0,0,0.1);
+  box-shadow: 0 4px 8px color=rbga(0,0,0,0.1);
   margin: 10px auto;
 }
 .project-card h3 {
