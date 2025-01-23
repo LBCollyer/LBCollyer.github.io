@@ -3,7 +3,6 @@ d*{
 }
 
 a {
-  color: red;
   background-color: red;
 }
 h1 {
@@ -14,4 +13,5 @@ header h2 {
 }
 header {
   position: fixed;
+  background-color: green;
 }
