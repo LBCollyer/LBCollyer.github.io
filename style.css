@@ -52,7 +52,7 @@ section {
 }
 .container {
   width: 80%;
-  margin: 0 auto;
+  margin: 10px auto;
   max-width: 1200px;
 }
 .section h2 {
