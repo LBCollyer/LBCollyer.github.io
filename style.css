@@ -1,8 +1,8 @@
 :root{
-  dark-moss-green: #606c38ff;
-  pakistan-green: #283618ff;
-  tea-green: #dde56ff;
-  salmon: #e28674ff;
+  --dark-moss-green: #606c38ff;
+  --pakistan-green: #283618ff;
+  --tea-green: #dde56ff;
+  --salmon: #e28674ff;
   --seal-brown: #552716ff;
 *{
   font-family: Garamound;
@@ -11,22 +11,22 @@
   padding: 0;
 }
 body{
-  background-color: var(tea-green);
+  background-color: var(--tea-green);
   color:var(--seal-brown);
 }
 
 h1,h2,h3 {
-  color: var(pakistan-green);
+  color: var(--pakistan-green);
 }
 a {
   text-decoration:none;
-  color: var(dark-moss-green);
+  color: var(--dark-moss-green);
 }
 a:hover {
-  color:var(salmon);
+  color:var(--salmon);
 }
 header {
-  background-color: var(pakistan-green);
+  background-color: var(--pakistan-green);
   color: white;
   padding: 20px 0;
 }
