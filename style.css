@@ -39,6 +39,9 @@ nav ul{
   list-style: none;
   margin-top: 10px;
 }
+nav ul li{
+  margin: 0 15px;
+}
 footer{
   background-color: var(--seal-brown);
   color: white;
