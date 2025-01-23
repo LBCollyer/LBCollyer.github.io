@@ -9,3 +9,6 @@ a {
 h1 {
   background-color: green;
 }
+header h2 {
+  display: inline-block;
+}
