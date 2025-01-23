@@ -28,14 +28,15 @@ a:hover {
 }
 header {
   background-color: var(--pakistan-green);
-  color: #ffff;
   padding: 20px 0;
   z-score: 100;
 }
 header h1 {
   text-align:center;
+  color: #ffff;
 }
 nav ul{
+  color: #ffff;
   display: flex;
   justify-content: center;
   list-style: none;
