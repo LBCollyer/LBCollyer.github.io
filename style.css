@@ -33,3 +33,9 @@ header {
 header h1 {
   text-align:center;
 }
+footer{
+  background-color: var(--seal-brown);
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+}
