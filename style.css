@@ -22,13 +22,12 @@ a {
 a:hover {
   color:var(salmon);
 }
-header h2 {
-  display: inline-block;
-}
-  
 header {
   position: fixed;
   background-color: var(pakistan-green);
   color: white;
   padding: 20px 0;
+}
+header h1 {
+  text-align:center;
 }
