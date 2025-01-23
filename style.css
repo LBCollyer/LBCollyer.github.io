@@ -11,15 +11,21 @@
 body{
   background-color: var(tea-green);
 }
-a {
-  background-color: red;
+
+h1,h2,h3 {
+  color: var(pakistan-green);
 }
-h1 {
-  background-color: green;
+a {
+  text-decoration:none;
+  color: var(dark-moss-green);
+}
+a:hover {
+  color:var(salmon);
 }
 header h2 {
   display: inline-block;
 }
+  
 header {
   position: fixed;
   background-color: var(pakistan-green);
