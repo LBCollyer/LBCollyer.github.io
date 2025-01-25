@@ -55,6 +55,7 @@ nav ul li h2{
 }
 section {
   padding: 50px 0;
+  margin-top: 10px;
 }
 .container {
   width: 80%;
@@ -63,7 +64,7 @@ section {
 }
 .section h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 .projects{
   display:flex;
