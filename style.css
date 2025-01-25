@@ -41,6 +41,8 @@ header h1 {
   text-align:center;
   color: #ffff;
 }
+header h2{
+  padding: 5px;
 nav ul{
   display: flex;
   justify-content: center;
