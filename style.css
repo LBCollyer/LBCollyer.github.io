@@ -4,6 +4,7 @@
   --tea-green: #dde56ff;
   --salmon: #e28674ff;
   --seal-brown: #552716ff;
+  --atomic--tangerine:#DC9479ff;
 *{
   font-family: Garamound, serif;
   box-sizing: border-box;
@@ -20,7 +21,9 @@ h1,h2,h3 {
   color: var(--pakistan-green);
 }
 h2{
-  background-color: var(--seal-brown);
+  background-color: var(--atomic-tangerine);
+  border: black solid;
+  border-width: 1em;
 }
 a {
   text-decoration:none;
