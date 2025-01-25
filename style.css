@@ -19,6 +19,9 @@ body{
 h1,h2,h3 {
   color: var(--pakistan-green);
 }
+h2{
+  background-color: var(--seal-brown);
+}
 a {
   text-decoration:none;
   color: var(--dark-moss-green);
