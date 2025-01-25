@@ -77,7 +77,7 @@ section {
 .project-card p {
   font-size: 1rem;
 }
-#aboutsec, #contact\ elements{
+#aboutsec{
     display: flex;
     justify-content: center;
     align-items: center;
