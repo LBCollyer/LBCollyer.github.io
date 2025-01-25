@@ -97,4 +97,5 @@ footer{
   #resPic {
     display: block;
     margin: 0 auto;
+    border: solid black;
 }
