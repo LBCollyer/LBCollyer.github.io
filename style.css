@@ -1,10 +1,10 @@
 :root{
   --dark-moss-green: #606c38ff;
   --pakistan-green: #283618ff;
-  --tea-green: ##DDF2B9;
+  --tea-green: #ddf2b9;
   --salmon: #e28674ff;
   --seal-brown: #552716ff;
-  --atomic--tangerine:#DC9479;
+  --atomic--tangerine:#dc9479;
 *{
   font-family: Garamound, serif;
   box-sizing: border-box;
