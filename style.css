@@ -23,7 +23,7 @@ h1,h2,h3 {
 h2{
   background-color: var(--atomic-tangerine);
   border: black solid;
-  border-width: 1em;
+  border-width: 1px;
 }
 a {
   text-decoration:none;
