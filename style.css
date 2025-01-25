@@ -90,7 +90,11 @@ footer{
   text-align: center;
   padding: 20px 0;
 }
-#laurenPic, #resPic {
+#laurenPic {
+    display: block;
+    margin: 0 auto;
+}
+  #resPic {
     display: block;
     margin: 0 auto;
 }
