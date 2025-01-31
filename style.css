@@ -20,8 +20,12 @@
 body{
   background-color: var(--light-background);
   color:var(--light-text);
+  transition: background-color 0.3s, color 0.3s;
 }
-
+body.dark-mode {
+  background-color: var(--dark-background);
+  color: var(--dark-text);
+}
 h1,h2,h3 {
   color: var(--light-header);
 }
