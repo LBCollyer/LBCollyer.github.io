@@ -1,10 +1,17 @@
 :root{
-  --dark-moss-green: #606c38ff;
+  /*--dark-moss-green: #606c38ff;
   --pakistan-green: #283618ff;
   --tea-green: #dbe7c5;
   --salmon: #e28674ff;
   --seal-brown: #552716ff;
-  --atomic--tangerine:#d88769;
+  --atomic--tangerine:#d88769;*/
+  --dark-moss-green: #6a7f4d; /* A softer, lighter dark green */
+  --pakistan-green: #3a4e34; /* Muted deep green */
+  --tea-green: #f0e1c6; /* Warm, creamy off-white */
+  --salmon: #f2a597; /* Soft peachy-pink */
+  --seal-brown: #4e2a1f; /* Grounded deep brown */
+  --atomic-tangerine: #e1794c; /* Muted orange for accents */
+
 *{
   font-family: Garamound, serif;
   box-sizing: border-box;
