@@ -47,7 +47,6 @@ a:hover {
 header {
   background-color: var(--light-header);
   padding: 20px 0;
-  z-score: 100;
 }
 header h1 {
   text-align:center;
