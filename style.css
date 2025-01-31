@@ -137,7 +137,7 @@ header.dark-mode, footer.dark-mode {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: var(--light-card);
+  background-color: var(--light-text);
   border: none;
   padding: 7px 7px;
   color: white;
@@ -147,5 +147,5 @@ header.dark-mode, footer.dark-mode {
 }
 
 .toggle-btn.dark-mode {
-  background-color: var(--light-header);
+  background-color: var(--light-card);
 }
