@@ -4,7 +4,7 @@
   --light-background: #f0e1c6; /* Warm, creamy off-white */
   --light-card: #f2a597; /* Soft peachy-pink */
   --light-text: #4e2a1f; /* Grounded deep brown */
-  --atomic-tangerine: #e1794c; /* Muted orange for accents */
+  --accent: #e1794c; /* Muted orange for accents */
   --dark-background: #2d2d2d;
   --dark-text: #f0f0f0;
   --dark-header-bg: #1b1b1b;
@@ -98,7 +98,7 @@ section {
     width: 33%;
     margin: 0 auto;
 }
-footer{
+footer {
   background-color: var(--light-text);
   color: white;
   text-align: center;
@@ -112,4 +112,32 @@ footer{
     display: block;
     margin: 0 auto;
     border: solid black;
+}
+a.dark-mode {
+  color: var(--dark-link);
+}
+a.dark-mode:hover {
+  color: var(--light-card);
+}
+header.dark-mode, footer.dark-mode {
+  background-color: var(--dark-header-bg);
+}
+.project.dark-mode {
+  background-color: var(--light-link);
+}
+
+.toggle-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: var(--accent);
+  border: none;
+  padding: 10px 15px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.toggle-btn.dark-mode {
+  background-color: var(--light-header);
 }
