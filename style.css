@@ -94,11 +94,9 @@ section {
   width: 30%
   margin: 10px auto;
 }
-.project-card h3 {
- 
-}
-.project-card p {
+.project p {
   font-size: 1rem;
+  color: var(--light-text);
 }
 #aboutsec{
     display: flex;
@@ -107,6 +105,8 @@ section {
     width: 33%;
     margin: 0 auto;
 }
+#aboutsec p{
+  
 footer {
   background-color: var(--light-text);
   color: white;
