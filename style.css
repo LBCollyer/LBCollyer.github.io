@@ -1,11 +1,15 @@
 :root{
-  --dark-moss-green: #6a7f4d; /* A softer, lighter dark green */
-  --pakistan-green: #3a4e34; /* Muted deep green */
-  --tea-green: #f0e1c6; /* Warm, creamy off-white */
-  --salmon: #f2a597; /* Soft peachy-pink */
-  --seal-brown: #4e2a1f; /* Grounded deep brown */
+  --light-link: #6a7f4d; /* A softer, lighter dark green */
+  --light-header: #3a4e34; /* Muted deep green */
+  --light-background: #f0e1c6; /* Warm, creamy off-white */
+  --light-card: #f2a597; /* Soft peachy-pink */
+  --light-text: #4e2a1f; /* Grounded deep brown */
   --atomic-tangerine: #e1794c; /* Muted orange for accents */
-
+  --dark-background: #2d2d2d;
+  --dark-text: #f0f0f0;
+  --dark-header-bg: #1b1b1b;
+  --dark-link: #e1794c;
+}
 *{
   font-family: Garamound, serif;
   box-sizing: border-box;
@@ -14,12 +18,12 @@
   text-align:center;
 }
 body{
-  background-color: var(--tea-green);
-  color:var(--seal-brown);
+  background-color: var(--light-background);
+  color:var(--light-text);
 }
 
 h1,h2,h3 {
-  color: var(--pakistan-green);
+  color: var(--light-header);
 }
 h2{
   background-color: rgb(162, 107, 87);
@@ -31,10 +35,10 @@ a {
   color: var(--dark-moss-green);
 }
 a:hover {
-  color:var(--salmon);
+  color:var(--light-card);
 }
 header {
-  background-color: var(--pakistan-green);
+  background-color: var(--light-header);
   padding: 20px 0;
   z-score: 100;
 }
@@ -75,7 +79,7 @@ section {
   gap: 20px;
 }
 .project{
-  background-color: var(--salmon);
+  background-color: var(--light-card);
   padding: 20px;
   border-radius:8px;
   width: 30%
@@ -95,7 +99,7 @@ section {
     margin: 0 auto;
 }
 footer{
-  background-color: var(--seal-brown);
+  background-color: var(--light-text);
   color: white;
   text-align: center;
   padding: 20px 0;
