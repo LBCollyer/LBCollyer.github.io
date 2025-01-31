@@ -33,7 +33,7 @@ h1.dark-mode,h2.dark-mode,h3.darkmode {
   color: var(--dark-text);
 }
 h2{
-  background-color: var(--light-text)/*rgb(162, 107, 87);
+  background-color: var(--light-text);/*rgb(162, 107, 87);*/
   border: black solid;
   border-width: 1px;
 }
