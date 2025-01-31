@@ -26,16 +26,19 @@ body.dark-mode {
   background-color: var(--dark-background);
   color: var(--dark-text);
 }
-h1,h2,h3 {
+h1,h2 {
   color: white/*var(--light-header);*/
 }
-h1.dark-mode,h2.dark-mode,h3.darkmode {
+h1.dark-mode,h2.dark-mode {
   color: var(--dark-text);
 }
 h2{
   background-color: var(--light-text);/*rgb(162, 107, 87);*/
   border: black solid;
   border-width: 1px;
+}
+h3 {
+  color: var(--light-header);
 }
 a {
   text-decoration:none;
