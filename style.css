@@ -139,7 +139,7 @@ header.dark-mode, footer.dark-mode {
   right: 20px;
   background-color: var(--light-card);
   border: none;
-  padding: 10px 15px;
+  padding: 7px 7px;
   color: white;
   font-size: 16px;
   cursor: pointer;
