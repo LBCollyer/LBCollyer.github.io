@@ -32,7 +32,7 @@ h2{
 }
 a {
   text-decoration:none;
-  color: var(--dark-moss-green);
+  color: var(--light-link);
 }
 a:hover {
   color:var(--light-card);
