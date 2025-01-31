@@ -29,6 +29,9 @@ body.dark-mode {
 h1,h2,h3 {
   color: var(--light-header);
 }
+h1.dark-mode,h2.dark-mode,h3.darkmode {
+  color: var(--dark-text);
+}
 h2{
   background-color: rgb(162, 107, 87);
   border: black solid;
