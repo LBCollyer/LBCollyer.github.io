@@ -105,8 +105,6 @@ section {
     width: 33%;
     margin: 0 auto;
 }
-#aboutsec p{
-  
 footer {
   background-color: var(--light-text);
   color: white;
@@ -117,7 +115,7 @@ footer {
     display: block;
     margin: 0 auto;
 }
-  #resPic {
+#resPic {
     display: block;
     margin: 0 auto;
     border: solid black;
