@@ -136,7 +136,7 @@ header.dark-mode, footer.dark-mode {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: var(--accent);
+  background-color: var(--light-card);
   border: none;
   padding: 10px 15px;
   color: white;
