@@ -31,6 +31,35 @@
   <div class="chart-container">
   <arcgis-charts-scatter-plot id="scatterplot"></arcgis-charts-scatter-plot>
 </div>
+  <!-- Step 1 -->
+<script type="module">
+  // Step 2
+  async function loadFeatureLayer(webmapId, layerTitle) {
+    const WebMap = await $arcgis.import("esri/WebMap");
+    const webmap = new WebMap({
+        portalItem: {
+            id: webmapId
+        }
+    });
+    await webmap.loadAll();
+    const featureLayer = webmap.layers.find((layer) => layer.title === layerTitle);
+
+    return featureLayer;
+  }
+
+  // Step 3
+  const featureLayer = await loadFeatureLayer("96cb2d2825dc459abadcabc941958125", "College Scorecard");
+
+  // Step 4
+  const scatterplotElement = document.querySelector("#scatterplot");
+
+  // Step 5
+  const scatterplotConfig = featureLayer.charts[0];
+
+  // Step 6
+  scatterplotElement.config = scatterplotConfig;
+  scatterplotElement.layer = featureLayer;
+</script>
 </body>
 
 </html>
