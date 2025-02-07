@@ -66,6 +66,33 @@
     scatterplotElement.config = scatterplotConfig;
     scatterplotElement.layer = featureLayer;
   </script>
+  <script type="module">
+    // Step 1
+    const { PieChartModel } = await $arcgis.import("@arcgis/charts-model");
+  
+    // Step 2
+    const pieChartElement = document.querySelector("#pie-chart");
+  
+    // Step 3
+    const pieChartModel = new PieChartModel();
+  
+    // Step 4
+    await pieChartModel.setup({ layer: featureLayer });
+  
+    // Step 5
+    await pieChartModel.setCategory("Type");
+    pieChartModel.setDataLabelsVisibility(true);
+    pieChartModel.setTitleText("Count by School Type");
+    pieChartModel.setLegendTitleText("School Type");
+    pieChartModel.setLegendPosition("bottom");
+  
+    // Step 6
+    const pieChartConfig = pieChartModel.getConfig();
+  
+    // Step 7
+    pieChartElement.config = pieChartConfig;
+    pieChartElement.layer = featureLayer;
+  </script>
 </body>
 
 </html>
