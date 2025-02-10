@@ -1,41 +1,54 @@
-<html>
-
+  var esriConfig = {
+    apiKey: "AAPTxy8BH1VEsoebNVZXo8HurBCyASoKLvJMp975P0MhDgOuTsrDo0KNXU1kRCxD8HVhcJ37PFTYJlUumgZryXmFp3p_BSw0Nd0qhhltCqh9FDqvJTkiq-rIVUJxV2ItFSBLxdAVItk41rtx3Ng_HOqYW6NSKSu7PgqQZvB1GgLU25h_5rt-GlnFTyMxisRRTvJM46bXmIANiymioQHcxrzrlmQg0uXsG5Nc5K25zKvbC60.AT1_HB22LyUE"
+  };
+  <html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>ArcGIS Maps SDK for JavaScript Tutorials: Display a map using arcgis/map-components</title>
-
+  <meta name="description" content="Style a feature layer">
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>ArcGIS Maps SDK for JavaScript Tutorials: Style a feature layer</title>
   <style>
     html,
-    body {
+    body,
+    #viewDiv {
       padding: 0;
       margin: 0;
       height: 100%;
       width: 100%;
     }
   </style>
-   <!-- Load Calcite components from CDN -->
-   <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/calcite-components/2.13.2/calcite.css" />
-   <script type="module" src="https://js.arcgis.com/calcite-components/2.13.2/calcite.esm.js"></script>
-   <!-- Load the ArcGIS Maps SDK for JavaScript from CDN -->
-   <link rel="stylesheet" href="https://js.arcgis.com/4.31/esri/themes/light/main.css" />
-   <script src="https://js.arcgis.com/4.31/"></script>
-   <!-- Load Map components from CDN-->
-   <script
-     type="module"
-     src="https://js.arcgis.com/map-components/4.31/arcgis-map-components.esm.js"
-   ></script>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.31/esri/themes/light/main.css">
+  <script src="https://js.arcgis.com/4.31/"></script>
+
+  <script>
+
+    require([
+      "esri/config",
+      "esri/Map",
+      "esri/views/MapView",
+
+      "esri/layers/FeatureLayer"
+
+    ], function(esriConfig, Map, MapView, FeatureLayer ) {
+
+      esriConfig.apiKey = "YOUR_ACCESS_TOKEN";
+
+      const map = new Map({
+        basemap: "arcgis/topographic" // basemap styles service
+      });
+
+      const view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-118.80543,34.02700], //Longitude, latitude
+        zoom: 13
+      });
+
+    });
+  </script>
 
 </head>
-
-
 <body>
-    <arcgis-map item-id="237b9584339446a0b56317b5962a4971">
-      <arcgis-zoom position="top-left"></arcgis-zoom>
-    <arcgis-legend position="bottom-right"></arcgis-legend>
-  </arcgis-map>
-
+  <div id="viewDiv"></div>
 </body>
-
-
 </html>
