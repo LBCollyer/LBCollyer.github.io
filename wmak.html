@@ -42,6 +42,7 @@
         center: [-118.80543,34.02700], //Longitude, latitude
         zoom: 13
       });
+      //Trailheads
       const trailheadsRenderer = {
         "type": "simple",
         "symbol": {
@@ -77,6 +78,7 @@
       });
 
       map.add(trailheads);
+      //trails
       const trailsRenderer = {
         type: "simple",
         symbol: {
@@ -102,12 +104,13 @@
       });
       
       map.add(trails,0);
+      //biketrails
       const bikeTrailsRenderer = {
         type: "simple",
         symbol: {
           type: "simple-line",
           style: "short-dot",
-          color: "#FF91FF",
+          color: "#009100",
           width: "1px"
         }
       };
@@ -119,7 +122,7 @@
       });
 
       map.add(bikeTrails, 1);
-
+      //fills
       function createFillSymbol(value, color) {
         return {
           "value": value,
