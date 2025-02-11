@@ -119,6 +119,21 @@
       });
 
       map.add(bikeTrails, 1);
+
+      function createFillSymbol(value, color) {
+        return {
+          "value": value,
+          "symbol": {
+            "color": color,
+            "type": "simple-fill",
+            "style": "solid",
+            "outline": {
+              "style": "none"
+            }
+          },
+          "label": value
+        };
+      }
     });
   </script>
 
