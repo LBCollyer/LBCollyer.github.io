@@ -47,6 +47,17 @@
 
 
       <arcgis-placement position="top-right">
+        <calcite-select id="sqlSelect">
+          <calcite-option id="defaultOption" value="1=0" label="Choose a SQL where clause..."></calcite-option>
+          <calcite-option value="UseType = 'Residential'" label="UseType = 'Residential'"></calcite-option>
+          <calcite-option value="UseType = 'Government'" label="UseType = 'Government'"></calcite-option>
+          <calcite-option value="UseType = 'Irrigated Farm'" label="UseType = 'Irrigated Farm'"></calcite-option>
+          <calcite-option value="TaxRateArea = 10853" label="TaxRateArea = 10853"></calcite-option>
+          <calcite-option value="TaxRateArea = 10860" label="TaxRateArea = 10860"></calcite-option>
+          <calcite-option value="TaxRateArea = 08637" label="TaxRateArea = 08637"></calcite-option>
+          <calcite-option value="Roll_LandValue > 1000000" label="Roll_LandValue > 1000000"></calcite-option>
+          <calcite-option value="Roll_LandValue < 1000000" label="Roll_LandValue < 1000000"></calcite-option>
+        </calcite-select>
 
       </arcgis-placement>
 
