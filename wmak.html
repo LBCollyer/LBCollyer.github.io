@@ -77,6 +77,24 @@
       });
 
       map.add(trailheads);
+      const trailsRenderer = {
+        type: "simple",
+        symbol: {
+          color: "#BA55D3",
+          type: "simple-line",
+          style: "solid"
+        },
+        visualVariables: [
+          {
+            type: "size",
+            field: "ELEV_GAIN",
+            minDataValue: 0,
+            maxDataValue: 2300,
+            minSize: "3px",
+            maxSize: "7px"
+          }
+        ]
+      };
     });
   </script>
 
