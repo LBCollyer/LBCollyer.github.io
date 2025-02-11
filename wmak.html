@@ -102,6 +102,23 @@
       });
       
       map.add(trails,0);
+      const bikeTrailsRenderer = {
+        type: "simple",
+        symbol: {
+          type: "simple-line",
+          style: "short-dot",
+          color: "#FF91FF",
+          width: "1px"
+        }
+      };
+      const bikeTrails = new FeatureLayer({
+        url:
+          "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trails/FeatureServer/0",
+        renderer: bikeTrailsRenderer,
+        definitionExpression: "USE_BIKE = 'YES'"
+      });
+
+      map.add(bikeTrails, 1);
     });
   </script>
 
