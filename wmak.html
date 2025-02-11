@@ -95,6 +95,13 @@
           }
         ]
       };
+      const trails = new FeatureLayer({
+        url: "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trails/FeatureServer/0",
+        renderer: trailsRenderer,
+        opacity: 0.75
+      });
+      
+      map.add(trails,0);
     });
   </script>
 
