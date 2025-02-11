@@ -1,0 +1,145 @@
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>ArcGIS Maps SDK for JavaScript Tutorials: Query a feature layer (SQL)</title>
+
+    <style>
+      html,
+      body,
+      arcgis-map {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <script>
+      var esriConfig = {
+        apiKey: "YOUR_ACCESS_TOKEN"
+      };
+    </script>
+
+    <!-- Load Calcite components from CDN -->
+    <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/calcite-components/2.13.2/calcite.css" />
+    <script type="module" src="https://js.arcgis.com/calcite-components/2.13.2/calcite.esm.js"></script>
+
+    <!-- Load the ArcGIS Maps SDK for JavaScript from CDN -->
+    <link rel="stylesheet" href="https://js.arcgis.com/4.31/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.31/"></script>
+
+    <!-- Load Map components from CDN-->
+    <script
+      type="module"
+      src="https://js.arcgis.com/map-components/4.31/arcgis-map-components.esm.js"
+    ></script>
+
+  </head>
+
+
+  <body>
+
+    <arcgis-map basemap="arcgis/topographic" center="-118.805, 34.027" zoom="13">
+
+      <arcgis-zoom position="top-left"></arcgis-zoom>
+
+
+      <arcgis-placement position="top-right">
+
+      </arcgis-placement>
+
+    </arcgis-map>
+
+    <script>
+
+      require(["esri/layers/FeatureLayer"], (FeatureLayer) => {
+
+        const arcgisMap = document.querySelector("arcgis-map");
+        const selectFilter = document.querySelector("#sqlSelect");
+        const defaultOption = document.querySelector("#defaultOption");
+        let whereClause = defaultOption.value;
+
+        arcgisMap.addEventListener("arcgisViewReadyChange", () => {
+
+          // Event listener
+          selectFilter.addEventListener("calciteSelectChange", (event) => {
+            whereClause = event.target.value;
+
+            queryFeatureLayer(arcgisMap.extent);
+
+          });
+
+
+          // Get query layer and set up query
+          const parcelLayer = new FeatureLayer({
+            url: "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/LA_County_Parcels/FeatureServer/0"
+          });
+
+          function queryFeatureLayer(extent) {
+
+            const parcelQuery = {
+              where: whereClause, // Set by select element
+              spatialRelationship: "intersects", // Relationship operation to apply
+              geometry: extent, // Restricted to visible extent of the map
+              outFields: ["APN", "UseType", "TaxRateCity", "Roll_LandValue"], // Attributes to return
+              returnGeometry: true
+            };
+
+            parcelLayer
+              .queryFeatures(parcelQuery)
+              .then((results) => {
+
+                console.log("Feature count: " + results.features.length);
+
+                displayResults(results);
+
+              })
+              .catch((error) => {
+                console.log(error.error);
+              });
+
+          }
+
+
+          function displayResults(results) {
+            // Create a blue polygon
+            const symbol = {
+              type: "simple-fill",
+              color: [20, 130, 200, 0.5],
+              outline: {
+                color: "white",
+                width: 0.5
+              }
+            };
+
+            const popupTemplate = {
+              title: "Parcel {APN}",
+              content: "Type: {UseType} <br> Land value: {Roll_LandValue} <br> Tax Rate City: {TaxRateCity}"
+            };
+
+            // Assign styles and popup to features
+            results.features.map((feature) => {
+              feature.symbol = symbol;
+              feature.popupTemplate = popupTemplate;
+              return feature;
+            });
+
+            // Clear display
+            arcgisMap.closePopup();
+            arcgisMap.graphics.removeAll();
+            // Add features to graphics layer
+            arcgisMap.graphics.addMany(results.features);
+
+          }
+
+        });
+
+      });
+
+    </script>
+
+  </body>
+
+</html>
