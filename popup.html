@@ -5,9 +5,7 @@
     <title>ArcGIS Maps SDK for JavaScript Tutorials: Add a feature layer</title>
 
     <style>
-      html,
-      body,
-      arcgis-map {
+      html, body, arcgis-map {
         padding: 0;
         margin: 0;
         height: 100%;
@@ -29,10 +27,7 @@
     <script src="https://js.arcgis.com/4.32/"></script>
 
     <!-- Load Map components from CDN-->
-    <script
-      type="module"
-      src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"
-    ></script>
+    <script type="module" src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"></script>
 
   </head>
   <body>
@@ -47,9 +42,8 @@
     require([
       "esri/Map", 
       "esri/views/MapView", 
-      "esri/layers/FeatureLayer", 
-      "esri/widgets/Popup"
-    ], function(Map, MapView, FeatureLayer, Popup) {
+      "esri/layers/FeatureLayer"
+    ], function(Map, MapView, FeatureLayer) {
 
       const arcgisMap = document.querySelector("arcgis-map");
 
@@ -74,39 +68,49 @@
           }
         });
 
-        map.add(corFacil);
+        corFacil.when(function() {
+          console.log("Facility layer loaded successfully.");
+          map.add(corFacil);
+        }).catch(function(error) {
+          console.error("Error loading Facility layer:", error);
+        });
 
         // grey US Feature Layer
         const noData = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/33"
         });
-        map.add(noData);
+
+        noData.when(function() {
+          console.log("No Data layer loaded successfully.");
+          map.add(noData);
+        }).catch(function(error) {
+          console.error("Error loading No Data layer:", error);
+        });
 
         // white US Feature Layer
         const baseUS = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/10"
         });
-        map.add(baseUS);
+
+        baseUS.when(function() {
+          console.log("Base US layer loaded successfully.");
+          map.add(baseUS);
+        }).catch(function(error) {
+          console.error("Error loading Base US layer:", error);
+        });
 
         // grey background Feature Layer
         const background = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/34"
         });
-        map.add(background);
 
-        // Listen for click events to display popup
-        view.on("click", function(event) {
-          view.hitTest(event).then(function(response) {
-            const graphic = response.results[0]?.graphic;
-            if (graphic) {
-              view.popup.open({
-                title: graphic.attributes.NAME,
-                content: `<b>Name:</b> ${graphic.attributes.NAME}<br><b>Address:</b> ${graphic.attributes.CITY} ${graphic.attributes.STATE} ${graphic.attributes.ZIPCODE}<br><b>Facility Type:</b> ${graphic.attributes.Facil_Type}<br><b>Youth or Adult Facility:</b> ${graphic.attributes.Facil_Age}<br><b>Facility Gender:</b> ${graphic.attributes.Facil_Gend}`,
-                location: event.mapPoint
-              });
-            }
-          });
+        background.when(function() {
+          console.log("Background layer loaded successfully.");
+          map.add(background);
+        }).catch(function(error) {
+          console.error("Error loading Background layer:", error);
         });
+        
       });
     });
   </script>
