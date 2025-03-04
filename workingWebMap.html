@@ -53,25 +53,29 @@
           content:
             "<b>Trail:</b> {TRL_NAME}<br><b>City:</b> {CITY_JUR}<br><b>Cross Street:</b> {X_STREET}<br><b>Parking:</b> {PARKING}<br><b>Elevation:</b> {ELEV_FT} ft"
         };
+
         // Trailheads feature layer (points)
         const corFacil = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0"
         });
-
         arcgisMap.addLayer(corFacil);
-
-        // Trails feature layer (lines)
+        
+        // grey US
+        const noData = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/33"
+        });
+        arcgisMap.addLayer(noData, 0);
+        
+        // white US
         const baseUS = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/10"
         });
-
         arcgisMap.addLayer(baseUS, 0);
 
-        // Parks and open spaces (polygons)
+        // grey background
         const background = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/34"
         });
-
         arcgisMap.addLayer(background, 0);
 
       });
