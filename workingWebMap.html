@@ -60,6 +60,12 @@
         });
         arcgisMap.addLayer(corFacil);
         
+        // Race data
+        const raceLayer = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/2"
+        });
+        arcgisMap.addLayer(raceLayer, 0);
+        
         // grey US
         const noData = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/33"
