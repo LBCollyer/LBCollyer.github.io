@@ -57,11 +57,11 @@
         arcgisMap.addLayer(corFacil);
 
         // Trails feature layer (lines)
-        const trailsLayer = new FeatureLayer({
-          url: "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trails/FeatureServer/0"
+        const baseUS = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/10"
         });
 
-        arcgisMap.addLayer(trailsLayer, 0);
+        arcgisMap.addLayer(baseUS, 0);
 
         // Parks and open spaces (polygons)
         const parksLayer = new FeatureLayer({
