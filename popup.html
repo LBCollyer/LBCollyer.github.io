@@ -1,0 +1,114 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>ArcGIS Maps SDK for JavaScript Tutorials: Add a feature layer</title>
+
+    <style>
+      html,
+      body,
+      arcgis-map {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <script>
+      var esriConfig = {
+        apiKey: "AAPTxy8BH1VEsoebNVZXo8HurBCyASoKLvJMp975P0MhDgOuTsrDo0KNXU1kRCxD8HVhcJ37PFTYJlUumgZryXmFp3p_BSw0Nd0qhhltCqh9FDqvJTkiq-rIVUJxV2ItFSBLxdAVItk41rtx3Ng_HOqYW6NSKSu7PgqQZvB1GgLU25h_5rt-GlnFTyMxisRRTvJM46bXmIANiymioQHcxrzrlmQg0uXsG5Nc5K25zKvbC60.AT1_HB22LyUE"
+      };
+    </script>
+
+    <!-- Load Calcite components from CDN -->
+    <script type="module" src="https://js.arcgis.com/calcite-components/3.0.3/calcite.esm.js"></script>
+
+    <!-- Load the ArcGIS Maps SDK for JavaScript from CDN -->
+    <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.32/"></script>
+
+    <!-- Load Map components from CDN-->
+    <script
+      type="module"
+      src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"
+    ></script>
+
+  </head>
+  <body>
+
+    <arcgis-map basemap="arcgis/topographic" center="-98, 39" zoom="5">
+      <arcgis-zoom position="top-left"></arcgis-zoom>
+    </arcgis-map>
+
+  </body>
+
+  <script>
+    require([
+      "esri/Map", 
+      "esri/views/MapView", 
+      "esri/layers/FeatureLayer", 
+      "esri/widgets/Popup"
+    ], function(Map, MapView, FeatureLayer, Popup) {
+
+      const arcgisMap = document.querySelector("arcgis-map");
+
+      arcgisMap.addEventListener("arcgisViewReadyChange", () => {
+        const map = new Map({
+          basemap: "topographic"
+        });
+
+        const view = new MapView({
+          container: arcgisMap.shadowRoot.querySelector("div"),
+          map: map,
+          center: [-98, 39], // Change coordinates to your center point
+          zoom: 5
+        });
+
+        // Facility Feature Layer
+        const corFacil = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
+          popupTemplate: {
+            title: "{NAME}",
+            content: "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY} {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
+          }
+        });
+
+        map.add(corFacil);
+
+        // grey US Feature Layer
+        const noData = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/33"
+        });
+        map.add(noData);
+
+        // white US Feature Layer
+        const baseUS = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/10"
+        });
+        map.add(baseUS);
+
+        // grey background Feature Layer
+        const background = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/34"
+        });
+        map.add(background);
+
+        // Listen for click events to display popup
+        view.on("click", function(event) {
+          view.hitTest(event).then(function(response) {
+            const graphic = response.results[0]?.graphic;
+            if (graphic) {
+              view.popup.open({
+                title: graphic.attributes.NAME,
+                content: `<b>Name:</b> ${graphic.attributes.NAME}<br><b>Address:</b> ${graphic.attributes.CITY} ${graphic.attributes.STATE} ${graphic.attributes.ZIPCODE}<br><b>Facility Type:</b> ${graphic.attributes.Facil_Type}<br><b>Youth or Adult Facility:</b> ${graphic.attributes.Facil_Age}<br><b>Facility Gender:</b> ${graphic.attributes.Facil_Gend}`,
+                location: event.mapPoint
+              });
+            }
+          });
+        });
+      });
+    });
+  </script>
+
+</html>
