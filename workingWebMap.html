@@ -5,7 +5,9 @@
     <title>ArcGIS Maps SDK for JavaScript Tutorials: Add a feature layer</title>
 
     <style>
-      html, body, arcgis-map {
+      html,
+      body,
+      arcgis-map {
         padding: 0;
         margin: 0;
         height: 100%;
@@ -48,10 +50,12 @@
       const arcgisMap = document.querySelector("arcgis-map");
 
       arcgisMap.addEventListener("arcgisViewReadyChange", () => {
+        // Create a map and view after the 'arcgisViewReadyChange' event
         const map = new Map({
           basemap: "topographic"
         });
 
+        // MapView should be created inside the shadowRoot of arcgis-map
         const view = new MapView({
           container: arcgisMap.shadowRoot.querySelector("div"),
           map: map,
@@ -59,13 +63,17 @@
           zoom: 5
         });
 
+        // Define the popup template for the Facility Feature Layer
+        const popupFacil = {
+          title: "Facility",
+          content:
+            "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY} {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
+        };
+
         // Facility Feature Layer
         const corFacil = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
-          popupTemplate: {
-            title: "{NAME}",
-            content: "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY} {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
-          }
+          popupTemplate: popupFacil
         });
 
         corFacil.when(function() {
@@ -110,7 +118,7 @@
         }).catch(function(error) {
           console.error("Error loading Background layer:", error);
         });
-        
+
       });
     });
   </script>
