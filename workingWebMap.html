@@ -2,12 +2,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <title>ArcGIS Maps SDK for JavaScript Tutorials: Display a pop-up</title>
+    <title>ArcGIS Maps SDK for JavaScript Tutorials: Add a feature layer</title>
 
     <style>
-      html,
-      body,
-      arcgis-map {
+      html, body, arcgis-map {
         padding: 0;
         margin: 0;
         height: 100%;
@@ -29,156 +27,91 @@
     <script src="https://js.arcgis.com/4.32/"></script>
 
     <!-- Load Map components from CDN-->
-    <script
-      type="module"
-      src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"
-    ></script>
+    <script type="module" src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"></script>
 
   </head>
-
   <body>
 
-    <arcgis-map basemap="arcgis/topographic" center="-118.805, 34.027" zoom="13">
+    <arcgis-map basemap="arcgis/topographic" center="-98, 39" zoom="5">
       <arcgis-zoom position="top-left"></arcgis-zoom>
     </arcgis-map>
 
   </body>
 
   <script>
-    require(["esri/layers/FeatureLayer"], (FeatureLayer) => {
+    require([
+      "esri/Map", 
+      "esri/views/MapView", 
+      "esri/layers/FeatureLayer"
+    ], function(Map, MapView, FeatureLayer) {
 
       const arcgisMap = document.querySelector("arcgis-map");
+
       arcgisMap.addEventListener("arcgisViewReadyChange", () => {
-
-        // Define a pop-up for Trailheads
-        const popupTrailheads = {
-          title: "Trailhead",
-          content:
-            "<b>Trail:</b> {TRL_NAME}<br><b>City:</b> {CITY_JUR}<br><b>Cross Street:</b> {X_STREET}<br><b>Parking:</b> {PARKING}<br><b>Elevation:</b> {ELEV_FT} ft"
-        };
-
-        const trailheads = new FeatureLayer({
-          url: "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trailheads_Styled/FeatureServer/0",
-          outFields: ["TRL_NAME", "CITY_JUR", "X_STREET", "PARKING", "ELEV_FT"],
-          popupTemplate: popupTrailheads
+        const map = new Map({
+          basemap: "topographic"
         });
 
-        arcgisMap.map.add(trailheads);
-
-        // Define a popup for Trails
-        const popupTrails = {
-          title: "Trail Information",
-          content: [
-            {
-              type: "media",
-              mediaInfos: [
-                {
-                  type: "column-chart",
-                  title: "Trail Elevation",
-                  value: {
-                    fields: ["ELEV_MIN", "ELEV_MAX"],
-                    normalizeField: null,
-                    tooltipField: "Min and max elevation values"
-                  }
-                }
-              ]
-            }
-          ],
-          fieldInfos: [
-            {
-              fieldName: "ELEV_MIN",
-              label: "Elevation Minimum",
-              digitSeparator: true
-            },
-            {
-              fieldName: "ELEV_MAX",
-              label: "Elevation Maximum",
-              digitSeparator: true
-            }
-          ]
-        };
-
-        const trails = new FeatureLayer({
-          url: "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trails_Styled/FeatureServer/0",
-          outFields: ["TRL_NAME", "ELEV_GAIN"],
-          popupTemplate: popupTrails
+        const view = new MapView({
+          container: arcgisMap.shadowRoot.querySelector("div"),
+          map: map,
+          center: [-98, 39], // Change coordinates to your center point
+          zoom: 5
         });
 
-        arcgisMap.map.add(trails, 0);
-
-        // Define popup for Parks and Open Spaces
-        const popupOpenspaces = {
-          title: "{PARK_NAME}",
-          content: [
-            {
-              type: "fields",
-              fieldInfos: [
-                {
-                  fieldName: "AGNCY_NAME",
-                  label: "Agency",
-                  isEditable: true,
-                  tooltip: "",
-                  visible: true,
-                  format: null,
-                  stringFieldOption: "text-box"
-                },
-                {
-                  fieldName: "TYPE",
-                  label: "Type",
-                  isEditable: true,
-                  tooltip: "",
-                  visible: true,
-                  format: null,
-                  stringFieldOption: "text-box"
-                },
-                {
-                  fieldName: "ACCESS_TYP",
-                  label: "Access",
-                  isEditable: true,
-                  tooltip: "",
-                  visible: true,
-                  format: null,
-                  stringFieldOption: "text-box"
-                },
-
-                {
-                  fieldName: "GIS_ACRES",
-                  label: "Acres",
-                  isEditable: true,
-                  tooltip: "",
-                  visible: true,
-                  format: {
-                    places: 2,
-                    digitSeparator: true
-                  },
-
-                  stringFieldOption: "text-box"
-                }
-              ]
-            }
-          ]
-        };
-
-        const openspaces = new FeatureLayer({
-          url: "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Parks_and_Open_Space_Styled/FeatureServer/0",
-          outFields: [
-            "TYPE",
-            "PARK_NAME",
-            "AGNCY_NAME",
-            "ACCESS_TYP",
-            "GIS_ACRES",
-            "TRLS_MI",
-            "TOTAL_GOOD",
-            "TOTAL_FAIR",
-            "TOTAL_POOR"
-          ],
-          popupTemplate: popupOpenspaces
+        // Facility Feature Layer
+        const corFacil = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
+          popupTemplate: {
+            title: "{NAME}",
+            content: "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY} {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
+          }
         });
 
-        arcgisMap.map.add(openspaces, 0);
+        corFacil.when(function() {
+          console.log("Facility layer loaded successfully.");
+          map.add(corFacil);
+        }).catch(function(error) {
+          console.error("Error loading Facility layer:", error);
+        });
 
+        // grey US Feature Layer
+        const noData = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/33"
+        });
+
+        noData.when(function() {
+          console.log("No Data layer loaded successfully.");
+          map.add(noData);
+        }).catch(function(error) {
+          console.error("Error loading No Data layer:", error);
+        });
+
+        // white US Feature Layer
+        const baseUS = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/10"
+        });
+
+        baseUS.when(function() {
+          console.log("Base US layer loaded successfully.");
+          map.add(baseUS);
+        }).catch(function(error) {
+          console.error("Error loading Base US layer:", error);
+        });
+
+        // grey background Feature Layer
+        const background = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/34"
+        });
+
+        background.when(function() {
+          console.log("Background layer loaded successfully.");
+          map.add(background);
+        }).catch(function(error) {
+          console.error("Error loading Background layer:", error);
+        });
+        
       });
-
     });
   </script>
 
