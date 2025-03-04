@@ -37,7 +37,7 @@
   </head>
   <body>
 
-    <arcgis-map basemap="arcgis/topographic" center="-118.805, 34.027" zoom="13">
+    <arcgis-map basemap="arcgis/topographic" center="-118.805, 34.027" zoom="1">
       <arcgis-zoom position="top-left"></arcgis-zoom>
     </arcgis-map>
 
@@ -48,7 +48,11 @@
 
       const arcgisMap = document.querySelector("arcgis-map");
       arcgisMap.addEventListener("arcgisViewReadyChange", () => {
-
+        const popupTrailheads = {
+          title: "Trailhead",
+          content:
+            "<b>Trail:</b> {TRL_NAME}<br><b>City:</b> {CITY_JUR}<br><b>Cross Street:</b> {X_STREET}<br><b>Parking:</b> {PARKING}<br><b>Elevation:</b> {ELEV_FT} ft"
+        };
         // Trailheads feature layer (points)
         const corFacil = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0"
