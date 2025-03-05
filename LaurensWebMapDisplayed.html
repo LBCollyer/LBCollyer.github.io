@@ -49,9 +49,9 @@
       const arcgisMap = document.querySelector("arcgis-map");
       arcgisMap.addEventListener("arcgisViewReadyChange", () => {
         const popupFacil = {
-          title: "Facility",
+          title: "{NAME}",
           content:
-            "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY}{STATE}{ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
+            "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY}, {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
         };
 
         // Trailheads feature layer (points)
