@@ -54,7 +54,7 @@
             "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY}, {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
         };
 
-        // Trailheads feature layer (points)
+        // correctional facil
         const corFacil = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
           popupTemplate: popupFacil
@@ -67,13 +67,13 @@
         });
         arcgisMap.addLayer(raceLayer, 0);
         
-        // grey US
+        // grey BaseUS(choropleth)
         const noData = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/33"
         });
         arcgisMap.addLayer(noData, 0);
         
-        // white US
+        // white BaseUS(points)
         const baseUS = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/10"
         });
