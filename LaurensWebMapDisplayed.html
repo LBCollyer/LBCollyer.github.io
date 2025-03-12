@@ -68,14 +68,6 @@
             return content;
           },
         };
-
-        // correctional facilities
-        const corFacil = new FeatureLayer({
-          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
-          popupTemplate: popupFacil,
-          outFields: ["*"]  
-        });
-        arcgisMap.addLayer(corFacil);
         
         //Base URL
         const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
@@ -89,6 +81,7 @@
           });
           arcgisMap.addLayer(layer);
         }
+        
         // grey BaseUS(choropleth)
         const noData = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/33"
@@ -106,7 +99,14 @@
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/34"
         });
         arcgisMap.addLayer(background, 0);
-
+        
+        // correctional facilities
+        const corFacil = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
+          popupTemplate: popupFacil,
+          outFields: ["*"]  
+        });
+        arcgisMap.addLayer(corFacil);
       });
 
     });
