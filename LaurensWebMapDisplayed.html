@@ -53,7 +53,7 @@
           content:
             "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY}, {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
         };
-        const popupRace = {
+        const popupPoly = {
           title: "{NAME}",
           content: function (feature) {
             let attributes = feature.graphic.attributes;
@@ -77,12 +77,16 @@
         });
         arcgisMap.addLayer(corFacil);
         
-        // Race data
-        const raceLayer = new FeatureLayer({
-          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/2",
-          popupTemplate: popupRace
-        });
-        arcgisMap.addLayer(raceLayer, 0);
+        //Base URL
+        const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
+        
+        //loop and add feature layers
+        for (let i = 2; i <=10; i++) {
+          const layer = new FeatureLayer({
+            url: `${baseURL}${i}`,
+            popupTemplate: popupPoly
+          });
+          arcgisMap.addLayer(layer);
         
         // grey BaseUS(choropleth)
         const noData = new FeatureLayer({
