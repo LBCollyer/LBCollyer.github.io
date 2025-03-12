@@ -57,7 +57,7 @@
           title: "{NAME}",
           content: function (feature) {
             let attributes = feature.graphic.attributes;
-            let excludedFields = [ "STATEFP", "STATENS", "GEOIDFQ", "GEOID", "STUSPS", "LSAD", "ALAND", "AWATER", "OBJECTID", "STATEID", "SHAPE__Length", "SHAPE__Area"];
+            let excludedFields = [ "STATEFP", "STATENS", "GEOIDFQ", "GEOID", "STUSPS", "LSAD", "ALAND", "AWATER", "OBJECTID_1", "STATEID", "Shape__Length", "Shape__Area", "STATE"];
             let content = "<table border='1' style='border-collapse: collapse; width: 100%;'>";
             for (let key in attributes) {
               if (!excludedFields.includes(key)) {
