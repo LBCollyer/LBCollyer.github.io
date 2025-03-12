@@ -54,10 +54,19 @@
             "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY}, {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
         };
         const popupRace = {
-          title: "{STATE}",
-          content:
-            "<b>Address:</b> {CITY}, {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
-        };
+          title: "{NAME}",
+          content: function (feature) {
+            let attributes = feature.graphic.attributes;
+            let excludedFields = [ "STATEFP", "STATENS", "GEOIDFQ", "GEOID", "STUSPS", "LSAD", "ALAND", "AWATER", "OBJECTID", "STATEID", "SHAPE__Length", "SHAPE__Area"];
+            let content = "<table border='1' style='border-collapse: collapse; width: 100%;'>";
+            for (let key in attributes) {
+              if (!excludedFields.includes(key)) {
+                content += `<tr><td><b>${key}</b></td><td>${attributes[key]}</td></tr>`;
+              }
+            }
+            content += "</table>";
+            return content;,
+                  outFields: ["*"]  };
 
         // correctional facilities
         const corFacil = new FeatureLayer({
