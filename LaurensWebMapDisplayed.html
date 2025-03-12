@@ -72,7 +72,7 @@
         // correctional facilities
         const corFacil = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
-          popupTemplate: popupFacil
+          popupTemplate: popupFacil,
           outFields: ["*"]  
         });
         arcgisMap.addLayer(corFacil);
@@ -84,7 +84,7 @@
         for (let i = 2; i <=10; i++) {
           const layer = new FeatureLayer({
             url: `${baseURL}${i}`,
-            popupTemplate: popupPoly
+            popupTemplate: popupPoly,
             outFields: ["*"]  
           });
           arcgisMap.addLayer(layer);
