@@ -98,7 +98,6 @@
           popupTemplate: popupFacil,
           outFields: ["*"]
         });
-        arcgisMap.addLayer(corFacil);
 
         // Base URL for looping layers
         const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
@@ -141,6 +140,7 @@
           });
           arcgisMap.addLayer(layer);
         }
+        arcgisMap.addLayer(corFacil);
         // Listen for Changes in the Dropdown
         document.getElementById("symbolFieldSelector").addEventListener("calciteSelectChange", function (event) {
           let selectedField = event.target.value;
