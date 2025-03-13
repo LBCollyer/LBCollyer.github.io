@@ -2,7 +2,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <title>ArcGIS Maps SDK for JavaScript Tutorials: Add a feature layer</title>
+    <title>Lauren's Webmap</title>
 
     <style>
       html,
@@ -29,7 +29,10 @@
     <script src="https://js.arcgis.com/4.32/"></script>
 
     <!-- Load Map components from CDN-->
-    <script type="module" src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"></script>
+    <script
+      type="module"
+      src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"
+    ></script>
 
   </head>
   <body>
@@ -41,85 +44,74 @@
   </body>
 
   <script>
-    require([
-      "esri/Map", 
-      "esri/views/MapView", 
-      "esri/layers/FeatureLayer"
-    ], function(Map, MapView, FeatureLayer) {
+    require(["esri/layers/FeatureLayer"], (FeatureLayer) => {
 
       const arcgisMap = document.querySelector("arcgis-map");
-
       arcgisMap.addEventListener("arcgisViewReadyChange", () => {
-        // Create a map and view after the 'arcgisViewReadyChange' event
-        const map = new Map({
-          basemap: "topographic"
-        });
-
-        // MapView should be created inside the shadowRoot of arcgis-map
-        const view = new MapView({
-          container: arcgisMap.shadowRoot.querySelector("div"),
-          map: map,
-          center: [-98, 39], // Change coordinates to your center point
-          zoom: 5
-        });
-
-        // Define the popup template for the Facility Feature Layer
+        //facility popup template
         const popupFacil = {
-          title: "Facility",
+          title: "{NAME}",
           content:
-            "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY} {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
+            "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY}, {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
         };
 
-        // Facility Feature Layer
-        const corFacil = new FeatureLayer({
-          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
-          popupTemplate: popupFacil
-        });
+        //other data popup template
+        const popupPoly = {
+          title: "{NAME}",
+          content: function (feature) {
+            let attributes = feature.graphic.attributes;
+            let excludedFields = [ "STATEFP", "STATENS", "GEOIDFQ", "GEOID", "STUSPS", "LSAD", "ALAND", "AWATER", "OBJECTID_1", "STATEID", "Shape__Length", "Shape__Area", "STATE"];
+            let content = "<table border='1' style='border-collapse: collapse; width: 100%;'>";
+            for (let key in attributes) {
+              if (!excludedFields.includes(key)) {
+                content += `<tr><td><b>${key}</b></td><td>${attributes[key]}</td></tr>`;
+              }
+            }
+            content += "</table>";
+            return content;
+          },
+        };
+        
+        //Base URL
+        const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
 
-        corFacil.when(function() {
-          console.log("Facility layer loaded successfully.");
-          map.add(corFacil);
-        }).catch(function(error) {
-          console.error("Error loading Facility layer:", error);
-        });
-
-        // grey US Feature Layer
-        const noData = new FeatureLayer({
-          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/33"
-        });
-
-        noData.when(function() {
-          console.log("No Data layer loaded successfully.");
-          map.add(noData);
-        }).catch(function(error) {
-          console.error("Error loading No Data layer:", error);
-        });
-
-        // white US Feature Layer
-        const baseUS = new FeatureLayer({
-          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/10"
-        });
-
-        baseUS.when(function() {
-          console.log("Base US layer loaded successfully.");
-          map.add(baseUS);
-        }).catch(function(error) {
-          console.error("Error loading Base US layer:", error);
-        });
-
-        // grey background Feature Layer
+        // grey background
         const background = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/34"
         });
-
-        background.when(function() {
-          console.log("Background layer loaded successfully.");
-          map.add(background);
-        }).catch(function(error) {
-          console.error("Error loading Background layer:", error);
+        arcgisMap.addLayer(background, 0);
+        
+        // grey BaseUS(choropleth)
+        const noData = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/33"
         });
-
+        arcgisMap.addLayer(noData, 0);
+        
+        // white BaseUS(points)
+        const baseUS = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/10"
+        });
+        arcgisMap.addLayer(baseUS, 0);
+        
+        //loop and add feature layers
+        for (let i = 2; i <=10; i++) {
+          const layer = new FeatureLayer({
+            url: `${baseURL}${i}`,
+            popupTemplate: popupPoly,
+            outFields: ["*"]  
+          });
+          arcgisMap.addLayer(layer);
+        }
+        
+        // correctional facilities
+        const corFacil = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
+          popupTemplate: popupFacil,
+          outFields: ["*"]  
+        });
+        arcgisMap.addLayer(corFacil);
       });
+
     });
   </script>
 
