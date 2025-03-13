@@ -65,12 +65,39 @@
   </body>
 
   <script>
-    require(["esri/layers/FeatureLayer"], (FeatureLayer) => {
+    require(["esri/layers/FeatureLayer",
+      "esri/renderers/UniqueValueRenderer",
+      "esri/symbols/SimpleMarkerSymbol",
+      "esri/tasks/support/Query",
+      "esri/Color"], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Query, Color) => {
       const arcgisMap = document.querySelector("arcgis-map");
 
       let corFacil;
 
       arcgisMap.addEventListener("arcgisViewReadyChange", () => {
+        // Function to generate a random color
+        function getRandomColor() {
+          return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
+        }
+
+        // Function to create a UniqueValueRenderer dynamically
+        function createRenderer(field, uniqueValues) {
+          return new UniqueValueRenderer({
+            field,
+            uniqueValueInfos: uniqueValues.map(value => ({
+              value,
+              symbol: new SimpleMarkerSymbol({
+                color: getRandomColor(),
+                size: 8,
+              })
+            })),
+            defaultSymbol: new SimpleMarkerSymbol({
+              color: "gray",
+              size: 8,
+            })
+          });
+        }
+        
         const popupFacil = {
           title: "{NAME}",
           content: "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY}, {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
@@ -140,6 +167,23 @@
           });
           arcgisMap.addLayer(layer);
         }
+        
+        // Function to update symbology when the field is changed
+        function updateSymbology(field) {
+          let query = corFacil.createQuery();
+          query.returnDistinctValues = true;
+          query.returnGeometry = false;
+          query.outFields = [field];
+
+          corFacil.queryFeatures(query).then(result => {
+            let uniqueValues = result.features.map(feature => feature.attributes[field]).filter(v => v);
+            corFacil.renderer = createRenderer(field, uniqueValues);
+          });
+        }
+        
+        // Set default symbology
+        updateSymbology("Facil_Type");
+        
         arcgisMap.addLayer(corFacil);
         // Listen for Changes in the Dropdown
         document.getElementById("symbolFieldSelector").addEventListener("calciteSelectChange", function (event) {
