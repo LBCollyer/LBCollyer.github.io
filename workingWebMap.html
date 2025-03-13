@@ -42,7 +42,14 @@
 
 </head>
 <body>
-
+  <!-- Intro Page -->
+  <div id="intro">
+    <h1>Welcome to Lauren's Webmap</h1>
+    <p>Explore correctional facilities across the U.S. with interactive symbology.</p>
+    <p>Scroll down to begin</p>
+    <div class="scroll-down"></div>
+  </div>
+  
   <!-- UI for Selecting Symbolization Field -->
   <div class="ui-container">
     <calcite-label>
@@ -74,7 +81,14 @@
 
     const arcgisMap = document.querySelector("arcgis-map");
     let corFacil;
-
+    // Smooth scrolling when the user scrolls down
+    document.addEventListener("DOMContentLoaded", () => {
+      document.addEventListener("wheel", (event) => {
+        if (window.scrollY === 0 && event.deltaY > 0) {
+          window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+        }
+      });
+    });
     arcgisMap.addEventListener("arcgisViewReadyChange", () => {
 
       function getRandomColor() {
