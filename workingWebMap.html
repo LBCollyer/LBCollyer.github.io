@@ -80,20 +80,21 @@
     
     /* Start Button */
     #startButton {
-      padding: 10px 20px;
-      font-size: 1.2rem;
+      padding: 12px 24px;
+      font-size: 1.5rem;
       background: black;
       color: white;
       border: none;
-      border-radius: 25px;
+      border-radius: 0; /* No rounded corners */
       cursor: pointer;
-      transition: 0.3s;
+      transition: background 0.3s, color 0.3s;
     }
-    
+  
     #startButton:hover {
-      background: #333;
+      background: #333; /* Slightly lighter black */
+      color: white;
     }
-    
+ 
     /* Map Container */
     #map-container {
       height: 100vh;
