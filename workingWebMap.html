@@ -146,6 +146,8 @@
           let selectedField = event.target.value;
           console.log("User selected field:", selectedField);
           updateSymbolization(selectedField);
+          
+        arcgisMap.reorder(corFacil, arcgisMap.layers.length - 1);
         });
       });
     });
