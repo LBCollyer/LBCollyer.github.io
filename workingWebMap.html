@@ -53,6 +53,9 @@
         <calcite-option value="Facil_Scop">Facility Scope</calcite-option>
         <calcite-option value="Facil_Gend">Facility Gender</calcite-option>
       </calcite-select>
+      <calcite-panel heading="Legend" id="legendPanel">
+        <calcite-list id="symbologyLegend"></calcite-list>
+      </calcite-panel>
     </calcite-label>
   </div>
 
@@ -120,6 +123,45 @@
           let uniqueValues = result.features.map(feature => feature.attributes[field]).filter(v => v);
           corFacil.renderer = createRenderer(field, uniqueValues);
         });
+        function updateLegend(uniqueValues) {
+          const legendPanel = document.getElementById("legendPanel");
+          legendPanel.innerHTML = ""; // Clear existing legend
+        
+          const legendList = document.createElement("calcite-list");
+          legendList.layout = "inline";
+          legendList.selectionMode = "none";
+        
+          uniqueValues.forEach(value => {
+            const listItem = document.createElement("calcite-list-item");
+        
+            const colorBox = document.createElement("div");
+            color.style.backgroundColor = value.color.toHex();
+            color.style.width = "16px";
+            color.style.height = "16px";
+            color.style.display = "inline-block";
+            color.style.marginRight = "8px";
+        
+            legendList.appendChild(
+              `<calcite-list-item>
+                 <div slot="content">
+                   <span style="display: inline-block; width: 16px; height: 16px; background-color: ${value.color.toHex()}; margin-right: 8px;"></span>
+                   ${value.value}
+                 </div>
+               </calcite-list-item>`
+            );
+          });
+        
+          legendPanel.appendChild(legendList);
+          corFacil.renderer = createRenderer(field, uniqueValues);
+          updateLegend(
+            uniqueValues.map(value => ({
+              value,
+              color: getRandomColor() // Ensure color matches renderer's color
+            }))
+          );
+
+        }
+
       }
 
       // Initialize with default field
