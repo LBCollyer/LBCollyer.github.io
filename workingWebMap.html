@@ -110,8 +110,6 @@
         outFields: ["*"]
       });
 
-      arcgisMap.addLayer(corFacil);
-
       function updateSymbology(field) {
         let query = corFacil.createQuery();
         query.returnDistinctValues = true;
@@ -153,6 +151,7 @@
         });
         arcgisMap.addLayer(layer);
       }
+      arcgisMap.addLayer(corFacil);
     });
   });
 </script>
