@@ -1,199 +1,162 @@
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <title>Lauren's Webmap</title>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Lauren's Webmap</title>
 
-    <style>
-      html, body, arcgis-map {
-        padding: 0;
-        margin: 0;
-        height: 100%;
-        width: 100%;
-      }
+  <style>
+    html, body, arcgis-map {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
 
-      /* Floating UI for Calcite Select */
-      .ui-container {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        background: white;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-        z-index: 10;
-      }
-    </style>
-
-    <script>
-      var esriConfig = {
-        apiKey: "AAPTxy8BH1VEsoebNVZXo8HurBCyASoKLvJMp975P0MhDgOuTsrDo0KNXU1kRCxD8HVhcJ37PFTYJlUumgZryXmFp3p_BSw0Nd0qhhltCqh9FDqvJTkiq-rIVUJxV2ItFSBLxdAVItk41rtx3Ng_HOqYW6NSKSu7PgqQZvB1GgLU25h_5rt-GlnFTyMxisRRTvJM46bXmIANiymioQHcxrzrlmQg0uXsG5Nc5K25zKvbC60.AT1_HB22LyUE"
-      };
-    </script>
-
-    <!-- Load Calcite components -->
-    <script type="module" src="https://js.arcgis.com/calcite-components/3.0.3/calcite.esm.js"></script>
-
-    <!-- Load ArcGIS Maps SDK -->
-    <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
-    <script src="https://js.arcgis.com/4.32/"></script>
-
-    <!-- Load ArcGIS Map components -->
-    <script type="module" src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"></script>
-
-  </head>
-  <body>
-
-    <!-- UI for Selecting Symbolization Field -->
-    <div class="ui-container">
-      <calcite-label>
-        Choose Symbolization Field:
-        <calcite-select id="symbolFieldSelector">
-          <calcite-option value="Facil_Type">Facility Type</calcite-option>
-          <calcite-option value="Facil_Age">Facility Age</calcite-option>
-          <calcite-option value="Facil_Scop">Facility Scope</calcite-option>
-          <calcite-option value="Facil_Gend">Facility Gender</calcite-option>
-        </calcite-select>
-      </calcite-label>
-    </div>
-
-    <!-- ArcGIS Map -->
-    <arcgis-map basemap="arcgis/topographic" center="-98, 39" zoom="5">
-      <arcgis-zoom position="top-left"></arcgis-zoom>
-    </arcgis-map>
-
-  </body>
+    .ui-container {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+      z-index: 10;
+    }
+  </style>
 
   <script>
-    require(["esri/layers/FeatureLayer",
-      "esri/renderers/UniqueValueRenderer",
-      "esri/symbols/SimpleMarkerSymbol",
-      "esri/tasks/support/Query",
-      "esri/Color"], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Query, Color) => {
-      const arcgisMap = document.querySelector("arcgis-map");
+    var esriConfig = {
+      apiKey: "AAPTxy8BH1VEsoebNVZXo8HurBCyASoKLvJMp975P0MhDgOuTsrDo0KNXU1kRCxD8HVhcJ37PFTYJlUumgZryXmFp3p_BSw0Nd0qhhltCqh9FDqvJTkiq-rIVUJxV2ItFSBLxdAVItk41rtx3Ng_HOqYW6NSKSu7PgqQZvB1GgLU25h_5rt-GlnFTyMxisRRTvJM46bXmIANiymioQHcxrzrlmQg0uXsG5Nc5K25zKvbC60.AT1_HB22LyUE"
+    };
+  </script>
 
-      let corFacil;
+  <!-- Load Calcite components -->
+  <script type="module" src="https://js.arcgis.com/calcite-components/3.0.3/calcite.esm.js"></script>
 
-      arcgisMap.addEventListener("arcgisViewReadyChange", () => {
-        // Function to generate a random color
-        function getRandomColor() {
-          return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
-        }
+  <!-- Load ArcGIS Maps SDK -->
+  <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.32/"></script>
 
-        // Function to create a UniqueValueRenderer dynamically
-        function createRenderer(field, uniqueValues) {
-          return new UniqueValueRenderer({
-            field,
-            uniqueValueInfos: uniqueValues.map(value => ({
-              value,
-              symbol: new SimpleMarkerSymbol({
-                color: getRandomColor(),
-                size: 8,
-              })
-            })),
-            defaultSymbol: new SimpleMarkerSymbol({
-              color: "gray",
+  <!-- Load ArcGIS Map components -->
+  <script type="module" src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"></script>
+
+</head>
+<body>
+
+  <!-- UI for Selecting Symbolization Field -->
+  <div class="ui-container">
+    <calcite-label>
+      Choose Symbolization Field:
+      <calcite-select id="symbolFieldSelector">
+        <calcite-option value="Facil_Type">Facility Type</calcite-option>
+        <calcite-option value="Facil_Age">Facility Age</calcite-option>
+        <calcite-option value="Facil_Scop">Facility Scope</calcite-option>
+        <calcite-option value="Facil_Gend">Facility Gender</calcite-option>
+      </calcite-select>
+    </calcite-label>
+  </div>
+
+  <!-- ArcGIS Map -->
+  <arcgis-map basemap="arcgis/topographic" center="-98, 39" zoom="5">
+    <arcgis-zoom position="top-left"></arcgis-zoom>
+  </arcgis-map>
+
+</body>
+
+<script>
+  require([
+    "esri/layers/FeatureLayer",
+    "esri/renderers/UniqueValueRenderer",
+    "esri/symbols/SimpleMarkerSymbol",
+    "esri/tasks/support/Query",
+    "esri/Color"
+  ], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Query, Color) => {
+    
+    const arcgisMap = document.querySelector("arcgis-map");
+
+    let corFacil;
+
+    arcgisMap.addEventListener("arcgisViewReadyChange", () => {
+      
+      function getRandomColor() {
+        return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
+      }
+
+      function createRenderer(field, uniqueValues) {
+        return new UniqueValueRenderer({
+          field,
+          uniqueValueInfos: uniqueValues.map(value => ({
+            value,
+            symbol: new SimpleMarkerSymbol({
+              color: getRandomColor(),
               size: 8,
+              outline: { color: "black", width: 1 }
             })
-          });
-        }
-        
-        const popupFacil = {
-          title: "{NAME}",
-          content: "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY}, {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
-        };
+          })),
+          defaultSymbol: new SimpleMarkerSymbol({
+            color: "gray",
+            size: 8,
+            outline: { color: "black", width: 1 }
+          })
+        });
+      }
 
-        const popupPoly = {
+      // Correctional Facilities Layer
+      corFacil = new FeatureLayer({
+        url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
+        popupTemplate: {
           title: "{NAME}",
-          content: function (feature) {
-            let attributes = feature.graphic.attributes;
-            let excludedFields = ["STATEFP", "STATENS", "GEOIDFQ", "GEOID", "STUSPS", "LSAD", "ALAND", "AWATER", "OBJECTID_1", "STATEID", "Shape__Length", "Shape__Area", "STATE"];
-            let content = "<table border='1' style='border-collapse: collapse; width: 100%;'>";
-            for (let key in attributes) {
-              if (!excludedFields.includes(key)) {
-                content += `<tr><td><b>${key}</b></td><td>${attributes[key]}</td></tr>`;
-              }
-            }
-            content += "</table>";
-            return content;
-          },
-        };
+          content: "<b>Facility Type:</b> {Facil_Type}<br><b>Age:</b> {Facil_Age}<br><b>Scope:</b> {Facil_Scop}<br><b>Gender:</b> {Facil_Gend}"
+        },
+        outFields: ["*"]
+      });
 
-        // Correctional Facilities Layer
-        corFacil = new FeatureLayer({
-          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
-          popupTemplate: popupFacil,
+      arcgisMap.addLayer(corFacil);
+      arcgisMap.reorder(corFacil, arcgisMap.layers.length - 1); // Always keep it on top
+
+      function updateSymbology(field) {
+        let query = corFacil.createQuery();
+        query.returnDistinctValues = true;
+        query.returnGeometry = false;
+        query.outFields = [field];
+
+        corFacil.queryFeatures(query).then(result => {
+          let uniqueValues = result.features.map(feature => feature.attributes[field]).filter(v => v);
+          corFacil.renderer = createRenderer(field, uniqueValues);
+        });
+      }
+
+      // Initialize with default field
+      updateSymbology("Facil_Type");
+
+      // Listen for field changes
+      document.getElementById("symbolFieldSelector").addEventListener("calciteSelectChange", function (event) {
+        let selectedField = event.target.value;
+        console.log("User selected:", selectedField);
+        updateSymbology(selectedField);
+      });
+
+      // Base Layers
+      const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
+
+      const noData = new FeatureLayer({ url: baseURL + "33" });
+      const baseUS = new FeatureLayer({ url: baseURL + "10" });
+      const background = new FeatureLayer({ url: baseURL + "34" });
+
+      arcgisMap.addLayer(noData);
+      arcgisMap.addLayer(baseUS);
+      arcgisMap.addLayer(background);
+
+      // Add Feature Layers 2-10
+      for (let i = 2; i <= 10; i++) {
+        const layer = new FeatureLayer({
+          url: `${baseURL}${i}`,
           outFields: ["*"]
         });
-
-        // Base URL for looping layers
-        const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
-
-        // Base layers
-        const noData = new FeatureLayer({
-          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/33"
-        });
-        arcgisMap.addLayer(noData, 0);
-
-        const baseUS = new FeatureLayer({
-          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/10"
-        });
-        arcgisMap.addLayer(baseUS, 0);
-
-        const background = new FeatureLayer({
-          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/34"
-        });
-        arcgisMap.addLayer(background, 0);
-
-        // Symbolization Update Function
-        function updateSymbolization(field) {
-          corFacil.renderer = {
-            type: "unique-value",
-            field: field,
-            uniqueValueInfos: [
-              { value: "Value1", symbol: { type: "simple-marker", color: "red" } },
-              { value: "Value2", symbol: { type: "simple-marker", color: "blue" } }
-            ]
-          };
-          corFacil.refresh();
-        }
-        
-        // Loop to add feature layers (IDs 2-10)
-        for (let i = 2; i <= 10; i++) {
-          const layer = new FeatureLayer({
-            url: `${baseURL}${i}`,
-            popupTemplate: popupPoly,
-            outFields: ["*"]
-          });
-          arcgisMap.addLayer(layer);
-        }
-        
-        // Function to update symbology when the field is changed
-        function updateSymbology(field) {
-          let query = corFacil.createQuery();
-          query.returnDistinctValues = true;
-          query.returnGeometry = false;
-          query.outFields = [field];
-
-          corFacil.queryFeatures(query).then(result => {
-            let uniqueValues = result.features.map(feature => feature.attributes[field]).filter(v => v);
-            corFacil.renderer = createRenderer(field, uniqueValues);
-          });
-        }
-        
-        // Set default symbology
-        updateSymbology("Facil_Type");
-        
-        arcgisMap.addLayer(corFacil);
-        // Listen for Changes in the Dropdown
-        document.getElementById("symbolFieldSelector").addEventListener("calciteSelectChange", function (event) {
-          let selectedField = event.target.value;
-          console.log("User selected field:", selectedField);
-          updateSymbolization(selectedField);
-          
-        arcgisMap.reorder(corFacil, arcgisMap.layers.length - 1);
-        });
-      });
+        arcgisMap.addLayer(layer);
+      }
     });
-  </script>
+  });
+</script>
+
 </html>
