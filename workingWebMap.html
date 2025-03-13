@@ -38,12 +38,12 @@
   <body>
     <calcite-label>
       Choose Symbolization Field:
-      <calcite-combobox id="symbolFieldSelector">
-        <calcite-combobox-item value="Facil_Type" text-label="Facility Type"></calcite-combobox-item>
-        <calcite-combobox-item value="Facil_Age" text-label="Facility Age"></calcite-combobox-item>
-        <calcite-combobox-item value="Facil_Scop" text-label="Facility Scope"></calcite-combobox-item>
-        <calcite-combobox-item value="Facil_Gend" text-label="Facility Gender"></calcite-combobox-item>
-      </calcite-combobox>
+      <calcite-select id="symbolFieldSelector">
+        <calcite-option value="Facil_Type">Facility Type</calcite-option>
+        <calcite-option value="Facil_Age">Facility Age</calcite-option>
+        <calcite-option value="Facil_Scop">Facility Scope</calcite-option>
+        <calcite-option value="Facil_Gend">Facility Gender</calcite-option>
+      </calcite-select>
     </calcite-label>
 
     <arcgis-map basemap="arcgis/topographic" center="-98, 39" zoom="5">
