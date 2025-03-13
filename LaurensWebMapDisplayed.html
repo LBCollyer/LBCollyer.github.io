@@ -71,16 +71,12 @@
         
         //Base URL
         const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
-        
-        //loop and add feature layers
-        for (let i = 2; i <=10; i++) {
-          const layer = new FeatureLayer({
-            url: `${baseURL}${i}`,
-            popupTemplate: popupPoly,
-            outFields: ["*"]  
-          });
-          arcgisMap.addLayer(layer);
-        }
+
+        // grey background
+        const background = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/34"
+        });
+        arcgisMap.addLayer(background, 0);
         
         // grey BaseUS(choropleth)
         const noData = new FeatureLayer({
@@ -93,12 +89,16 @@
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/10"
         });
         arcgisMap.addLayer(baseUS, 0);
-
-        // grey background
-        const background = new FeatureLayer({
-          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/34"
-        });
-        arcgisMap.addLayer(background, 0);
+        
+        //loop and add feature layers
+        for (let i = 2; i <=10; i++) {
+          const layer = new FeatureLayer({
+            url: `${baseURL}${i}`,
+            popupTemplate: popupPoly,
+            outFields: ["*"]  
+          });
+          arcgisMap.addLayer(layer);
+        }
         
         // correctional facilities
         const corFacil = new FeatureLayer({
