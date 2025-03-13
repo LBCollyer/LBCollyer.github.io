@@ -111,7 +111,6 @@
       });
 
       arcgisMap.addLayer(corFacil);
-      arcgisMap.reorder(corFacil, arcgisMap.layers.length - 1); // Always keep it on top
 
       function updateSymbology(field) {
         let query = corFacil.createQuery();
