@@ -27,7 +27,9 @@
       height: 100vh;
       width: 100%;
       background: white;
+      color: black;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
@@ -37,47 +39,44 @@
       left: 0;
       z-index: 100;
       transition: transform 1s ease-in-out;
-      overflow: hidden;
     }
     
-    /* Black Vertical Bars */
-    .vertical-bars {
+    /* Black vertical bars */
+    #intro::before,
+    #intro::after {
+      content: "";
       position: absolute;
-      width: 100%;
+      top: 0;
+      width: 15vw; /* Adjust thickness */
       height: 100%;
-      background: repeating-linear-gradient(
-        to right,
-        black 0%,
-        black 10%,
-        white 10%,
-        white 20%
-      );
-      background-size: 200px; /* Adjust for thinner/thicker bars */
+      background: black;
     }
-    
-    /* Centered Box for Text */
-    .intro-box {
-      position: relative;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-      max-width: 500px;
+    #intro::before {
+    left: 0;
+    }
+  
+    #intro::after {
+      right: 0;
+    }
+  
+    /* Centered box */
+    #intro-box {
+      background: white;
+      padding: 30px;
+      border: 4px solid black;
+      box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.3);
       text-align: center;
-      z-index: 2;
+      max-width: 60%;
     }
-    
-    .intro-box h1 {
+  
+    #intro h1 {
       font-size: 2.5rem;
       margin-bottom: 10px;
-      color: black;
     }
-    
-    .intro-box p {
+  
+    #intro p {
       font-size: 1.2rem;
       margin-bottom: 20px;
-      color: black;
-    }
     
     /* Start Button */
     #startButton {
@@ -122,9 +121,11 @@
 <body>
   <!-- Intro Page -->
   <div id="intro">
-    <h1>Welcome to Lauren's Webmap</h1>
-    <p>Explore correctional facilities across the U.S. with interactive symbology.</p>
-    <p>Scroll down to begin</p>
+    <div id="intro-box">
+      <h1>Welcome to Lauren's Webmap</h1>
+      <p>Explore correctional facilities across the U.S. with interactive symbology.</p>
+      <p>Scroll down to begin</p>
+    </div>
     <button id="startButton">Start Exploring</button>
   </div>
 
