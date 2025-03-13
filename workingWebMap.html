@@ -103,16 +103,6 @@
         // Base URL for looping layers
         const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
 
-        // Loop to add feature layers (IDs 2-10)
-        for (let i = 2; i <= 10; i++) {
-          const layer = new FeatureLayer({
-            url: `${baseURL}${i}`,
-            popupTemplate: popupPoly,
-            outFields: ["*"]
-          });
-          arcgisMap.addLayer(layer);
-        }
-
         // Base layers
         const noData = new FeatureLayer({
           url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/33"
@@ -141,7 +131,16 @@
           };
           corFacil.refresh();
         }
-
+        
+        // Loop to add feature layers (IDs 2-10)
+        for (let i = 2; i <= 10; i++) {
+          const layer = new FeatureLayer({
+            url: `${baseURL}${i}`,
+            popupTemplate: popupPoly,
+            outFields: ["*"]
+          });
+          arcgisMap.addLayer(layer);
+        }
         // Listen for Changes in the Dropdown
         document.getElementById("symbolFieldSelector").addEventListener("calciteSelectChange", function (event) {
           let selectedField = event.target.value;
