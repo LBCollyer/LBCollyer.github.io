@@ -156,8 +156,9 @@
         query.outFields = [field];
 
         corFacil.queryFeatures(query).then(result => {
-          let uniqueValues = result.features.map(f => f.attributes[field])
-                                    .filter((value, idx, self) => uniqueValues.indexOf(value) === -1);
+          let values = result.features.map(f => f.attributes[field]);
+          let uniqueValues = values.filter((value, index, self) => self.indexOf(value) === index);
+
 
           let uniqueValueInfos = uniqueValues.map(value => ({
             value,
