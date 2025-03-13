@@ -150,7 +150,12 @@
     });
     arcgisMap.addEventListener("arcgisViewReadyChange", (event) => {
       if (event.detail?.view) {
-        event.detail.view.navigation.mouseWheelZoomEnabled = false;
+        let view = event.detail.view;
+        view.on("mouse-wheel", (event) => event.stopPropagation()); // Disables mouse scroll zoom
+        view.on("double-click", (event) => event.stopPropagation()); // Disables double-click zoom
+        view.on("drag", (event) => {
+          if (event.button === 2) event.stopPropagation(); // Disables right-click drag zoom
+        });
       }
     });
 
