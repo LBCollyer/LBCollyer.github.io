@@ -67,13 +67,29 @@
   <script>
     require(["esri/layers/FeatureLayer"], (FeatureLayer) => {
       const arcgisMap = document.querySelector("arcgis-map");
-      
+
       let corFacil;
 
       arcgisMap.addEventListener("arcgisViewReadyChange", () => {
         const popupFacil = {
           title: "{NAME}",
           content: "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY}, {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
+        };
+
+        const popupPoly = {
+          title: "{NAME}",
+          content: function (feature) {
+            let attributes = feature.graphic.attributes;
+            let excludedFields = ["STATEFP", "STATENS", "GEOIDFQ", "GEOID", "STUSPS", "LSAD", "ALAND", "AWATER", "OBJECTID_1", "STATEID", "Shape__Length", "Shape__Area", "STATE"];
+            let content = "<table border='1' style='border-collapse: collapse; width: 100%;'>";
+            for (let key in attributes) {
+              if (!excludedFields.includes(key)) {
+                content += `<tr><td><b>${key}</b></td><td>${attributes[key]}</td></tr>`;
+              }
+            }
+            content += "</table>";
+            return content;
+          },
         };
 
         // Correctional Facilities Layer
@@ -83,6 +99,35 @@
           outFields: ["*"]
         });
         arcgisMap.addLayer(corFacil);
+
+        // Base URL for looping layers
+        const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
+
+        // Loop to add feature layers (IDs 2-10)
+        for (let i = 2; i <= 10; i++) {
+          const layer = new FeatureLayer({
+            url: `${baseURL}${i}`,
+            popupTemplate: popupPoly,
+            outFields: ["*"]
+          });
+          arcgisMap.addLayer(layer);
+        }
+
+        // Base layers
+        const noData = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/33"
+        });
+        arcgisMap.addLayer(noData, 0);
+
+        const baseUS = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/10"
+        });
+        arcgisMap.addLayer(baseUS, 0);
+
+        const background = new FeatureLayer({
+          url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/34"
+        });
+        arcgisMap.addLayer(background, 0);
 
         // Symbolization Update Function
         function updateSymbolization(field) {
