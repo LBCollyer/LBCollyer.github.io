@@ -22,66 +22,55 @@
       box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
       z-index: 10;
     }
-    /* Full-screen Intro Section */
-    #intro {
-      height: 100vh;
-      background: linear-gradient(to bottom, #1e3c72, #2a5298);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      font-family: Arial, sans-serif;
-    }
-    
-    #intro h1 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-    }
-    
-    #intro p {
-      font-size: 1.2rem;
-    }
-    
-    /* Scroll Indicator */
-    .scroll-down {
-      width: 30px;
-      height: 50px;
-      border: 2px solid white;
-      border-radius: 25px;
-      position: absolute;
-      bottom: 20px;
-      animation: bounce 1.5s infinite;
-    }
-    
-    .scroll-down::after {
-      content: "";
-      width: 8px;
-      height: 8px;
-      background: white;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 10px;
-      border-radius: 50%;
-    }
-    
-    /* Bouncing Animation */
-    @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(10px);
-      }
-    }
-    
-    /* Map Container */
-    #map-container {
-      height: 100vh;
-    }
-
+/* Full-screen Intro Section */
+  #intro {
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(to bottom, #1e3c72, #2a5298);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    transition: transform 1s ease-in-out;
+  }
+  
+  #intro h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+  
+  #intro p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+  
+  /* Start Button */
+  #startButton {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background: white;
+    color: #1e3c72;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  #startButton:hover {
+    background: #f1f1f1;
+  }
+  
+  /* Map Container */
+  #map-container {
+    height: 100vh;
+  }
   </style>
 
   <script>
@@ -107,7 +96,7 @@
     <h1>Welcome to Lauren's Webmap</h1>
     <p>Explore correctional facilities across the U.S. with interactive symbology.</p>
     <p>Scroll down to begin</p>
-    <div class="scroll-down"></div>
+    <button id="startButton">Start Exploring</button>
   </div>
 
   <!-- Map Container -->
