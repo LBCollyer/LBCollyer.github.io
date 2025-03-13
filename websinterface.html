@@ -1,1 +1,110 @@
-dg
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Lauren's Webmap</title>
+  <style>
+    html, body, arcgis-map {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    /* Full-screen Intro Section */
+    #intro {
+      height: 100vh;
+      width: 100%;
+      background: white;
+      color: black;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+    }
+
+    #intro.hidden {
+      transform: translateY(-100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Ensure the map container takes up the full screen */
+    #map-container {
+      height: 100vh;
+      width: 100%;
+      position: relative;
+      z-index: 10;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    /* UI Container */
+    .ui-container {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+      z-index: 10;
+    }
+  </style>
+  <script>
+    var esriConfig = {
+      apiKey: "YOUR_API_KEY"
+    };
+  </script>
+  <script type="module" src="https://js.arcgis.com/calcite-components/3.0.3/calcite.esm.js"></script>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.32/"></script>
+  <script type="module" src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"></script>
+</head>
+<body>
+
+  <!-- Intro Page -->
+  <div id="intro">
+    <div id="intro-box">
+      <h1>Welcome to Lauren's Webmap</h1>
+      <p>Explore correctional facilities across the U.S. with interactive symbology.</p>
+      <p>Scroll down to begin</p>
+    </div>
+    <button id="startButton">⇩⬇↓ </button>
+  </div>
+
+  <!-- Map Container -->
+  <div id="map-container">
+    <div class="ui-container">
+      <calcite-label>
+        Choose Symbolization Field:
+        <calcite-select id="symbolFieldSelector">
+          <calcite-option value="Facil_Type">Facility Type</calcite-option>
+          <calcite-option value="Facil_Age">Facility Age</calcite-option>
+          <calcite-option value="Facil_Scop">Facility Scope</calcite-option>
+          <calcite-option value="Facil_Gend">Facility Gender</calcite-option>
+        </calcite-select>
+        <calcite-panel heading="Legend" id="legendPanel"></calcite-panel>
+      </calcite-label>
+    </div>
+
+    <arcgis-map baseMap="arcgis/topographic" center="-98, 39" zoom="5">
+      <arcgis-zoom position="bottom-right"></arcgis-zoom>
+    </arcgis-map>
+  </div>
+
+  <script>
+    document.getElementById("startButton").addEventListener("click", () => {
+      document.getElementById("intro").classList.add("hidden");
+      document.getElementById("map-container").classList.add("visible");
+    });
+  </script>
+</body>
+</html>
