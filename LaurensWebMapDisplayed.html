@@ -48,11 +48,14 @@
 
       const arcgisMap = document.querySelector("arcgis-map");
       arcgisMap.addEventListener("arcgisViewReadyChange", () => {
+        //facility popup template
         const popupFacil = {
           title: "{NAME}",
           content:
             "<b>Name:</b> {NAME}<br><b>Address:</b> {CITY}, {STATE} {ZIPCODE}<br><b>Facility Type:</b> {Facil_Type}<br><b>Youth or Adult Facility:</b> {Facil_Age}<br><b>Facility Gender:</b> {Facil_Gend}"
         };
+
+        //other data popup template
         const popupPoly = {
           title: "{NAME}",
           content: function (feature) {
