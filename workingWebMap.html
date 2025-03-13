@@ -40,23 +40,6 @@
       z-index: 100;
       transition: transform 1s ease-in-out;
     }
-    
-    /* Black vertical bars */
-    #intro::before,
-    #intro::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      width: 15vw; /* Adjust thickness */
-      height: 100%;
-    }
-    #intro::before {
-    left: 0;
-    }
-  
-    #intro::after {
-      right: 0;
-    }
   
     /* Centered box */
     #intro-box {
@@ -92,23 +75,6 @@
     #map-container {
       height: 100vh;
     }
-    /* Black Bars Background */
-    .black-bars {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      z-index: -1;
-    }
-  
-    .black-bar {
-      flex: 1;
-      background-color: black;
-      height: 100%;
-    }
-
   </style>
 
   <script>
@@ -129,18 +95,6 @@
 
 </head>
   <body>
-    <div class="black-bars">
-    <div class="black-bar"></div>
-    <div class="black-bar"></div>
-    <div class="black-bar"></div>
-    <div class="black-bar"></div>
-    <div class="black-bar"></div>
-    <div class="black-bar"></div>
-    <div class="black-bar"></div>
-    <div class="black-bar"></div>
-    <div class="black-bar"></div>
-    <div class="black-bar"></div>
-  </div>
 
   <!-- Intro Page -->
   <div id="intro">
@@ -149,7 +103,7 @@
       <p>Explore correctional facilities across the U.S. with interactive symbology.</p>
       <p>Scroll down to begin</p>
     </div>
-    <button id="startButton">⇩⬇↓ </button>
+    <button id="startButton">⇩⬇</button>
   </div>
 
   <!-- Map Container -->
