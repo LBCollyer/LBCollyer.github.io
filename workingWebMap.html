@@ -152,6 +152,14 @@
         }
       });
     });
+    // Button click event to lift the intro page
+    document.getElementById("startButton").addEventListener("click", () => {
+      document.getElementById("intro").style.transform = "translateY(-100%)";
+      setTimeout(() => {
+        document.getElementById("intro").style.display = "none";
+      }, 1000); // Hide after animation
+    });
+
     arcgisMap.addEventListener("arcgisViewReadyChange", () => {
 
       function getRandomColor() {
