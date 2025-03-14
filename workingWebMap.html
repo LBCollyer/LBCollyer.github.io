@@ -273,7 +273,7 @@
       // Adding base and data layers
       const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
 
-      const baseLayers = [10, 33, 34]; 
+      const baseLayers = [33, 34, 10]; 
       baseLayers.forEach(id => {
         arcgisMap.addLayer(new FeatureLayer({
           url: `${baseURL}${id}`,
