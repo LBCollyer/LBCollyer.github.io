@@ -157,13 +157,13 @@
         document.getElementById("intro").style.display = "none";
       }, 1000); // Hide after animation
     });
-    /*arcgisMap.addEventListener("arcgisViewReadyChange", (event) => {
+    arcgisMap.addEventListener("arcgisViewReadyChange", (event) => {
       if (event.detail?.view) {
         let view = event.detail.view;
         view.navigation.mouseWheelZoomEnabled= false
         );
       }
-    });*/
+    });
 
     arcgisMap.addEventListener("arcgisViewReadyChange", () => { 
       function getRandomColor() {
