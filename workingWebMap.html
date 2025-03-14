@@ -160,7 +160,7 @@
     arcgisMap.addEventListener("arcgisViewReadyChange", (event) => {
       if (event.detail?.view) {
         let view = event.detail.view;
-        view.navigation.mouseWheelZoomEnabled= false
+        view.interaction.mouseWheelZoomEnabled= false
       }
     });
 
