@@ -272,20 +272,20 @@
       // Adding base and data layers
       const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
 
-      const baseLayers = [10, 33, 34]; // Example layer IDs
+      const baseLayers = [10, 33, 34]; 
       baseLayers.forEach(id => {
         arcgisMap.addLayer(new FeatureLayer({
           url: `${baseURL}${id}`,
           outFields: ["*"]
         }));
-      });/*
+      });
       // Adding layers 2 to 10
       for (let i = 2; i <= 10; i++) {
         arcgisMap.addLayer(new FeatureLayer({
           url: `${baseURL}${i}`,
           outFields: ["*"]
         }));
-      }*/
+      }
 
       arcgisMap.addLayer(corFacil);
     });
