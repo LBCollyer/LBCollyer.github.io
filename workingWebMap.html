@@ -157,18 +157,16 @@
         document.getElementById("intro").style.display = "none";
       }, 1000); // Hide after animation
     });
-    arcgisMap.addEventListener("arcgisViewReadyChange", (event) => {
+    /*arcgisMap.addEventListener("arcgisViewReadyChange", (event) => {
       if (event.detail?.view) {
         let view = event.detail.view;
-        view.on("mouse-wheel", (event) => event.stopPropagation()); // Disables mouse scroll zoom
-        view.on("double-click", (event) => event.stopPropagation()); // Disables double-click zoom
-        view.on("drag", (event) => {
-          if (event.button === 2) event.stopPropagation(); // Disables right-click drag zoom
-        });
-      }
+        view.navigation.mouseWheelZoomEnabled= false
+        );
+      }*/
     });
 
     arcgisMap.addEventListener("arcgisViewReadyChange", () => { 
+      view.navigation.mouseWheelZoomEnabled= false
       function getRandomColor() {
         return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
       }
