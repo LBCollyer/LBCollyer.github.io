@@ -107,7 +107,13 @@
     <button id="startButton">⇩</button>
   </div>
 
-  <!-- Map Container -->
+  <!-- ArcGIS Map -->
+  <arcgis-map baseMap = "arcgis/topographic" center="-98, 39" zoom=5 mouse-wheel-zoom-enabled="false">
+    <arcgis-zoom position="bottom-right"></arcgis-zoom>
+    <arcgis-search position="top-right"></arcgis-search>
+  </arcgis-map>
+    
+    <!-- Map Container -->
   <div id="map-container">
     <!-- UI for Selecting Symbolization Field -->
     <div class="ui-container">
@@ -123,12 +129,6 @@
       </calcite-label>
     </div>
   </div>
-
-  <!-- ArcGIS Map -->
-  <arcgis-map baseMap = "arcgis/topographic" center="-98, 39" zoom=5 mouse-wheel-zoom-enabled="false">
-    <arcgis-zoom position="bottom-right"></arcgis-zoom>
-    <arcgis-search position="top-right"></arcgis-search>
-  </arcgis-map>
 
 </body>
 
