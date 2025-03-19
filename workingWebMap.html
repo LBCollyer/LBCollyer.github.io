@@ -155,14 +155,12 @@
         document.getElementById("intro").style.display = "none";
       }, 1000); // Hide after animation
     });
-    arcgisMap.addEventListener("arcgisViewReadyChange", (event) => {
+    
+    arcgisMap.addEventListener("arcgisViewReadyChange", (event) => { 
       if (event.detail?.view) {
         let view = event.detail.view;
         view.Navigation.mouseWheelZoomEnabled= false
       }
-    });
-
-    arcgisMap.addEventListener("arcgisViewReadyChange", () => { 
       function getRandomColor() {
         return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
       }
