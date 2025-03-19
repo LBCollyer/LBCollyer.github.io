@@ -134,8 +134,9 @@
     "esri/layers/FeatureLayer",
     "esri/renderers/UniqueValueRenderer",
     "esri/symbols/SimpleMarkerSymbol",
-    "esri/Color"
-  ], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Color) => {
+    "esri/Color",
+    "esri/views/navigation/Navigation"
+  ], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Color, Navigation) => {
 
     const arcgisMap = document.querySelector("arcgis-map");
     let corFacil;
@@ -157,7 +158,7 @@
     arcgisMap.addEventListener("arcgisViewReadyChange", (event) => {
       if (event.detail?.view) {
         let view = event.detail.view;
-        view.interaction.mouseWheelZoomEnabled= false
+        view.Navigation.mouseWheelZoomEnabled= false
       }
     });
 
