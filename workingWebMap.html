@@ -157,10 +157,8 @@
     });
     
     arcgisMap.addEventListener("arcgisViewReadyChange", (event) => { 
-      if (event.detail?.view) {
-        let view = event.detail.view;
-        view.Navigation.mouseWheelZoomEnabled= false
-      }
+      let view = arcgisMap.view;
+      view.Navigation.mouseWheelZoomEnabled= false
       function getRandomColor() {
         return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
       }
