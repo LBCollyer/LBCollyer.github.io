@@ -68,7 +68,7 @@
       border: none;
       cursor: pointer;
       transition: background 0.3s;
-      border-radius: 5
+      border-radius: 30px
     }
     #startButton:hover { background: #333; }
  
@@ -83,14 +83,11 @@
       apiKey: "AAPTxy8BH1VEsoebNVZXo8HurBCyASoKLvJMp975P0MhDgOuTsrDo0KNXU1kRCxD8HVhcJ37PFTYJlUumgZryXmFp3p_BSw0Nd0qhhltCqh9FDqvJTkiq-rIVUJxV2ItFSBLxdAVItk41rtx3Ng_HOqYW6NSKSu7PgqQZvB1GgLU25h_5rt-GlnFTyMxisRRTvJM46bXmIANiymioQHcxrzrlmQg0uXsG5Nc5K25zKvbC60.AT1_HB22LyUE"
     };
   </script>
-
   <!-- Load Calcite components -->
   <script type="module" src="https://js.arcgis.com/calcite-components/3.0.3/calcite.esm.js"></script>
-
   <!-- Load ArcGIS Maps SDK -->
   <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
   <script src="https://js.arcgis.com/4.32/"></script>
-
   <!-- Load ArcGIS Map components -->
   <script type="module" src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"></script>
 
@@ -100,7 +97,7 @@
   <!-- Intro Page -->
   <div id="intro">
     <div id="intro-box">
-      <h1>Welcome to Lauren's Webmap</h1>
+      <h1>Correctional Facilities Maps</h1>
       <p>Explore correctional facilities across the U.S. with interactive symbology.</p>
       <p>Scroll down to begin</p>
     </div>
@@ -110,7 +107,6 @@
   <!-- ArcGIS Map -->
   <arcgis-map baseMap = "arcgis/topographic" center="-98, 39" zoom=5 mouse-wheel-zoom-enabled="false">
     <arcgis-zoom position="bottom-right"></arcgis-zoom>
-    <arcgis-search position="top-right"></arcgis-search>
   </arcgis-map>
     
     <!-- Map Container -->
@@ -137,8 +133,9 @@
     "esri/layers/FeatureLayer",
     "esri/renderers/UniqueValueRenderer",
     "esri/symbols/SimpleMarkerSymbol",
-    "esri/Color"
-  ], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Color) => {
+    "esri/Color",
+    "esri/views/navigation/Navigation"
+  ], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Color, Navigation) => {
 
     const arcgisMap = document.querySelector("arcgis-map");
     let corFacil;
@@ -157,14 +154,10 @@
         document.getElementById("intro").style.display = "none";
       }, 1000); // Hide after animation
     });
-    arcgisMap.addEventListener("arcgisViewReadyChange", (event) => {
-      if (event.detail?.view) {
-        let view = event.detail.view;
-        view.interaction.mouseWheelZoomEnabled= false
-      }
-    });
-
-    arcgisMap.addEventListener("arcgisViewReadyChange", () => { 
+    
+    arcgisMap.addEventListener("arcgisViewReadyChange", (event) => { 
+      let view = arcgisMap.view;
+      view.navigation.actionMap.mouseWheel= 'none';
       function getRandomColor() {
         return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
       }
