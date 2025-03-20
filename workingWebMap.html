@@ -108,7 +108,7 @@
   </div>
 
   <!-- ArcGIS Map -->
-  <arcgis-map baseMap = "arcgis/topographic" center="-98, 39" zoom=10>
+  <arcgis-map baseMap = "arcgis/topographic" center="-98, 39" zoom=7>
     <arcgis-zoom position="bottom-right"></arcgis-zoom>
   </arcgis-map>
     
@@ -159,7 +159,7 @@
         // Set the map's center to the new location and zoom level (adjust the zoom level as needed)
         arcgisMap.view.goTo({
           center: [targetLongitude, targetLatitude], // [longitude, latitude]
-          zoom: 20  // Set zoom level as needed
+          zoom: 7  // Set zoom level as needed
         });
       //}
       });
