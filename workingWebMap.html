@@ -145,9 +145,9 @@
     // Smooth scrolling when the user scrolls down
     document.addEventListener("DOMContentLoaded", () => {
       document.addEventListener("wheel", (event) => {
-       <!-- if (window.scrollY === 0 && event.deltaY > 0) {
+       /* if (window.scrollY === 0 && event.deltaY > 0) {
           window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
-        }-->
+        }*/
         if (window.scrollY > window.innerHeight) {
         // Get the ArcGIS map and view
         const arcgisMap = document.querySelector("arcgis-map");
