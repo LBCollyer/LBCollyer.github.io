@@ -152,14 +152,14 @@
         // Get the ArcGIS map and view
         let view = arcgisMap.view;
   
-        // Define the target latitude and longitude (32° 38' 46" N, 83° 25' 54" W)
-        const targetLatitude = 32.646111;
-        const targetLongitude = -83.431667;
+        // Define the target latitude and longitude (32° 38' 46" N, 83° 25' 54" W° N and 92.0000° W)
+        const targetLatitude = 31.0667;
+        const targetLongitude = -92.0000;
   
         // Set the map's center to the new location and zoom level (adjust the zoom level as needed)
         arcgisMap.view.goTo({
           center: [targetLongitude, targetLatitude], // [longitude, latitude]
-          zoom: 10  // Set zoom level as needed
+          zoom: 20  // Set zoom level as needed
         });
       //}
       });
