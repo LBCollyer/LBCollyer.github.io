@@ -149,9 +149,6 @@
     // Scrolling
     document.addEventListener("DOMContentLoaded", () => {
       document.addEventListener("wheel", (event) => {
-       if (window.scrollY === 0 && event.deltaY > 0) {
-          event.preventDefault();
-        }
         // Get the ArcGIS map and view
         let view = arcgisMap.view;
         const targetLatitude = 31.0667;
