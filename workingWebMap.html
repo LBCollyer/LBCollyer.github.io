@@ -11,7 +11,11 @@
       height: 100%;
       width: 100%;
     }
-
+    
+    body {
+      overflow: hidden; /* Disable scrolling after intro */
+    }
+    
     .ui-container {
       position: absolute;
       top: 10px;
@@ -141,8 +145,8 @@
   ], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Color, Navigation) => {
 
     const arcgisMap = document.querySelector("arcgis-map");
-    let corFacil;
-    // Smooth scrolling when the user scrolls down
+    
+    // Scrolling
     document.addEventListener("DOMContentLoaded", () => {
       document.addEventListener("wheel", (event) => {
        if (window.scrollY === 0 && event.deltaY > 0) {
@@ -150,14 +154,12 @@
         }
         // Get the ArcGIS map and view
         let view = arcgisMap.view;
-  
-        // Define the target latitude and longitude (32° 38' 46" N, 83° 25' 54" W° N and 92.0000° W)
         const targetLatitude = 31.0667;
         const targetLongitude = -92.0000;
   
         // Set the map's center to the new location and zoom level (adjust the zoom level as needed)
         arcgisMap.view.goTo({
-          center: [targetLongitude, targetLatitude], // [longitude, latitude]
+          center: [targetLongitude, targetLatitude],
           zoom: 7  // Set zoom level as needed
         });
       });
