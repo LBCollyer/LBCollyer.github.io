@@ -13,7 +13,7 @@
     }
     
     body {
-      overflow: hidden; /* Disable scrolling after intro */
+      overflow: hidden;
     }
     
     .ui-container {
@@ -148,17 +148,7 @@
     
     // Scrolling
     document.addEventListener("DOMContentLoaded", () => {
-      document.addEventListener("wheel", (event) => {
-        // Get the ArcGIS map and view
-        let view = arcgisMap.view;
-        const targetLatitude = 31.0667;
-        const targetLongitude = -92.0000;
-  
-        // Set the map's center to the new location and zoom level (adjust the zoom level as needed)
-        arcgisMap.view.goTo({
-          center: [targetLongitude, targetLatitude],
-          zoom: 7  // Set zoom level as needed
-        });
+      
       });
     });
     // Button click event to lift the intro page
@@ -171,7 +161,22 @@
     
     arcgisMap.addEventListener("arcgisViewReadyChange", (event) => { 
       let view = arcgisMap.view;
+      if (!view) {
+        console.error("View is not ready");
+        return;
+      }
       view.navigation.actionMap.mouseWheel= 'none';
+      document.addEventListener("wheel", (event) => {
+        // Get the ArcGIS map and view
+        let view = arcgisMap.view;
+        const targetLatitude = 31.0667;
+        const targetLongitude = -92.0000;
+  
+        // Set the map's center to the new location and zoom level (adjust the zoom level as needed)
+        arcgisMap.view.goTo({
+          center: [targetLongitude, targetLatitude],
+          zoom: 7  // Set zoom level as needed
+        });
       function getRandomColor() {
         return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
       }
