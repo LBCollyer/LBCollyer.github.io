@@ -143,8 +143,8 @@
     "esri/Color",
     "esri/views/navigation/Navigation"
   ], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Color, Navigation) => {
-    const arcgisMap = document.querySelector("arcgis-map");
-    
+    const myarcgisMap = document.querySelector("arcgis-map");
+    let myview = myarcgisMap.view;
     // Button click event to lift the intro page
     document.getElementById("startButton").addEventListener("click", () => {
       document.getElementById("intro").style.transform = "translateY(-100%)";
@@ -153,21 +153,19 @@
       }, 1000); // Hide after animation
     });
     
-    arcgisMap.addEventListener("arcgisViewReadyChange", (event) => { 
-      let view = arcgisMap.view;
-      if (!view) {
+    myarcgisMap.addEventListener("arcgisViewReadyChange", (event) => { 
+      if (!myview) {
         console.error("View is not ready");
         return;
       }
-      view.navigation.actionMap.mouseWheel= 'none';
+      myview.navigation.actionMap.mouseWheel= 'none';
       document.addEventListener("wheel", (event) => {
         // Get the ArcGIS map and view
-        let view = arcgisMap.view;
         const targetLatitude = 31.0667;
         const targetLongitude = -92.0000;
   
         // Set the map's center to the new location and zoom level (adjust the zoom level as needed)
-        arcgisMap.view.goTo({
+        myview.goTo({
           center: [targetLongitude, targetLatitude],
           zoom: 7  // Set zoom level as needed
         });
@@ -278,21 +276,21 @@
 
       const baseLayers = [33, 34, 10]; 
       baseLayers.forEach(id => {
-        arcgisMap.addLayer(new FeatureLayer({
+        myarcgisMap.addLayer(new FeatureLayer({
           url: `${baseURL}${id}`,
           outFields: ["*"]
         }));
       });
      /* // Adding layers 2 to 9
       for (let i = 2; i < 10; i++) {
-        arcgisMap.addLayer(new FeatureLayer({
+        myarcgisMap.addLayer(new FeatureLayer({
           url: `${baseURL}${i}`,
           outFields: ["*"]
         }));
       }*/
 
-      arcgisMap.addLayer(corFacil);
-      arcgisMap.basemap = null
+      myarcgisMap.addLayer(corFacil);
+      myarcgisMap.basemap = null
     });
   });
 </script>
