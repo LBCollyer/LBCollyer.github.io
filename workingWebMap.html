@@ -154,10 +154,10 @@
     });
     
     myarcgisMap.addEventListener("arcgisViewReadyChange", (event) => { 
-      if (!myview) {
+     /* if (!myview) {
         console.error("View is not ready");
         return;
-      }
+      }*/
       myview.navigation.actionMap.mouseWheel= 'none';
       document.addEventListener("wheel", (event) => {
         // Get the ArcGIS map and view
