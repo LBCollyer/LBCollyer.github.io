@@ -1,110 +1,153 @@
-<html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Lauren's Webmap</title>
-  <style>
-    html, body, arcgis-map {
-      padding: 0;
-      margin: 0;
-      height: 100%;
-      width: 100%;
+<script>
+  // Create a namespace object
+  const PrisonMap = {
+    esriConfig: {
+      apiKey: "AAPTxy8BH1VEsoebNVZXo8HurBCyASoKLvJMp975P0MhDgOuTsrDo0KNXU1kRCxD8HVhcJ37PFTYJlUumgZryXmFp3p_BSw0Nd0qhhltCqh9FDqvJTkiq-rIVUJxV2ItFSBLxdAVItk41rtx3Ng_HOqYW6NSKSu7PgqQZvB1GgLU25h_5rt-GlnFTyMxisRRTvJM46bXmIANiymioQHcxrzrlmQg0uXsG5Nc5K25zKvbC60.AT1_HB22LyUE"
+    },
+
+    getRandomColor: function() {
+      return new esri.Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
+    },
+
+    createRenderer: function(field, uniqueValues) {
+      return new esri.renderer.UniqueValueRenderer({
+        field: field,
+        uniqueValueInfos: uniqueValues.map(info => ({
+          value: info.value,
+          symbol: new esri.symbol.SimpleMarkerSymbol({
+            color: info.color,
+            size: 5,
+            outline: null
+          })
+        })),
+        defaultSymbol: new esri.symbol.SimpleMarkerSymbol({
+          color: "gray",
+          size: 5,
+          outline: null
+        })
+      });
+    },
+
+    updateLegend: function(uniqueValueInfos) {
+      const legendPanel = document.getElementById("legendPanel");
+      legendPanel.innerHTML = ""; // Clear existing legend
+
+      const legendList = document.createElement("calcite-list");
+      legendList.layout = "inline";
+      legendList.selectionMode = "none";
+
+      uniqueValueInfos.forEach(info => {
+        const listItem = document.createElement("calcite-list-item");
+
+        // Create color box
+        const colorBox = document.createElement("span");
+        colorBox.style.display = "inline-block";
+        colorBox.style.width = "16px";
+        colorBox.style.height = "16px";
+        colorBox.style.backgroundColor = info.color.toHex();
+        colorBox.style.marginRight = "8px";
+        colorBox.style.border = "1px solid black";
+
+        // Append list item content
+        listItem.innerHTML = `
+          <div slot="content" style="display: flex; align-items: center;">
+            ${colorBox.outerHTML}
+            <span>${info.value}</span>
+          </div>
+        `;
+
+        legendList.appendChild(listItem);
+      });
+
+      legendPanel.appendChild(legendList);
+    },
+
+    updateSymbology: function(field, corFacil) {
+      let query = corFacil.createQuery();
+      query.returnDistinctValues = true;
+      query.returnGeometry = false;
+      query.outFields = [field];
+
+      corFacil.queryFeatures(query).then(result => {
+        let values = result.features.map(f => f.attributes[field]);
+        let uniqueValues = values.filter((value, index, self) => self.indexOf(value) === index);
+
+        let uniqueValueInfos = uniqueValues.map(value => ({
+          value: value,
+          color: this.getRandomColor()
+        }));
+
+        corFacil.renderer = this.createRenderer(field, uniqueValueInfos);
+        this.updateLegend(uniqueValueInfos);
+      }).catch(error => console.error("Query failed:", error));
+    },
+
+    initializeMap: function(myarcgisMap) {
+      myarcgisMap.addEventListener("arcgisViewReadyChange", (event) => {
+        const myview = myarcgisMap.view;
+        if (!myview) {
+          console.error("View is not ready");
+          return;
+        }
+        myview.navigation.actionMap.mouseWheel = 'none';
+
+        document.addEventListener("wheel", (event) => {
+          const targetLatitude = 31.0667;
+          const targetLongitude = -92.0000;
+          myview.goTo({
+            center: [targetLongitude, targetLatitude],
+            zoom: 7
+          });
+        });
+      });
+    },
+
+    init: function() {
+      // Get the ArcGIS map and view
+      const myarcgisMap = document.querySelector("arcgis-map");
+
+      // Correctional Facilities Layer
+      const corFacil = new esri.layers.FeatureLayer({
+        url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
+        popupTemplate: {
+          title: "{NAME}",
+          content: `
+            <b>Type:</b> {Facil_Type}<br>
+            <b>Age:</b> {Facil_Age}<br>
+            <b>Scope:</b> {Facil_Scop}<br>
+            <b>Gender:</b> {Facil_Gend}
+          `
+        },
+        outFields: ["*"]
+      });
+
+      // Initialize map components and layers
+      this.initializeMap(myarcgisMap);
+
+      // Initialize symbology with default field
+      this.updateSymbology("Facil_Type", corFacil);
+
+      // Event listener for changing symbolization field
+      document.getElementById("symbolFieldSelector").addEventListener("calciteSelectChange", (event) => {
+        this.updateSymbology(event.target.value, corFacil);
+      });
+
+      // Add layers
+      const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
+      const baseLayers = [33, 34, 10]; 
+      baseLayers.forEach(id => {
+        myarcgisMap.addLayer(new esri.layers.FeatureLayer({
+          url: `${baseURL}${id}`,
+          outFields: ["*"]
+        }));
+      });
+
+      myarcgisMap.addLayer(corFacil);
+      myarcgisMap.basemap = null;
     }
+  };
 
-    /* Full-screen Intro Section */
-    #intro {
-      height: 100vh;
-      width: 100%;
-      background: white;
-      color: black;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      font-family: Arial, sans-serif;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 100;
-      transition: transform 1s ease-in-out, opacity 1s ease-in-out;
-    }
+  // Initialize the map and application
+  PrisonMap.init();
 
-    #intro.hidden {
-      transform: translateY(-100%);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    /* Ensure the map container takes up the full screen */
-    #map-container {
-      height: 100vh;
-      width: 100%;
-      position: relative;
-      z-index: 10;
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-    }
-
-    /* UI Container */
-    .ui-container {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: white;
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-      z-index: 10;
-    }
-  </style>
-  <script>
-    var esriConfig = {
-      apiKey: "YOUR_API_KEY"
-    };
-  </script>
-  <script type="module" src="https://js.arcgis.com/calcite-components/3.0.3/calcite.esm.js"></script>
-  <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
-  <script src="https://js.arcgis.com/4.32/"></script>
-  <script type="module" src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"></script>
-</head>
-<body>
-
-  <!-- Intro Page -->
-  <div id="intro">
-    <div id="intro-box">
-      <h1>Welcome to Lauren's Webmap</h1>
-      <p>Explore correctional facilities across the U.S. with interactive symbology.</p>
-      <p>Scroll down to begin</p>
-    </div>
-    <button id="startButton">⇩⬇↓ </button>
-  </div>
-
-  <!-- Map Container -->
-  <div id="map-container">
-    <div class="ui-container">
-      <calcite-label>
-        Choose Symbolization Field:
-        <calcite-select id="symbolFieldSelector">
-          <calcite-option value="Facil_Type">Facility Type</calcite-option>
-          <calcite-option value="Facil_Age">Facility Age</calcite-option>
-          <calcite-option value="Facil_Scop">Facility Scope</calcite-option>
-          <calcite-option value="Facil_Gend">Facility Gender</calcite-option>
-        </calcite-select>
-        <calcite-panel heading="Legend" id="legendPanel"></calcite-panel>
-      </calcite-label>
-    </div>
-
-    <arcgis-map baseMap="arcgis/topographic" center="-98, 39" zoom="5">
-      <arcgis-zoom position="bottom-right"></arcgis-zoom>
-    </arcgis-map>
-  </div>
-
-  <script>
-    document.getElementById("startButton").addEventListener("click", () => {
-      document.getElementById("intro").classList.add("hidden");
-      document.getElementById("map-container").classList.add("visible");
-    });
-  </script>
-</body>
-</html>
+</script>
