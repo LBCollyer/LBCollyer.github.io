@@ -144,8 +144,8 @@
     "esri/Color",
     "esri/views/navigation/Navigation"
   ], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Color, Navigation) => {
-    let my.arcgisMap = document.querySelector("arcgis-map");
-    let my.view = this.arcgisMap.view;
+    my.arcgisMap = document.querySelector("arcgis-map");
+    my.view = this.arcgisMap.view;
     // Button click event to lift the intro page
     document.getElementById("startButton").addEventListener("click", () => {
       document.getElementById("intro").style.transform = "translateY(-100%)";
