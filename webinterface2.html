@@ -277,21 +277,21 @@
 
       const baseLayers = [33, 34, 10]; 
       baseLayers.forEach(id => {
-        myarcgisMap.addLayer(new FeatureLayer({
+        my.arcgisMap.addLayer(new FeatureLayer({
           url: `${baseURL}${id}`,
           outFields: ["*"]
         }));
       });
      /* // Adding layers 2 to 9
       for (let i = 2; i < 10; i++) {
-        myarcgisMap.addLayer(new FeatureLayer({
+        my.arcgisMap.addLayer(new FeatureLayer({
           url: `${baseURL}${i}`,
           outFields: ["*"]
         }));
       }*/
 
-      myarcgisMap.addLayer(corFacil);
-      myarcgisMap.basemap = null
+      my.arcgisMap.addLayer(corFacil);
+      my.arcgisMap.basemap = null
     });
   });
 </script>
