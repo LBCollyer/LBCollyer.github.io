@@ -1,3 +1,140 @@
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Prison Webmap</title>
+
+  <style>
+    html, body, arcgis-map {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+    
+    body {
+      overflow: hidden;
+    }
+    
+    .ui-container {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+      z-index: 10;
+    }
+    /* Full-screen Intro Section */
+    #intro {
+      height: 100vh;
+      width: 100%;
+      background: white;
+      color: black;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      transition: transform 1s ease-in-out;
+    }
+  
+    /* Centered box */
+    #intro-box {
+      background: white;
+      padding: 30px;
+      border: 4px solid black;
+      text-align: center;
+      max-width: 60%;
+    }
+  
+    #intro h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+  
+    #intro p {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+    /* Start Button */
+    #startButton {
+      padding: 8px 15px;
+      font-size: 1.5rem;
+      background: black;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+      border-radius: 30px;
+      position: fixed;
+      bottom: 20px;
+      z-index: 999
+    }
+    #startButton:hover { background: #333; }
+ 
+    /* Map Container */
+    #map-container {
+      height: 100vh;
+    }
+  </style>
+
+  <script>
+    var esriConfig = {
+      apiKey: "AAPTxy8BH1VEsoebNVZXo8HurBCyASoKLvJMp975P0MhDgOuTsrDo0KNXU1kRCxD8HVhcJ37PFTYJlUumgZryXmFp3p_BSw0Nd0qhhltCqh9FDqvJTkiq-rIVUJxV2ItFSBLxdAVItk41rtx3Ng_HOqYW6NSKSu7PgqQZvB1GgLU25h_5rt-GlnFTyMxisRRTvJM46bXmIANiymioQHcxrzrlmQg0uXsG5Nc5K25zKvbC60.AT1_HB22LyUE"
+    };
+  </script>
+  <!-- Load Calcite components -->
+  <script type="module" src="https://js.arcgis.com/calcite-components/3.0.3/calcite.esm.js"></script>
+  <!-- Load ArcGIS Maps SDK -->
+  <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.32/"></script>
+  <!-- Load ArcGIS Map components -->
+  <script type="module" src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"></script>
+
+</head>
+  <body>
+
+  <!-- Intro Page -->
+  <div id="intro">
+    <div id="intro-box">
+      <h1>Correctional Facilities Maps</h1>
+      <p>Explore correctional facilities across the U.S. with interactive symbology.</p>
+      <p>Scroll down to begin</p>
+    </div>
+    <button id="startButton">⇩</button>
+  </div>
+
+  <!-- ArcGIS Map -->
+  <arcgis-map baseMap = "arcgis/topographic" center="-98, 39" zoom=5>
+    <arcgis-zoom position="bottom-right"></arcgis-zoom>
+  </arcgis-map>
+    
+    <!-- Map Container -->
+  <div id="map-container">
+    <!-- UI for Selecting Symbolization Field -->
+    <div class="ui-container">
+      <calcite-label>
+        Choose Symbolization Field:
+        <calcite-select id="symbolFieldSelector">
+          <calcite-option value="Facil_Type">Facility Type</calcite-option>
+          <calcite-option value="Facil_Age">Facility Age</calcite-option>
+          <calcite-option value="Facil_Scop">Facility Scope</calcite-option>
+          <calcite-option value="Facil_Gend">Facility Gender</calcite-option>
+        </calcite-select>
+        <calcite-panel heading="Legend" id="legendPanel"></calcite-panel>
+      </calcite-label>
+    </div>
+  </div>
+
+</body>
+
 <script>
   // Create a namespace object
   const PrisonMap = {
