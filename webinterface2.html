@@ -145,7 +145,6 @@
     "esri/views/navigation/Navigation"
   ], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Color, Navigation) => {
     my.arcgisMap = document.querySelector("arcgis-map");
-    my.view = my.arcgisMap.view;
     // Button click event to lift the intro page
     document.getElementById("startButton").addEventListener("click", () => {
       document.getElementById("intro").style.transform = "translateY(-100%)";
@@ -159,6 +158,7 @@
         console.error("View is not ready");
         return;
       }*/
+      my.view = my.arcgisMap.view;
       my.view.navigation.actionMap.mouseWheel= 'none';
       document.addEventListener("wheel", (event) => {
         // Get the ArcGIS map and view
