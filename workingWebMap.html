@@ -265,13 +265,6 @@
             if (my.corFacil) {
               my.corFacil.visible = false;
             }
-            // Adding layers 2 to 9
-            for (let i = 2; i < 10; i++) {
-              my.arcgisMap.addLayer(new FeatureLayer({
-                url: `${baseURL}${i}`,
-                outFields: ["*"]
-              }));
-            }
             my.legend1 = document.querySelector("#legend1");
             my.legend1.style.opacity = "0";
             my.legend1.style.pointerEvents = "none";
@@ -395,6 +388,16 @@
           outFields: ["*"]
         }));
       });
+      // Adding layers 2 to 9
+      my.lays = {};
+      for (let i = 2; i < 10; i++) {
+        my.lays[`layer ${x}`] = new FeatureLayer({
+          url: `${baseURL}${i}`,
+          outFields: ["*"]
+        })
+        my.arcgisMap.addLayer(my.lays[`layer ${x}`]);
+        my.lays[`layer ${x}`].visible = false;
+      }
 
       my.arcgisMap.addLayer(my.corFacil);
       my.arcgisMap.basemap = null;
