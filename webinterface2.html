@@ -169,6 +169,8 @@
         my.view.goTo({
           center: [targetLongitude, targetLatitude],
           zoom: 7  // Set zoom level as needed
+        }).then(() => {
+          console.log("Zoom animation completed.");
         });
         my.view.zoom = 7;
       });
