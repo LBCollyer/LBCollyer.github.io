@@ -84,15 +84,15 @@
       height: 100vh;
     }
     .story-container {
-      width: 50%;
+      width: 30%;
       height: 50vh;
       overflow-y: scroll;
       scroll-snap-type: y mandatory;
       position: absolute;
       top: 0;
-      left: 0;
+      right: 0;
       z-index: 50;
-      background: white;
+      background: black;
     }
   
     /* Individual sections */
@@ -106,27 +106,6 @@
       font-family: Arial, sans-serif;
       scroll-snap-align: start;
       padding: 20px;
-    }
-  
-    /* Sticky image container */
-    .image-container {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      max-width: 80%;
-      max-height: 60vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 60;
-    }
-  
-    .image-container img {
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 10px;
-      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
     }
   </style>
 
