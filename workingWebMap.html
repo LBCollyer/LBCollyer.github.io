@@ -358,5 +358,18 @@
       myarcgisMap.basemap = null
     });
   });
+  const sections = document.querySelectorAll('.story-section');
+  const storyImage = document.getElementById('storyImage');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const newImage = entry.target.getAttribute('data-image');
+        storyImage.src = newImage;
+      }
+    });
+  }, { threshold: 0.6 });
+
+  sections.forEach(section => observer.observe(section));
 </script>
 </html>
