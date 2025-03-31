@@ -243,6 +243,13 @@
             if (my.corFacil) {
               my.corFacil.visible = false;
             }
+            // Adding layers 2 to 9
+            for (let i = 2; i < 10; i++) {
+              my.arcgisMap.addLayer(new FeatureLayer({
+                url: `${baseURL}${i}`,
+                outFields: ["*"]
+              }));
+            }
           }
         });
       }, { threshold: 1.0 }); // Trigger when the last section is fully in view
@@ -359,13 +366,6 @@
           outFields: ["*"]
         }));
       });
-     /* // Adding layers 2 to 9
-      for (let i = 2; i < 10; i++) {
-        my.arcgisMap.addLayer(new FeatureLayer({
-          url: `${baseURL}${i}`,
-          outFields: ["*"]
-        }));
-      }*/
 
       my.arcgisMap.addLayer(my.corFacil);
       my.arcgisMap.basemap = null
