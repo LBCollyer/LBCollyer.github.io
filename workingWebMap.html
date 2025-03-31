@@ -236,6 +236,11 @@
           if (entry.isIntersecting && entry.target === my.sections[my.sections.length - 1]) {
             my.storyContainer.style.opacity = "0";
             my.storyContainer.style.pointerEvents = "none"; // Disable interaction
+            my.view.gotTo({
+              center:[-98, 39],
+              zoom: 5
+            })
+            
           }
         });
       }, { threshold: 1.0 }); // Trigger when the last section is fully in view
