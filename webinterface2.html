@@ -160,12 +160,10 @@
       }*/
       my.view = my.arcgisMap.view;
       my.view.navigation.actionMap.mouseWheel= 'none';
+      //zoom to Louisiana
       document.addEventListener("wheel", (event) => {
-        // Get the ArcGIS map and view
         const targetLatitude = 31.0667;
         const targetLongitude = -92.0000;
-  
-        // Set the map's center to the new location and zoom level (adjust the zoom level as needed)
         my.view.goTo({
           center: [targetLongitude, targetLatitude],
           zoom: 7  // Set zoom level as needed
