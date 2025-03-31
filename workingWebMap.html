@@ -240,8 +240,8 @@
               center:[-98, 39],
               zoom: 5
             })
-            if (corFacil) {
-              corFacil.visible = false;
+            if (my.corFacil) {
+              my.corFacil.visible = false;
             }
           }
         });
@@ -306,7 +306,7 @@
       }
 
       // Correctional Facilities Layer
-      const corFacil = new FeatureLayer({
+      my.corFacil = new FeatureLayer({
         url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
         popupTemplate: {
           title: "{NAME}",
@@ -321,12 +321,12 @@
       });
 
       function updateSymbology(field) {
-        let query = corFacil.createQuery();
+        let query = my.corFacil.createQuery();
         query.returnDistinctValues = true;
         query.returnGeometry = false;
         query.outFields = [field];
 
-        corFacil.queryFeatures(query).then(result => {
+        my.corFacil.queryFeatures(query).then(result => {
           let values = result.features.map(f => f.attributes[field]);
           let uniqueValues = values.filter((value, index, self) => self.indexOf(value) === index);
 
@@ -336,7 +336,7 @@
             color: getRandomColor()
           }));
 
-          corFacil.renderer = createRenderer(field, uniqueValueInfos);
+          my.corFacil.renderer = createRenderer(field, uniqueValueInfos);
           updateLegend(uniqueValueInfos);
         }).catch(error => console.error("Query failed:", error));
       }
@@ -367,7 +367,7 @@
         }));
       }*/
 
-      my.arcgisMap.addLayer(corFacil);
+      my.arcgisMap.addLayer(my.corFacil);
       my.arcgisMap.basemap = null
     });
   });
