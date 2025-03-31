@@ -217,10 +217,10 @@
           }).then(() => {
             my.view.zoom = 7;
           });
-          hasScrolled = true;
+          my.scrolled = true;
           my.storyContainer.style.display = "block"; // Show the container
           setTimeout(() => {
-            storyContainer.style.opacity = "1"; // Fade it in smoothly
+            my.storyContainer.style.opacity = "1"; // Fade it in smoothly
         }, 100);
       }
       });
