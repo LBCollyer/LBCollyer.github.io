@@ -208,7 +208,7 @@
       my.scrolled = false;
       //zoom to Louisiana
       document.addEventListener("wheel", (event) => {
-        if (!hasScrolled) {
+        if (!my.scrolled) {
           const targetLatitude = 31.0667;
           const targetLongitude = -92.0000;
           my.view.goTo({
