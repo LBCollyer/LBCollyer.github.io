@@ -195,6 +195,7 @@
     "esri/views/navigation/Navigation"
   ], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Color, Navigation) => {
     my.arcgisMap = document.querySelector("arcgis-map");
+    
     // Button click event to lift the intro page
     document.getElementById("startButton").addEventListener("click", () => {
       document.getElementById("intro").style.transform = "translateY(-100%)";
@@ -203,17 +204,15 @@
       }, 1000); // Hide after animation
     });
     
+    //Actions done once map view has loaded
     my.arcgisMap.addEventListener("arcgisViewReadyChange", (event) => { 
-     /* if (!myview) {
-        console.error("View is not ready");
-        return;
-      }*/
       my.view = my.arcgisMap.view;
       my.view.navigation.actionMap.mouseWheel= 'none';
       my.storyContainer = document.querySelector(".story-container");
       my.sections = document.querySelectorAll('.story-section');
       my.scrolled = false;
-      //zoom to Louisiana
+      
+      //zoom to Louisiana and show sidebar
       document.addEventListener("wheel", (event) => {
         if (!my.scrolled) {
           const targetLatitude = 31.0667;
@@ -231,6 +230,8 @@
         }, 100);
       }
       });
+      
+      //zoom out and add other layers when finished louisiana story
       my.observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting && entry.target === my.sections[my.sections.length - 1]) {
@@ -253,12 +254,14 @@
           }
         });
       }, { threshold: 1.0 }); // Trigger when the last section is fully in view
-      
       my.sections.forEach(section => my.observer.observe(section));
+      
+      //Get Random Color
       function getRandomColor() {
         return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
       }
-
+      
+      //Render corFacil Layer
       function createRenderer(field, uniqueValues) {
         return new UniqueValueRenderer({
           field,
@@ -277,7 +280,8 @@
           })
         });
       }
-
+      
+      //Update corFacil Legend when new field selected
       function updateLegend(uniqueValueInfos) {
         const legendPanel = document.getElementById("legendPanel");
         legendPanel.innerHTML = ""; // Clear existing legend
@@ -305,14 +309,12 @@
               <span>${info.value}</span>
             </div>
           `;
-
           legendList.appendChild(listItem);
         });
-
         legendPanel.appendChild(legendList);
       }
 
-      // Correctional Facilities Layer
+      // Create correctional Facilities Layer
       my.corFacil = new FeatureLayer({
         url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
         popupTemplate: {
@@ -326,7 +328,8 @@
         },
         outFields: ["*"]
       });
-
+      
+      //Update symbology of corFacil when new field is selected
       function updateSymbology(field) {
         let query = my.corFacil.createQuery();
         query.returnDistinctValues = true;
@@ -358,7 +361,6 @@
 
       // Adding base and data layers
       const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
-
       const baseLayers = [33, 34, 10]; 
       baseLayers.forEach(id => {
         my.arcgisMap.addLayer(new FeatureLayer({
