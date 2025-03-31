@@ -240,7 +240,9 @@
               center:[-98, 39],
               zoom: 5
             })
-            
+            if (corFacil) {
+              corFacil.visible = false;
+            }
           }
         });
       }, { threshold: 1.0 }); // Trigger when the last section is fully in view
