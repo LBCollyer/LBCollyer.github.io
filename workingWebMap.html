@@ -240,7 +240,7 @@
         });
       }, { threshold: 1.0 }); // Trigger when the last section is fully in view
       
-      my.sections.forEach(section => observer.observe(section));
+      my.sections.forEach(section => my.observer.observe(section));
       function getRandomColor() {
         return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
       }
