@@ -211,6 +211,7 @@
       my.view = my.arcgisMap.view;
       my.view.navigation.actionMap.mouseWheel= 'none';
       my.storyContainer = document.querySelector(".story-container");
+      my.sections = document.querySelectorAll('.story-section');
       my.scrolled = false;
       //zoom to Louisiana
       document.addEventListener("wheel", (event) => {
@@ -230,6 +231,16 @@
         }, 100);
       }
       });
+      my.observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && entry.target === my.sections[my.sections.length - 1]) {
+            my.storyContainer.style.opacity = "0";
+            my.storyContainer.style.pointerEvents = "none"; // Disable interaction
+          }
+        });
+      }, { threshold: 1.0 }); // Trigger when the last section is fully in view
+      
+      my.sections.forEach(section => observer.observe(section));
       function getRandomColor() {
         return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
       }
