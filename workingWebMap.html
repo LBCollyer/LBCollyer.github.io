@@ -84,6 +84,9 @@
       height: 100vh;
     }
     .story-container {
+      display: none;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
       width: 30%;
       height: 50vh;
       overflow-y: scroll;
@@ -201,16 +204,25 @@
       }*/
       my.view = my.arcgisMap.view;
       my.view.navigation.actionMap.mouseWheel= 'none';
+      my.sections = document.querySelectorAll('.story-section');
+      my.scrolled = false;
       //zoom to Louisiana
       document.addEventListener("wheel", (event) => {
-        const targetLatitude = 31.0667;
-        const targetLongitude = -92.0000;
-        my.view.goTo({
-          center: [targetLongitude, targetLatitude],
-          zoom: 7  // Set zoom level as needed
-        }).then(() => {
-          my.view.zoom = 7;
-        });
+        if (!hasScrolled) {
+          const targetLatitude = 31.0667;
+          const targetLongitude = -92.0000;
+          my.view.goTo({
+            center: [targetLongitude, targetLatitude],
+            zoom: 7  // Set zoom level as needed
+          }).then(() => {
+            my.view.zoom = 7;
+          });
+          hasScrolled = true;
+          storyContainer.style.display = "block"; // Show the container
+          setTimeout(() => {
+            storyContainer.style.opacity = "1"; // Fade it in smoothly
+        }, 100);
+      }
       });
       function getRandomColor() {
         return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
@@ -335,18 +347,5 @@
       my.arcgisMap.basemap = null
     });
   });
-  const sections = document.querySelectorAll('.story-section');
-  const storyImage = document.getElementById('storyImage');
-
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const newImage = entry.target.getAttribute('data-image');
-        storyImage.src = newImage;
-      }
-    });
-  }, { threshold: 0.6 });
-
-  sections.forEach(section => observer.observe(section));
 </script>
 </html>
