@@ -204,7 +204,7 @@
       }*/
       my.view = my.arcgisMap.view;
       my.view.navigation.actionMap.mouseWheel= 'none';
-      my.sections = document.querySelectorAll('.story-section');
+      my.storyContainer = document.querySelector(".story-container");
       my.scrolled = false;
       //zoom to Louisiana
       document.addEventListener("wheel", (event) => {
@@ -218,7 +218,7 @@
             my.view.zoom = 7;
           });
           hasScrolled = true;
-          storyContainer.style.display = "block"; // Show the container
+          my.storyContainer.style.display = "block"; // Show the container
           setTimeout(() => {
             storyContainer.style.opacity = "1"; // Fade it in smoothly
         }, 100);
