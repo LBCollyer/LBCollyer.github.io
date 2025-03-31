@@ -30,6 +30,7 @@
       display: none;
       opacity: 0;
     }
+    #legen
       
     /* Full-screen Intro Section */
     #intro {
@@ -271,8 +272,11 @@
                 outFields: ["*"]
               }));
             }
+            my.legend1 = document.querySelector("#legend1");
+            my.legend1.style.opacity = "0";
+            my.legend1.style.pointerEvents = "none";
             my.legend2 = document.querySelector("#legend2");
-            my.legend2.style.style.display = "block";
+            my.legend2.style.display = "block";
             my.legend2.style.opacity = "1";
           }
         });
