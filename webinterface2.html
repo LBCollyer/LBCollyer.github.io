@@ -170,9 +170,8 @@
           center: [targetLongitude, targetLatitude],
           zoom: 7  // Set zoom level as needed
         }).then(() => {
-          console.log("Zoom animation completed.");
+          my.view.zoom = 7;
         });
-        my.view.zoom = 7;
       });
       function getRandomColor() {
         return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
