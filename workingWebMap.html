@@ -422,12 +422,12 @@
       // Adding layers 2 to 9
       my.lays = {};
       for (let i = 2; i < 10; i++) {
-        my.lays[`layer ${i}`] = new FeatureLayer({
+        my.lays[`Layer ${i}`] = new FeatureLayer({
           url: `${baseURL}${i}`,
           outFields: ["*"]
         })
-        my.arcgisMap.addLayer(my.lays[`layer ${i}`]);
-        my.lays[`layer ${i}`].visible = false;
+        my.arcgisMap.addLayer(my.lays[`Layer ${i}`]);
+        my.lays[`Layer ${i}`].visible = false;
       }
 
       my.arcgisMap.addLayer(my.corFacil);
