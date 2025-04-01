@@ -319,13 +319,11 @@
       function updateLegend2(chosenLayer) {
         my.layerName = "Layer " + (my.layerNames.indexOf(chosenLayer) + 1)
         my.fieldNames = my.lays[my.layerName].fields.map(field => field.name);
-        // Fields to exclude
         const excludedFields = new Set([
             "STATEFP", "STATENS", "GEOIDFQ", "GEOID", "STUSPS",
             "LSAD", "ALAND", "AWATER", "OBJECTID", "STATEID",
             "Shape__Length", "Shape__Area", "NAME", "YEAR", "OBJECTID_1", "STATE", "State", "Year"
         ]);
-        // Filter out excluded fields
         const filteredFields = my.fieldNames.filter(name => !excludedFields.has(name));
         my.selectVar = document.getElementById("varSelector");
         my.selectVar.innerHTML = "";
@@ -335,6 +333,9 @@
             option.textContent = name;
             my.selectVar.appendChild(option);
         })
+        if (filteredFields.length > 0) {
+          my.selectVar.value = filteredFields[0];
+        }
       }
         
       //Update corFacil Legend when new field selected
