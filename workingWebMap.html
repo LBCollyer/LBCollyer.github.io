@@ -199,12 +199,11 @@
     </calcite-label>
   
     <calcite-label>
+      Choose Category:
+      <calcite-select id="layerSelector">
+      </calcite-select>
       Choose Variable:
       <calcite-select id="variableSelector">
-        <calcite-option value="prison_population">Prison Population</calcite-option>
-        <calcite-option value="white_percentage">White Percentage</calcite-option>
-        <calcite-option value="black_percentage">Black Percentage</calcite-option>
-        <!-- Add more fields as needed -->
       </calcite-select>
     </calcite-label>
   </div>
@@ -227,6 +226,17 @@
       setTimeout(() => {
         document.getElementById("intro").style.display = "none";
       }, 1000); // Hide after animation
+    });
+
+    //Create 2nd legend
+    my.layerNames = ["Facility_Types", "Race_Data", "Admissions", "HIV_Data", "Releases", "Citizenship_Data", "Death_Data", "Jurisdiction_and_Custody_Data", "Prison_and_Jail_Population_Data"];
+    my.selectLayer = document.getElementById("layerSelector");
+    
+    my.layerNames.forEach(name => {
+        const option = document.createElement("calcite-option");
+        option.value = name;
+        option.textContent = name.replace("_", " "); // Formatting for readability
+        my.selectLayer.appendChild(option);
     });
     
     //Actions done once map view has loaded
