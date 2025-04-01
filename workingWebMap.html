@@ -323,7 +323,7 @@
         const excludedFields = new Set([
             "STATEFP", "STATENS", "GEOIDFQ", "GEOID", "STUSPS",
             "LSAD", "ALAND", "AWATER", "OBJECTID", "STATEID",
-            "SHAPE__Length", "SHAPE__Area", "NAME"
+            "Shape__Length", "Shape__Area", "NAME", "YEAR", "OBJECTID_1",
         ]);
         // Filter out excluded fields
         const filteredFields = my.fieldNames.filter(name => !excludedFields.has(name));
