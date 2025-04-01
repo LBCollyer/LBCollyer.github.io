@@ -328,6 +328,7 @@
         // Filter out excluded fields
         const filteredFields = my.fieldNames.filter(name => !excludedFields.has(name));
         my.selectVar = document.getElementById("varSelector");
+        my.selectVar.innerHTML = "";
         filteredFields.forEach(name => {
             const option = document.createElement("calcite-option");
             option.value = name;
