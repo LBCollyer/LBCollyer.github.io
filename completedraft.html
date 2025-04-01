@@ -26,6 +26,16 @@
       box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
       z-index: 10;
     }
+    #legend1 {
+      display: block;
+      opacity: 1;
+    }
+    #legend2 {
+      display: none;
+      opacity: 0;
+      z-index: 10;
+    }
+      
     /* Full-screen Intro Section */
     #intro {
       height: 100vh;
@@ -152,7 +162,7 @@
     <!-- Map Container -->
   <div id="map-container">
     <!-- UI for Selecting Symbolization Field -->
-    <div class="ui-container">
+    <div class="ui-container" id="legend1">
       <calcite-label>
         Choose Symbolization Field:
         <calcite-select id="symbolFieldSelector">
@@ -182,7 +192,21 @@
       <img id="conv" src="LA_conviction_status_1978-2019.webp" alt="LA_conviction_status_1978-2019">
     </div>
   </div>
-
+  <div class="ui-container" id="legend2">
+    <calcite-label>
+      Select Year:
+      <calcite-slider id="yearSlider" min="1980" max="2020" step="1" value="2020"></calcite-slider>
+    </calcite-label>
+  
+    <calcite-label>
+      Choose Category:
+      <calcite-select id="layerSelector">
+      </calcite-select>
+      Choose Variable:
+      <calcite-select id="variableSelector">
+      </calcite-select>
+    </calcite-label>
+  </div>
 </body>
 
 <script>
@@ -195,6 +219,7 @@
     "esri/views/navigation/Navigation"
   ], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Color, Navigation) => {
     my.arcgisMap = document.querySelector("arcgis-map");
+    
     // Button click event to lift the intro page
     document.getElementById("startButton").addEventListener("click", () => {
       document.getElementById("intro").style.transform = "translateY(-100%)";
@@ -202,18 +227,27 @@
         document.getElementById("intro").style.display = "none";
       }, 1000); // Hide after animation
     });
+
+    //Create 2nd legend
+    my.layerNames = ["Facility_Types", "Race_Data", "Admissions", "HIV_Data", "Releases", "Citizenship_Data", "Death_Data", "Jurisdiction_and_Custody_Data", "Prison_and_Jail_Population_Data"];
+    my.selectLayer = document.getElementById("layerSelector");
     
+    my.layerNames.forEach(name => {
+        const option = document.createElement("calcite-option");
+        option.value = name;
+        option.textContent = name.replace("_", " "); // Formatting for readability
+        my.selectLayer.appendChild(option);
+    });
+    
+    //Actions done once map view has loaded
     my.arcgisMap.addEventListener("arcgisViewReadyChange", (event) => { 
-     /* if (!myview) {
-        console.error("View is not ready");
-        return;
-      }*/
       my.view = my.arcgisMap.view;
       my.view.navigation.actionMap.mouseWheel= 'none';
       my.storyContainer = document.querySelector(".story-container");
       my.sections = document.querySelectorAll('.story-section');
       my.scrolled = false;
-      //zoom to Louisiana
+      
+      //zoom to Louisiana and show sidebar
       document.addEventListener("wheel", (event) => {
         if (!my.scrolled) {
           const targetLatitude = 31.0667;
@@ -231,25 +265,38 @@
         }, 100);
       }
       });
+      
+      //zoom out and add other layers when finished louisiana story
       my.observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
+          console.log(entry.target, entry.isIntersecting);
           if (entry.isIntersecting && entry.target === my.sections[my.sections.length - 1]) {
             my.storyContainer.style.opacity = "0";
             my.storyContainer.style.pointerEvents = "none"; // Disable interaction
-            my.view.gotTo({
+            my.view.goTo({
               center:[-98, 39],
               zoom: 5
             })
-            
+            if (my.corFacil) {
+              my.corFacil.visible = false;
+            }
+            my.legend1 = document.querySelector("#legend1");
+            my.legend1.style.opacity = "0";
+            my.legend1.style.pointerEvents = "none";
+            my.legend2 = document.querySelector("#legend2");
+            my.legend2.style.display = "block";
+            my.legend2.style.opacity = "1";
           }
         });
       }, { threshold: 1.0 }); // Trigger when the last section is fully in view
-      
       my.sections.forEach(section => my.observer.observe(section));
+      
+      //Get Random Color
       function getRandomColor() {
         return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
       }
-
+      
+      //Render corFacil Layer
       function createRenderer(field, uniqueValues) {
         return new UniqueValueRenderer({
           field,
@@ -268,7 +315,8 @@
           })
         });
       }
-
+      
+      //Update corFacil Legend when new field selected
       function updateLegend(uniqueValueInfos) {
         const legendPanel = document.getElementById("legendPanel");
         legendPanel.innerHTML = ""; // Clear existing legend
@@ -296,15 +344,13 @@
               <span>${info.value}</span>
             </div>
           `;
-
           legendList.appendChild(listItem);
         });
-
         legendPanel.appendChild(legendList);
       }
 
-      // Correctional Facilities Layer
-      const corFacil = new FeatureLayer({
+      // Create correctional Facilities Layer
+      my.corFacil = new FeatureLayer({
         url: "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/0",
         popupTemplate: {
           title: "{NAME}",
@@ -317,14 +363,15 @@
         },
         outFields: ["*"]
       });
-
+      
+      //Update symbology of corFacil when new field is selected
       function updateSymbology(field) {
-        let query = corFacil.createQuery();
+        let query = my.corFacil.createQuery();
         query.returnDistinctValues = true;
         query.returnGeometry = false;
         query.outFields = [field];
 
-        corFacil.queryFeatures(query).then(result => {
+        my.corFacil.queryFeatures(query).then(result => {
           let values = result.features.map(f => f.attributes[field]);
           let uniqueValues = values.filter((value, index, self) => self.indexOf(value) === index);
 
@@ -334,7 +381,7 @@
             color: getRandomColor()
           }));
 
-          corFacil.renderer = createRenderer(field, uniqueValueInfos);
+          my.corFacil.renderer = createRenderer(field, uniqueValueInfos);
           updateLegend(uniqueValueInfos);
         }).catch(error => console.error("Query failed:", error));
       }
@@ -349,7 +396,6 @@
 
       // Adding base and data layers
       const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
-
       const baseLayers = [33, 34, 10]; 
       baseLayers.forEach(id => {
         my.arcgisMap.addLayer(new FeatureLayer({
@@ -357,17 +403,21 @@
           outFields: ["*"]
         }));
       });
-     /* // Adding layers 2 to 9
+      // Adding layers 2 to 9
+      my.lays = {};
       for (let i = 2; i < 10; i++) {
-        my.arcgisMap.addLayer(new FeatureLayer({
+        my.lays[`layer ${i}`] = new FeatureLayer({
           url: `${baseURL}${i}`,
           outFields: ["*"]
-        }));
-      }*/
+        })
+        my.arcgisMap.addLayer(my.lays[`layer ${i}`]);
+        my.lays[`layer ${i}`].visible = false;
+      }
 
-      my.arcgisMap.addLayer(corFacil);
-      my.arcgisMap.basemap = null
+      my.arcgisMap.addLayer(my.corFacil);
+      my.arcgisMap.basemap = null;
     });
   });
+//Next Steps: update legend and symbology for each layer/field, create timelapse animation
 </script>
 </html>
