@@ -323,6 +323,7 @@
         my.fieldNames.forEach(name => {
             const option = document.createElement("calcite-option");
             option.value = name;
+            option.textContent = name;
             my.selectVar.appendChild(option);
         })
       }
