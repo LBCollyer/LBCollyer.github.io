@@ -317,7 +317,7 @@
       }
       //Update legend2 when new layer selected
       function updateLegend2(chosenLayer) {
-        my.layerName = "Layer " + (my.layerNames.indexOf(chosenLayer) + 2)
+        my.layerName = "Layer " + (my.layerNames.indexOf(chosenLayer) + 1)
         my.fieldNames = my.lays[my.layerName].fields.map(field => field.name);
         // Fields to exclude
         const excludedFields = new Set([
