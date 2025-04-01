@@ -195,7 +195,7 @@
   <div class="ui-container" id="legend2">
     <calcite-label>
       Select Year:
-      <calcite-slider id="yearSlider" min="1980" max="2020" step="1" value="2020"></calcite-slider>
+      <calcite-slider id="yearSlider" min="1980" max="2020" step="1" value="2020" label-handles label-ticks max-label="2020" min-label="1980" ticks="1"></calcite-slider>
     </calcite-label>
   
     <calcite-label>
@@ -315,7 +315,20 @@
           })
         });
       }
-      
+      //Update legend2 when new layer selected
+      function updateLegend2(chosenLayer) {
+        chosenLayer.forEach(layer => {
+          my.layerName = "Layer Name" + str(my.layerNames.indexOf(layer) + 2)
+          my.fieldNames = my.layerName.fields
+          my.selectLayer = document.getElementById("layerSelector");
+          my.fieldNames.forEach(name => {
+              const option = document.createElement("calcite-option");
+              option.value = name;
+              my.chosenLayer.appendChild(option);
+          }
+        }
+      }
+        
       //Update corFacil Legend when new field selected
       function updateLegend(uniqueValueInfos) {
         const legendPanel = document.getElementById("legendPanel");
@@ -389,9 +402,14 @@
       // Initialize symbology with default field
       updateSymbology("Facil_Type");
 
-      // Event listener for changing symbolization field
+      // Event listener for changing corFacil symbolization field
       document.getElementById("symbolFieldSelector").addEventListener("calciteSelectChange", (event) => {
         updateSymbology(event.target.value);
+      });
+
+      //Event listener for changing other layers legend and symbology
+      document.getElementById("layerSelector").addEventListener("calciteSelectChange", (event) => {
+        updateLegend2(event.target.value);
       });
 
       // Adding base and data layers
