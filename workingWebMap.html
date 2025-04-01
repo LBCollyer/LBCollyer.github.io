@@ -317,7 +317,7 @@
       }
       //Update legend2 when new layer selected
       function updateLegend2(chosenLayer) {
-        my.layerName = "Layer Name" + str(my.layerNames.indexOf(chosenLayer) + 2)
+        my.layerName = "Layer Name" + (my.layerNames.indexOf(chosenLayer) + 2)
         my.fieldNames = my.layerName.fields
         my.selectLayer = document.getElementById("layerSelector");
         my.fieldNames.forEach(name => {
