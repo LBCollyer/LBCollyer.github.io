@@ -318,7 +318,7 @@
       //Update legend2 when new layer selected
       function updateLegend2(chosenLayer) {
         my.layerName = "Layer " + (my.layerNames.indexOf(chosenLayer) + 2)
-        my.fieldNames = my.layerName.fields.map(field => field.name);
+        my.fieldNames = my.lays[layerName].fields.map(field => field.name);
         my.selectLayer = document.getElementById("layerSelector");
         my.fieldNames.forEach(name => {
             const option = document.createElement("calcite-option");
