@@ -379,7 +379,7 @@
           
             // Update popup template dynamically
             layer.popupTemplate = {
-                title: "{STATE}",
+                title: "{NAME}",
                 content: `<b>${field.replace(/_/g, " ")}:</b> {${field}}`
             };
         }).catch(error => console.error("Query failed:", error));
@@ -527,7 +527,7 @@
           url: `${baseURL}${i}`,
           outFields: ["*"],
           popupTemplate:{
-          title: "{STATE}"}
+          title: "{NAME}"}
         })
         my.arcgisMap.addLayer(my.lays[`Layer ${i}`]);
         my.lays[`Layer ${i}`].visible = false;
