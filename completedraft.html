@@ -2,7 +2,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Prison Webmap</title>
+  <title>Prison Web Map</title>
 
   <style>
     html, body, arcgis-map {
@@ -195,7 +195,7 @@
   <div class="ui-container" id="legend2">
     <calcite-label>
       Select Year:
-      <calcite-slider id="yearSlider" min="1980" max="2020" step="1" value="2020"></calcite-slider>
+      <calcite-slider id="yearSlider" min="1980" max="2020" step="1" value="2020" label-handles max-label="2020" min-label="1980" ticks="1"></calcite-slider>
     </calcite-label>
   
     <calcite-label>
@@ -203,7 +203,7 @@
       <calcite-select id="layerSelector">
       </calcite-select>
       Choose Variable:
-      <calcite-select id="variableSelector">
+      <calcite-select id="varSelector">
       </calcite-select>
     </calcite-label>
   </div>
@@ -219,7 +219,11 @@
     "esri/views/navigation/Navigation"
   ], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Color, Navigation) => {
     my.arcgisMap = document.querySelector("arcgis-map");
-    
+    my.sYear = 2020;
+    my.yearSlider = document.getElementById("yearSlider");
+    my.sVar = "PVINM";
+    my.selectVar = document.getElementById("varSelector");
+    my.sLay = "Facility_Types"
     // Button click event to lift the intro page
     document.getElementById("startButton").addEventListener("click", () => {
       document.getElementById("intro").style.transform = "translateY(-100%)";
@@ -315,7 +319,67 @@
           })
         });
       }
-      
+      //Update Choropleth symbology
+      function applyChoroplethSymbology(layer, field, year) {
+        let query = layer.createQuery();
+        const yearField = layer.name === "Layer 9" ? "Year" : "YEAR";
+        query.where = `${yearField} = ${year}`;
+        query.outFields = [field];
+        query.returnGeometry = false;
+    
+        layer.queryFeatures(query).then(result => {
+            let values = result.features.map(f => f.attributes[field]).filter(v => v !== null);
+            
+            if (values.length === 0) return;
+    
+            let min = Math.min(...values);
+            let max = Math.max(...values);
+            let step = (max - min) / 5;
+    
+            let renderer = {
+                type: "class-breaks",
+                field: field,
+                classBreakInfos: [
+                    { minValue: min, maxValue: min + step, symbol: { type: "simple-fill", color: "#fef0d9" } },
+                    { minValue: min + step, maxValue: min + 2 * step, symbol: { type: "simple-fill", color: "#fdcc8a" } },
+                    { minValue: min + 2 * step, maxValue: min + 3 * step, symbol: { type: "simple-fill", color: "#fc8d59" } },
+                    { minValue: min + 3 * step, maxValue: min + 4 * step, symbol: { type: "simple-fill", color: "#e34a33" } },
+                    { minValue: min + 4 * step, maxValue: max, symbol: { type: "simple-fill", color: "#b30000" } }
+                ]
+            };
+    
+            layer.renderer = renderer;
+        }).catch(error => console.error("Query failed:", error));
+    }
+
+      //Update legend2 when new layer selected
+      function updateLegend2(chosenLayer) {
+        my.layerName = "Layer " + (my.layerNames.indexOf(chosenLayer) + 1)
+        Object.values(my.lays).forEach(layer => layer.visible = false);
+        my.lays[my.layerName].visible = true;
+        my.fieldNames = my.lays[my.layerName].fields.map(field => field.name);
+        const excludedFields = new Set([
+            "STATEFP", "STATENS", "GEOIDFQ", "GEOID", "STUSPS",
+            "LSAD", "ALAND", "AWATER", "OBJECTID", "STATEID",
+            "Shape__Length", "Shape__Area", "NAME", "YEAR", "OBJECTID_1", "STATE", "State", "Year", "REGION"
+        ]);
+        const filteredFields = my.fieldNames.filter(name => !excludedFields.has(name));
+        my.selectVar = document.getElementById("varSelector");
+        my.selectVar.innerHTML = "";
+        filteredFields.forEach(name => {
+            const option = document.createElement("calcite-option");
+            option.value = name;
+            option.textContent = name;
+            my.selectVar.appendChild(option);
+        })
+        if (filteredFields.length > 0) {
+          my.selectVar.value = filteredFields[0];
+        }
+        my.sVar = my.selectVar.value || my.fieldNames[0];
+        if (my.yearSlider.value) {my.sYear = my.yearSlider.value;}
+        applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
+      }
+        
       //Update corFacil Legend when new field selected
       function updateLegend(uniqueValueInfos) {
         const legendPanel = document.getElementById("legendPanel");
@@ -389,11 +453,27 @@
       // Initialize symbology with default field
       updateSymbology("Facil_Type");
 
-      // Event listener for changing symbolization field
+      // Event listener for changing corFacil symbolization field
       document.getElementById("symbolFieldSelector").addEventListener("calciteSelectChange", (event) => {
         updateSymbology(event.target.value);
       });
 
+      //Event listener for changing other layers legend and symbology
+      document.getElementById("layerSelector").addEventListener("calciteSelectChange", (event) => {
+        updateLegend2(event.target.value);
+      });
+      
+      document.getElementById("varSelector").addEventListener("calciteSelectChange", (event) => {
+          my.sVar = event.target.value;
+          if (my.yearSlider.value) { my.yearSlider.value;}
+          applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
+      });
+      
+      document.getElementById("yearSlider").addEventListener("calciteSliderInput", (event) => {
+          my.sYear = event.target.value;
+          if (my.selectVar.value) { my.sVar = my.selectVar.value;}
+          applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
+      });
       // Adding base and data layers
       const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
       const baseLayers = [33, 34, 10]; 
@@ -406,18 +486,20 @@
       // Adding layers 2 to 9
       my.lays = {};
       for (let i = 2; i < 10; i++) {
-        my.lays[`layer ${i}`] = new FeatureLayer({
+        my.lays[`Layer ${i}`] = new FeatureLayer({
           url: `${baseURL}${i}`,
           outFields: ["*"]
         })
-        my.arcgisMap.addLayer(my.lays[`layer ${i}`]);
-        my.lays[`layer ${i}`].visible = false;
+        my.arcgisMap.addLayer(my.lays[`Layer ${i}`]);
+        my.lays[`Layer ${i}`].visible = false;
       }
 
       my.arcgisMap.addLayer(my.corFacil);
       my.arcgisMap.basemap = null;
     });
   });
-//Next Steps: update legend and symbology for each layer/field, create timelapse animation
+//Complete draft: remove years with no data, create symbology for each layer/field, add popup of info for layer, add legend 
+//professional look: it scrolls after you've read it, defaults?, add explanation on side, smooth scrolling
+//extra features: create timelapse animation, normalize data
 </script>
 </html>
