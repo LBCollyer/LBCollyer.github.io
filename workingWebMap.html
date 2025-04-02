@@ -374,7 +374,7 @@
           my.selectVar.value = filteredFields[0];
         }
         my.sVar = my.selectVar.value || my.fieldNames[0];
-        my.sYear = my.yearSlider.value;
+        if (my.yearSlider.value) {my.sYear = my.yearSlider.value;}
         applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
       }
         
