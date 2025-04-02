@@ -243,6 +243,34 @@
         my.selectLayer.appendChild(option);
     });
     
+    // Function to update the year slider range based on available data for the chosen variable
+    function updateYearSlider(layer, field) {
+      // Determine the appropriate year field name
+      const yearField = layer.name === "Layer 9" ? "Year" : "YEAR";
+      let query = layer.createQuery();
+      // Only consider features where the chosen field has data
+      query.where = `${field} IS NOT NULL`;
+      query.outFields = [yearField];
+      query.returnGeometry = false;
+      
+      layer.queryFeatures(query).then(result => {
+        let years = result.features
+                        .map(f => f.attributes[yearField])
+                        .filter(year => year != null);
+        if (years.length > 0) {
+          let minYear = Math.min(...years);
+          let maxYear = Math.max(...years);
+          // Update the slider attributes
+          my.yearSlider.min = minYear;
+          my.yearSlider.max = maxYear;
+          my.yearSlider.value = maxYear;
+          my.yearSlider.setAttribute("min-label", minYear);
+          my.yearSlider.setAttribute("max-label", maxYear);
+          my.sYear = maxYear;
+        }
+      }).catch(error => console.error("Year query failed:", error));
+    }
+    
     //Actions done once map view has loaded
     my.arcgisMap.addEventListener("arcgisViewReadyChange", (event) => { 
       my.view = my.arcgisMap.view;
@@ -377,6 +405,8 @@
         }
         my.sVar = my.selectVar.value || my.fieldNames[0];
         if (my.yearSlider.value) {my.sYear = my.yearSlider.value;}
+        // Update the slider range based on available year values for the selected field
+        updateYearSlider(my.lays[my.layerName], my.sVar);
         applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
       }
         
@@ -465,13 +495,15 @@
       
       document.getElementById("varSelector").addEventListener("calciteSelectChange", (event) => {
           my.sVar = event.target.value;
-          if (my.yearSlider.value) { my.yearSlider.value;}
+          // Update the slider range based on the newly selected field
+          updateYearSlider(my.lays[my.layerName], my.sVar);
+          if (my.yearSlider.value) { my.sYear = my.yearSlider.value; }
           applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
       });
       
       document.getElementById("yearSlider").addEventListener("calciteSliderInput", (event) => {
           my.sYear = event.target.value;
-          if (my.selectVar.value) { my.sVar = my.selectVar.value;}
+          if (my.selectVar.value) { my.sVar = my.selectVar.value; }
           applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
       });
       // Adding base and data layers
@@ -498,8 +530,8 @@
       my.arcgisMap.basemap = null;
     });
   });
-//Complete draft: remove years with no data, create symbology for each layer/field, add popup of info for layer, add legend 
-//professional look: it scrolls after you've read it, defaults?, add explanation on side, smooth scrolling
-//extra features: create timelapse animation, normalize data
+  //Complete draft: remove years with no data, create symbology for each layer/field, add popup of info for layer, add legend 
+  //professional look: it scrolls after you've read it, defaults?, add explanation on side, smooth scrolling
+  //extra features: create timelapse animation, normalize data
 </script>
 </html>
