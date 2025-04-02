@@ -375,8 +375,13 @@
                     { minValue: min + 4 * step, maxValue: max, symbol: { type: "simple-fill", color: "#b30000" } }
                 ]
             };
-    
             layer.renderer = renderer;
+          
+            // Update popup template dynamically
+            layer.popupTemplate = {
+                title: "{STATE}",
+                content: `<b>${field.replace(/_/g, " ")}:</b> {${field}}`
+            };
         }).catch(error => console.error("Query failed:", error));
     }
 
@@ -521,6 +526,8 @@
         my.lays[`Layer ${i}`] = new FeatureLayer({
           url: `${baseURL}${i}`,
           outFields: ["*"]
+          popupTemplate:{
+          title: "{STATE}"}
         })
         my.arcgisMap.addLayer(my.lays[`Layer ${i}`]);
         my.lays[`Layer ${i}`].visible = false;
@@ -530,7 +537,7 @@
       my.arcgisMap.basemap = null;
     });
   });
-  //Complete draft: remove years with no data, create symbology for each layer/field, add popup of info for layer, add legend 
+  //Complete draft: create symbology for each layer/field, add popup of info for layer, add legend 
   //professional look: it scrolls after you've read it, defaults?, add explanation on side, smooth scrolling
   //extra features: create timelapse animation, normalize data
 </script>
