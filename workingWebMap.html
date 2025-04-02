@@ -315,13 +315,41 @@
           })
         });
       }
+      function applyChoroplethSymbology(layer, field, year) {
+        let query = layer.createQuery();          
+        query.where = `${yearField} = ${YEAR}`|| `${yearField} = = ${year}`;  // Adjust based on your year field's name
+        query.outFields = [field];
+        query.returnGeometry = false;
+    
+        layer.queryFeatures(query).then(result => {
+            let values = result.features.map(f => f.attributes[field]).filter(v => v !== null);
+            
+            if (values.length === 0) return;
+    
+            let min = Math.min(...values);
+            let max = Math.max(...values);
+            let step = (max - min) / 5;
+    
+            let renderer = {
+                type: "class-breaks",
+                field: field,
+                classBreakInfos: [
+                    { minValue: min, maxValue: min + step, symbol: { type: "simple-fill", color: "#fef0d9" } },
+                    { minValue: min + step, maxValue: min + 2 * step, symbol: { type: "simple-fill", color: "#fdcc8a" } },
+                    { minValue: min + 2 * step, maxValue: min + 3 * step, symbol: { type: "simple-fill", color: "#fc8d59" } },
+                    { minValue: min + 3 * step, maxValue: min + 4 * step, symbol: { type: "simple-fill", color: "#e34a33" } },
+                    { minValue: min + 4 * step, maxValue: max, symbol: { type: "simple-fill", color: "#b30000" } }
+                ]
+            };
+    
+            layer.renderer = renderer;
+        }).catch(error => console.error("Query failed:", error));
+    }
+
       //Update legend2 when new layer selected
       function updateLegend2(chosenLayer) {
         my.layerName = "Layer " + (my.layerNames.indexOf(chosenLayer) + 1)
-        // Hide all layers first
         Object.values(my.lays).forEach(layer => layer.visible = false);
-    
-        // Make the selected layer visible
         my.lays[my.layerName].visible = true;
         my.fieldNames = my.lays[my.layerName].fields.map(field => field.name);
         const excludedFields = new Set([
@@ -341,6 +369,9 @@
         if (filteredFields.length > 0) {
           my.selectVar.value = filteredFields[0];
         }
+        const selectedField = my.selectVar.value || my.fieldNames[0];
+        const selectedYear = my.yearSlider.value;
+        applyChoroplethSymbology(my.lays[my.layerName], selectedField, selectedYear);
       }
         
       //Update corFacil Legend when new field selected
@@ -425,7 +456,18 @@
       document.getElementById("layerSelector").addEventListener("calciteSelectChange", (event) => {
         updateLegend2(event.target.value);
       });
-
+      
+      document.getElementById("varSelector").addEventListener("calciteSelectChange", (event) => {
+          const field = event.target.value;
+          const year = my.yearSlider.value;
+          applyChoroplethSymbology(my.lays[my.layerName], field, year);
+      });
+      
+      document.getElementById("yearSlider").addEventListener("calciteSliderInput", (event) => {
+          const year = event.target.value;
+          const field = my.selectVar.value;
+          applyChoroplethSymbology(my.lays[my.layerName], field, year);
+      });
       // Adding base and data layers
       const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
       const baseLayers = [33, 34, 10]; 
