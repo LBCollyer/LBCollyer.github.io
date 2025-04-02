@@ -318,7 +318,7 @@
       //Update Choropleth symbology
       function applyChoroplethSymbology(layer, field, year) {
         let query = layer.createQuery();
-        const yearField = layer.name === "Layer 9" ? Year : YEAR;
+        const yearField = layer.name === "Layer 9" ? "Year" : "YEAR";
         query.where = `${yearField} = ${year}`;
         query.outFields = [field];
         query.returnGeometry = false;
@@ -494,7 +494,7 @@
       my.arcgisMap.basemap = null;
     });
   });
-//Next Steps: filter out fields, create symbology for each layer/field, create timelapse animation
-//extras: smooth scrolling, it scrolls after you've read it, defaults?
+//Next Steps: create symbology for each layer/field, create timelapse animation
+//extras: smooth scrolling, it scrolls after you've read it, defaults?, add popup of info for layer, add explanation on side, add legend
 </script>
 </html>
