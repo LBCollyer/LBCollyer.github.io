@@ -318,11 +318,16 @@
       //Update legend2 when new layer selected
       function updateLegend2(chosenLayer) {
         my.layerName = "Layer " + (my.layerNames.indexOf(chosenLayer) + 1)
+        // Hide all layers first
+        Object.values(my.lays).forEach(layer => layer.visible = false);
+    
+        // Make the selected layer visible
+        my.lays[my.layerName].visible = true;
         my.fieldNames = my.lays[my.layerName].fields.map(field => field.name);
         const excludedFields = new Set([
             "STATEFP", "STATENS", "GEOIDFQ", "GEOID", "STUSPS",
             "LSAD", "ALAND", "AWATER", "OBJECTID", "STATEID",
-            "Shape__Length", "Shape__Area", "NAME", "YEAR", "OBJECTID_1", "STATE", "State", "Year"
+            "Shape__Length", "Shape__Area", "NAME", "YEAR", "OBJECTID_1", "STATE", "State", "Year", "REGION"
         ]);
         const filteredFields = my.fieldNames.filter(name => !excludedFields.has(name));
         my.selectVar = document.getElementById("varSelector");
