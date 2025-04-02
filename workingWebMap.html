@@ -317,8 +317,9 @@
       }
       //Update Choropleth symbology
       function applyChoroplethSymbology(layer, field, year) {
-        let query = layer.createQuery();          
-        query.where = `${yearField} = ${YEAR}`|| `${yearField} = = ${Year}`;  // Adjust based on your year field's name
+        let query = layer.createQuery();
+        const yearField = layer.name === "Layer 9" ? Year : YEAR;
+        query.where = `${yearField} = ${year}`;
         query.outFields = [field];
         query.returnGeometry = false;
     
