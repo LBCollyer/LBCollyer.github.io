@@ -219,7 +219,9 @@
     "esri/views/navigation/Navigation"
   ], (FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Color, Navigation) => {
     my.arcgisMap = document.querySelector("arcgis-map");
-    
+    my.sYear = 2020;
+    my.sVar = "PVINM";
+    my.sLay = "Facility_Types"
     // Button click event to lift the intro page
     document.getElementById("startButton").addEventListener("click", () => {
       document.getElementById("intro").style.transform = "translateY(-100%)";
@@ -371,9 +373,9 @@
         if (filteredFields.length > 0) {
           my.selectVar.value = filteredFields[0];
         }
-        const selectedField = my.selectVar.value || my.fieldNames[0];
-        const selectedYear = my.yearSlider.value;
-        applyChoroplethSymbology(my.lays[my.layerName], selectedField, selectedYear);
+        my.sVar = my.selectVar.value || my.fieldNames[0];
+        my.sYear = my.yearSlider.value;
+        applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
       }
         
       //Update corFacil Legend when new field selected
@@ -460,15 +462,15 @@
       });
       
       document.getElementById("varSelector").addEventListener("calciteSelectChange", (event) => {
-          const field = event.target.value;
-          const year = my.yearSlider.value;
-          applyChoroplethSymbology(my.lays[my.layerName], field, year);
+          my.sVar = event.target.value;
+          if (my.yearSlider.value) { my.yearSlider.value;}
+          applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
       });
       
       document.getElementById("yearSlider").addEventListener("calciteSliderInput", (event) => {
-          const year = event.target.value;
-          const field = my.selectVar.value;
-          applyChoroplethSymbology(my.lays[my.layerName], field, year);
+          my.sYear = event.target.value;
+          if (my.selectVar.value) { my.sVar = my.selectVar.value;}
+          applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
       });
       // Adding base and data layers
       const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
