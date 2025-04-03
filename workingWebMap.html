@@ -278,20 +278,25 @@
       const legendList = document.createElement("calcite-list");
   
       classBreakInfos.forEach(info => {
-          let listItem = document.createElement("calcite-list-item");
-          listItem.label = `${info.minValue.toFixed(2)} - ${info.maxValue.toFixed(2)}`;
-  
-          // Create a color swatch using a `calcite-chip`
-          let colorChip = document.createElement("calcite-chip");
-          colorChip.style.backgroundColor = info.color;
-          colorChip.style.color = "transparent"; // Hide text
-          colorChip.style.width = "20px";
-          colorChip.style.height = "20px";
-          colorChip.style.borderRadius = "4px";
-  
-          // Append chip to the list item
-          listItem.appendChild(colorChip);
-          legendList.appendChild(listItem);
+        let listItem = document.createElement("calcite-list-item");
+        listItem.label = `${info.minValue.toFixed(2)} - ${info.maxValue.toFixed(2)}`;
+
+        // Create a color swatch using a `calcite-chip`
+        let colorChip = document.createElement("calcite-chip");
+        colorChip.style.backgroundColor = info.color;
+        colorChip.style.color = "transparent"; // Hide text
+        colorChip.style.width = "20px";
+        colorChip.style.height = "20px";
+        colorChip.style.borderRadius = "4px";
+        listItem.innerHTML = `
+          <div slot="content" style="display: flex; align-items: center;">
+            ${colorChip.outerHTML}
+            //<span>${info.value}</span>
+          </div>
+        `;
+        // Append chip to the list item
+        //listItem.appendChild(colorChip);
+        legendList.appendChild(listItem);
       });
       legendPanel.appendChild(legendList);
     }
