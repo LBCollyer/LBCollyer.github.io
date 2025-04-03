@@ -280,17 +280,18 @@
       classBreakInfos.forEach(info => {
         let listItem = document.createElement("calcite-list-item");
         //listItem.label = `${info.minValue.toFixed(2)} - ${info.maxValue.toFixed(2)}`;
-
-        // Create a color swatch using a `calcite-chip`
-        let colorChip = document.createElement("calcite-chip");
-        colorChip.style.backgroundColor = info.color;
-        colorChip.style.color = "transparent"; // Hide text
-        colorChip.style.width = "20px";
-        colorChip.style.height = "20px";
-        colorChip.style.borderRadius = "4px";
+        
+        // Create color box
+        const colorBox = document.createElement("span");
+        colorBox.style.display = "inline-block";
+        colorBox.style.width = "16px";
+        colorBox.style.height = "16px";
+        colorBox.style.backgroundColor = info.color.toHex();
+        colorBox.style.marginRight = "8px";
+        colorBox.style.border = "1px solid black";
         listItem.innerHTML = `
           <div slot="content" style="display: flex; align-items: center;">
-            ${colorChip.outerHTML}
+            ${colorBox.outerHTML}
             <span>${info.minValue.toFixed(2)} - ${info.maxValue.toFixed(2)}</span>
           </div>
         `;
@@ -506,17 +507,13 @@
         query.returnDistinctValues = true;
         query.returnGeometry = false;
         query.outFields = [field];
-
         my.corFacil.queryFeatures(query).then(result => {
           let values = result.features.map(f => f.attributes[field]);
           let uniqueValues = values.filter((value, index, self) => self.indexOf(value) === index);
-
-
           let uniqueValueInfos = uniqueValues.map(value => ({
             value,
             color: getRandomColor()
           }));
-
           my.corFacil.renderer = createRenderer(field, uniqueValueInfos);
           updateLegend(uniqueValueInfos);
         }).catch(error => console.error("Query failed:", error));
@@ -529,7 +526,7 @@
       document.getElementById("symbolFieldSelector").addEventListener("calciteSelectChange", (event) => {
         updateSymbology(event.target.value);
       });
-
+      updateUI2(my.lays[0]);
       //Event listener for changing other layers legend and symbology
       document.getElementById("layerSelector").addEventListener("calciteSelectChange", (event) => {
         updateUI2(event.target.value);
@@ -542,7 +539,7 @@
           if (my.yearSlider.value) { my.sYear = my.yearSlider.value; }
           applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
       });
-      
+
       document.getElementById("yearSlider").addEventListener("calciteSliderInput", (event) => {
           my.sYear = event.target.value;
           if (my.selectVar.value) { my.sVar = my.selectVar.value; }
@@ -576,6 +573,6 @@
   });
   //Complete draft: add legend, defaults, add explanation on side
   //professional look: it scrolls after you've read it, smooth scrolling, smaller images, fix zoom, buttons to use instead of zoom
-  //extra features: create timelapse animation, normalize data, go backwards, sources page
+  //extra features: create timelapse animation, normalize data, go backwards, sources page, round numbers
 </script>
 </html>
