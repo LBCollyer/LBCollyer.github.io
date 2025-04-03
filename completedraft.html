@@ -205,6 +205,7 @@
       Choose Variable:
       <calcite-select id="varSelector">
       </calcite-select>
+      <calcite-panel heading="Legend" id="legendPanel2"></calcite-panel>
     </calcite-label>
   </div>
 </body>
@@ -270,7 +271,49 @@
         }
       }).catch(error => console.error("Year query failed:", error));
     }
-    
+    //update legend2
+    function updateLegend2(classBreakInfos, field) {
+      const legendPanel = document.getElementById("legendPanel2");
+      legendPanel.innerHTML = ""; // Clear existing legend
+      const legendList = document.createElement("calcite-list");
+      //Add white no data box
+      let listItem1 = document.createElement("calcite-list-item");        
+      // Create color box
+      const colorBox1 = document.createElement("span");
+      colorBox1.style.display = "inline-block";
+      colorBox1.style.width = "16px";
+      colorBox1.style.height = "16px";
+      colorBox1.style.backgroundColor = "white";
+      colorBox1.style.marginRight = "8px";
+      colorBox1.style.border = "1px solid black";
+      listItem1.innerHTML = `
+        <div slot="content" style="display: flex; align-items: center;">
+          ${colorBox1.outerHTML}
+          <span>${"No Data"}</span>
+        </div>
+      `;
+      legendList.appendChild(listItem1);
+      classBreakInfos.forEach(info => {
+        let listItem = document.createElement("calcite-list-item");        
+        // Create color box
+        const colorBox = document.createElement("span");
+        colorBox.style.display = "inline-block";
+        colorBox.style.width = "16px";
+        colorBox.style.height = "16px";
+        colorBox.style.backgroundColor = info.color;
+        colorBox.style.marginRight = "8px";
+        colorBox.style.border = "1px solid black";
+        listItem.innerHTML = `
+          <div slot="content" style="display: flex; align-items: center;">
+            ${colorBox.outerHTML}
+            <span>${info.minValue.toFixed(2)} - ${info.maxValue.toFixed(2)}</span>
+          </div>
+        `;
+        legendList.appendChild(listItem);
+      });
+      legendPanel.appendChild(legendList);
+    }
+
     //Actions done once map view has loaded
     my.arcgisMap.addEventListener("arcgisViewReadyChange", (event) => { 
       my.view = my.arcgisMap.view;
@@ -283,7 +326,7 @@
       document.addEventListener("wheel", (event) => {
         if (!my.scrolled) {
           const targetLatitude = 31.0667;
-          const targetLongitude = -92.0000;
+          const targetLongitude = -75.0000;
           my.view.goTo({
             center: [targetLongitude, targetLatitude],
             zoom: 7  // Set zoom level as needed
@@ -318,6 +361,7 @@
             my.legend2 = document.querySelector("#legend2");
             my.legend2.style.display = "block";
             my.legend2.style.opacity = "1";
+            updateUI2("Facility_Types");
           }
         });
       }, { threshold: 1.0 }); // Trigger when the last section is fully in view
@@ -356,37 +400,44 @@
         query.returnGeometry = false;
     
         layer.queryFeatures(query).then(result => {
-            let values = result.features.map(f => f.attributes[field]).filter(v => v !== null);
-            
-            if (values.length === 0) return;
-    
-            let min = Math.min(...values);
-            let max = Math.max(...values);
-            let step = (max - min) / 5;
-    
-            let renderer = {
-                type: "class-breaks",
-                field: field,
-                classBreakInfos: [
-                    { minValue: min, maxValue: min + step, symbol: { type: "simple-fill", color: "#fef0d9" } },
-                    { minValue: min + step, maxValue: min + 2 * step, symbol: { type: "simple-fill", color: "#fdcc8a" } },
-                    { minValue: min + 2 * step, maxValue: min + 3 * step, symbol: { type: "simple-fill", color: "#fc8d59" } },
-                    { minValue: min + 3 * step, maxValue: min + 4 * step, symbol: { type: "simple-fill", color: "#e34a33" } },
-                    { minValue: min + 4 * step, maxValue: max, symbol: { type: "simple-fill", color: "#b30000" } }
-                ]
-            };
-            layer.renderer = renderer;
+          let values = result.features.map(f => f.attributes[field]).filter(v => v !== null);
           
-            // Update popup template dynamically
-            layer.popupTemplate = {
-                title: "{NAME}",
-                content: `<b>${field.replace(/_/g, " ")}:</b> {${field}}`
-            };
+          if (values.length === 0) return;
+  
+          let min = Math.min(...values);
+          let max = Math.max(...values);
+          let step = (max - min) / 5;
+  
+          let classBreakInfos = [
+              { minValue: min, maxValue: min + step, color: "#fef0d9" },
+              { minValue: min + step, maxValue: min + 2 * step, color: "#fdcc8a" },
+              { minValue: min + 2 * step, maxValue: min + 3 * step, color: "#fc8d59" },
+              { minValue: min + 3 * step, maxValue: min + 4 * step, color: "#e34a33" },
+              { minValue: min + 4 * step, maxValue: max, color: "#b30000" }
+          ];
+  
+          let renderer = {
+              type: "class-breaks",
+              field: field,
+              classBreakInfos: classBreakInfos.map(info => ({
+                  minValue: info.minValue,
+                  maxValue: info.maxValue,
+                  symbol: { type: "simple-fill", color: info.color }
+              }))
+          };
+          layer.renderer = renderer;
+        
+          // Update popup template dynamically
+          layer.popupTemplate = {
+              title: "{NAME}",
+              content: `<b>${field.replace(/_/g, " ")}:</b> {${field}}`
+          };
+          updateLegend2(classBreakInfos, field);
         }).catch(error => console.error("Query failed:", error));
-    }
+      }
 
-      //Update legend2 when new layer selected
-      function updateLegend2(chosenLayer) {
+      //Update UI2 when new layer selected
+      function updateUI2(chosenLayer) {
         my.layerName = "Layer " + (my.layerNames.indexOf(chosenLayer) + 1)
         Object.values(my.lays).forEach(layer => layer.visible = false);
         my.lays[my.layerName].visible = true;
@@ -469,17 +520,13 @@
         query.returnDistinctValues = true;
         query.returnGeometry = false;
         query.outFields = [field];
-
         my.corFacil.queryFeatures(query).then(result => {
           let values = result.features.map(f => f.attributes[field]);
           let uniqueValues = values.filter((value, index, self) => self.indexOf(value) === index);
-
-
           let uniqueValueInfos = uniqueValues.map(value => ({
             value,
             color: getRandomColor()
           }));
-
           my.corFacil.renderer = createRenderer(field, uniqueValueInfos);
           updateLegend(uniqueValueInfos);
         }).catch(error => console.error("Query failed:", error));
@@ -492,10 +539,10 @@
       document.getElementById("symbolFieldSelector").addEventListener("calciteSelectChange", (event) => {
         updateSymbology(event.target.value);
       });
-
+      
       //Event listener for changing other layers legend and symbology
       document.getElementById("layerSelector").addEventListener("calciteSelectChange", (event) => {
-        updateLegend2(event.target.value);
+        updateUI2(event.target.value);
       });
       
       document.getElementById("varSelector").addEventListener("calciteSelectChange", (event) => {
@@ -505,7 +552,7 @@
           if (my.yearSlider.value) { my.sYear = my.yearSlider.value; }
           applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
       });
-      
+
       document.getElementById("yearSlider").addEventListener("calciteSliderInput", (event) => {
           my.sYear = event.target.value;
           if (my.selectVar.value) { my.sVar = my.selectVar.value; }
@@ -520,9 +567,9 @@
           outFields: ["*"]
         }));
       });
-      // Adding layers 2 to 9
+      // Adding layers 1 to 9
       my.lays = {};
-      for (let i = 2; i < 10; i++) {
+      for (let i = 1; i < 10; i++) {
         my.lays[`Layer ${i}`] = new FeatureLayer({
           url: `${baseURL}${i}`,
           outFields: ["*"],
@@ -537,8 +584,5 @@
       my.arcgisMap.basemap = null;
     });
   });
-  //Complete draft: create symbology for each layer/field, add popup of info for layer, add legend 
-  //professional look: it scrolls after you've read it, defaults?, add explanation on side, smooth scrolling
-  //extra features: create timelapse animation, normalize data
-</script>
+ </script>
 </html>
