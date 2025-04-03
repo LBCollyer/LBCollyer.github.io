@@ -349,6 +349,7 @@
             my.legend2 = document.querySelector("#legend2");
             my.legend2.style.display = "block";
             my.legend2.style.opacity = "1";
+            updateUI2(my.lays[0]);
           }
         });
       }, { threshold: 1.0 }); // Trigger when the last section is fully in view
@@ -566,7 +567,7 @@
         my.arcgisMap.addLayer(my.lays[`Layer ${i}`]);
         my.lays[`Layer ${i}`].visible = false;
       }
-      updateUI2(my.lays[0]);
+
       my.arcgisMap.addLayer(my.corFacil);
       my.arcgisMap.basemap = null;
     });
