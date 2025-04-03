@@ -526,7 +526,7 @@
       document.getElementById("symbolFieldSelector").addEventListener("calciteSelectChange", (event) => {
         updateSymbology(event.target.value);
       });
-      updateUI2(my.lays[0]);
+      
       //Event listener for changing other layers legend and symbology
       document.getElementById("layerSelector").addEventListener("calciteSelectChange", (event) => {
         updateUI2(event.target.value);
@@ -566,7 +566,7 @@
         my.arcgisMap.addLayer(my.lays[`Layer ${i}`]);
         my.lays[`Layer ${i}`].visible = false;
       }
-
+      updateUI2(my.lays[0]);
       my.arcgisMap.addLayer(my.corFacil);
       my.arcgisMap.basemap = null;
     });
