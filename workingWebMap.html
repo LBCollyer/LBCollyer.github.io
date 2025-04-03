@@ -276,11 +276,25 @@
       const legendPanel = document.getElementById("legendPanel2");
       legendPanel.innerHTML = ""; // Clear existing legend
       const legendList = document.createElement("calcite-list");
-  
+      //Add white no data box
+      let listItem1 = document.createElement("calcite-list-item");        
+      // Create color box
+      const colorBox1 = document.createElement("span");
+      colorBox1.style.display = "inline-block";
+      colorBox1.style.width = "16px";
+      colorBox1.style.height = "16px";
+      colorBox1.style.backgroundColor = white;
+      colorBox1.style.marginRight = "8px";
+      colorBox1.style.border = "1px solid black";
+      listItem1.innerHTML = `
+        <div slot="content" style="display: flex; align-items: center;">
+          ${colorBox.outerHTML}
+          <span>${"No Data"}</span>
+        </div>
+      `;
+      legendList.appendChild(listItem);
       classBreakInfos.forEach(info => {
-        let listItem = document.createElement("calcite-list-item");
-        //listItem.label = `${info.minValue.toFixed(2)} - ${info.maxValue.toFixed(2)}`;
-        
+        let listItem = document.createElement("calcite-list-item");        
         // Create color box
         const colorBox = document.createElement("span");
         colorBox.style.display = "inline-block";
@@ -295,8 +309,6 @@
             <span>${info.minValue.toFixed(2)} - ${info.maxValue.toFixed(2)}</span>
           </div>
         `;
-        // Append chip to the list item
-        //listItem.appendChild(colorChip);
         legendList.appendChild(listItem);
       });
       legendPanel.appendChild(legendList);
@@ -555,7 +567,7 @@
           outFields: ["*"]
         }));
       });
-      // Adding layers 2 to 9
+      // Adding layers 1 to 9
       my.lays = {};
       for (let i = 1; i < 10; i++) {
         my.lays[`Layer ${i}`] = new FeatureLayer({
