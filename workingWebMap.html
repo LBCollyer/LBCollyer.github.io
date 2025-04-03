@@ -293,7 +293,8 @@
           listItem.appendChild(colorChip);
           legendList.appendChild(listItem);
       });
-  }
+      legendPanel.appendChild(legendList);
+    }
 
     //Actions done once map view has loaded
     my.arcgisMap.addEventListener("arcgisViewReadyChange", (event) => { 
@@ -416,7 +417,7 @@
         }).catch(error => console.error("Query failed:", error));
       }
 
-      //Update legend2 when new layer selected
+      //Update UIpanel2 when new layer selected
       function updateUI2(chosenLayer) {
         my.layerName = "Layer " + (my.layerNames.indexOf(chosenLayer) + 1)
         Object.values(my.lays).forEach(layer => layer.visible = false);
