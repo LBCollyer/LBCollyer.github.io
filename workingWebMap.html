@@ -279,7 +279,7 @@
   
       classBreakInfos.forEach(info => {
         let listItem = document.createElement("calcite-list-item");
-        listItem.label = `${info.minValue.toFixed(2)} - ${info.maxValue.toFixed(2)}`;
+        //listItem.label = `${info.minValue.toFixed(2)} - ${info.maxValue.toFixed(2)}`;
 
         // Create a color swatch using a `calcite-chip`
         let colorChip = document.createElement("calcite-chip");
@@ -291,7 +291,7 @@
         listItem.innerHTML = `
           <div slot="content" style="display: flex; align-items: center;">
             ${colorChip.outerHTML}
-            //<span>${info.value}</span>
+            <span>${info.minValue.toFixed(2)} - ${info.maxValue.toFixed(2)}</span>
           </div>
         `;
         // Append chip to the list item
