@@ -286,7 +286,7 @@
         colorBox.style.display = "inline-block";
         colorBox.style.width = "16px";
         colorBox.style.height = "16px";
-        colorBox.style.backgroundColor = info.color.toHex();
+        colorBox.style.backgroundColor = info.color;
         colorBox.style.marginRight = "8px";
         colorBox.style.border = "1px solid black";
         listItem.innerHTML = `
@@ -349,7 +349,7 @@
             my.legend2 = document.querySelector("#legend2");
             my.legend2.style.display = "block";
             my.legend2.style.opacity = "1";
-            updateUI2("Facility_Types");
+            //updateUI2("Facility_Types");
           }
         });
       }, { threshold: 1.0 }); // Trigger when the last section is fully in view
