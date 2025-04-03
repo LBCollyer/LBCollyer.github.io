@@ -417,7 +417,7 @@
       }
 
       //Update legend2 when new layer selected
-      function updateLegend2(chosenLayer) {
+      function updateUI2(chosenLayer) {
         my.layerName = "Layer " + (my.layerNames.indexOf(chosenLayer) + 1)
         Object.values(my.lays).forEach(layer => layer.visible = false);
         my.lays[my.layerName].visible = true;
@@ -526,7 +526,7 @@
 
       //Event listener for changing other layers legend and symbology
       document.getElementById("layerSelector").addEventListener("calciteSelectChange", (event) => {
-        updateLegend2(event.target.value);
+        updateUI2(event.target.value);
       });
       
       document.getElementById("varSelector").addEventListener("calciteSelectChange", (event) => {
