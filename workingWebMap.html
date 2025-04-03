@@ -349,7 +349,7 @@
             my.legend2 = document.querySelector("#legend2");
             my.legend2.style.display = "block";
             my.legend2.style.opacity = "1";
-            updateUI2("Layer 2");
+            updateUI2("Facility_Types");
           }
         });
       }, { threshold: 1.0 }); // Trigger when the last section is fully in view
@@ -424,7 +424,7 @@
         }).catch(error => console.error("Query failed:", error));
       }
 
-      //Update UIpanel2 when new layer selected
+      //Update UI2 when new layer selected
       function updateUI2(chosenLayer) {
         my.layerName = "Layer " + (my.layerNames.indexOf(chosenLayer) + 1)
         Object.values(my.lays).forEach(layer => layer.visible = false);
@@ -574,6 +574,6 @@
   });
   //Complete draft: add legend, defaults, add explanation on side
   //professional look: it scrolls after you've read it, smooth scrolling, smaller images, fix zoom, buttons to use instead of zoom
-  //extra features: create timelapse animation, normalize data, go backwards, sources page, round numbers
+  //extra features: create timelapse animation, normalize data, go backwards, sources page, round numbers, random colors
 </script>
 </html>
