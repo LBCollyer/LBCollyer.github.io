@@ -205,6 +205,7 @@
       Choose Variable:
       <calcite-select id="varSelector">
       </calcite-select>
+      <calcite-panel heading="Legend" id="legendPanel2"></calcite-panel>
     </calcite-label>
   </div>
 </body>
@@ -270,7 +271,30 @@
         }
       }).catch(error => console.error("Year query failed:", error));
     }
-    
+    //update legend2
+    function updateLegend2(classBreakInfos, field) {
+      const legendPanel = document.getElementById("legendPanel2");
+      legendPanel.innerHTML = ""; // Clear existing legend
+      const legendList = document.createElement("calcite-list");
+  
+      classBreakInfos.forEach(info => {
+          let listItem = document.createElement("calcite-list-item");
+          listItem.label = `${info.minValue.toFixed(2)} - ${info.maxValue.toFixed(2)}`;
+  
+          // Create a color swatch using a `calcite-chip`
+          let colorChip = document.createElement("calcite-chip");
+          colorChip.style.backgroundColor = info.color;
+          colorChip.style.color = "transparent"; // Hide text
+          colorChip.style.width = "20px";
+          colorChip.style.height = "20px";
+          colorChip.style.borderRadius = "4px";
+  
+          // Append chip to the list item
+          listItem.appendChild(colorChip);
+          legendList.appendChild(listItem);
+      });
+  }
+
     //Actions done once map view has loaded
     my.arcgisMap.addEventListener("arcgisViewReadyChange", (event) => { 
       my.view = my.arcgisMap.view;
@@ -356,34 +380,41 @@
         query.returnGeometry = false;
     
         layer.queryFeatures(query).then(result => {
-            let values = result.features.map(f => f.attributes[field]).filter(v => v !== null);
-            
-            if (values.length === 0) return;
-    
-            let min = Math.min(...values);
-            let max = Math.max(...values);
-            let step = (max - min) / 5;
-    
-            let renderer = {
-                type: "class-breaks",
-                field: field,
-                classBreakInfos: [
-                    { minValue: min, maxValue: min + step, symbol: { type: "simple-fill", color: "#fef0d9" } },
-                    { minValue: min + step, maxValue: min + 2 * step, symbol: { type: "simple-fill", color: "#fdcc8a" } },
-                    { minValue: min + 2 * step, maxValue: min + 3 * step, symbol: { type: "simple-fill", color: "#fc8d59" } },
-                    { minValue: min + 3 * step, maxValue: min + 4 * step, symbol: { type: "simple-fill", color: "#e34a33" } },
-                    { minValue: min + 4 * step, maxValue: max, symbol: { type: "simple-fill", color: "#b30000" } }
-                ]
-            };
-            layer.renderer = renderer;
+          let values = result.features.map(f => f.attributes[field]).filter(v => v !== null);
           
-            // Update popup template dynamically
-            layer.popupTemplate = {
-                title: "{NAME}",
-                content: `<b>${field.replace(/_/g, " ")}:</b> {${field}}`
-            };
+          if (values.length === 0) return;
+  
+          let min = Math.min(...values);
+          let max = Math.max(...values);
+          let step = (max - min) / 5;
+  
+          let classBreakInfos = [
+              { minValue: min, maxValue: min + step, color: "#fef0d9" },
+              { minValue: min + step, maxValue: min + 2 * step, color: "#fdcc8a" },
+              { minValue: min + 2 * step, maxValue: min + 3 * step, color: "#fc8d59" },
+              { minValue: min + 3 * step, maxValue: min + 4 * step, color: "#e34a33" },
+              { minValue: min + 4 * step, maxValue: max, color: "#b30000" }
+          ];
+  
+          let renderer = {
+              type: "class-breaks",
+              field: field,
+              classBreakInfos: classBreakInfos.map(info => ({
+                  minValue: info.minValue,
+                  maxValue: info.maxValue,
+                  symbol: { type: "simple-fill", color: info.color }
+              }))
+          };
+          layer.renderer = renderer;
+        
+          // Update popup template dynamically
+          layer.popupTemplate = {
+              title: "{NAME}",
+              content: `<b>${field.replace(/_/g, " ")}:</b> {${field}}`
+          };
+          updateLegend2(classBreakInfos, field);
         }).catch(error => console.error("Query failed:", error));
-    }
+      }
 
       //Update legend2 when new layer selected
       function updateLegend2(chosenLayer) {
@@ -538,7 +569,7 @@
     });
   });
   //Complete draft: add legend, defaults, add explanation on side
-  //professional look: it scrolls after you've read it, smooth scrolling, smaller images, fix zoom
-  //extra features: create timelapse animation, normalize data
+  //professional look: it scrolls after you've read it, smooth scrolling, smaller images, fix zoom, buttons to use instead of zoom
+  //extra features: create timelapse animation, normalize data, go backwards, sources page
 </script>
 </html>
