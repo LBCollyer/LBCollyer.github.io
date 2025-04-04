@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Prison Web Map</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
+  <script type="module" src="https://js.arcgis.com/calcite-components/3.0.3/calcite.esm.js"></script>
+  <script src="https://js.arcgis.com/4.32/"></script>
+  <script type="module" src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"></script>
+</head>
+<body>
+  <!-- Intro Page -->
+  <div id="intro">
+    <div id="intro-box">
+      <h1>Correctional Facilities Maps</h1>
+      <p>Explore correctional facilities across the U.S. with interactive symbology.</p>
+      <p>Scroll to go through each section.</p>
+    </div>
+    <button id="startButton">⇩</button>
+  </div>
+
+  <!-- ArcGIS Map -->
+  <arcgis-map baseMap="arcgis/topographic" center="-98, 39" zoom="5">
+    <arcgis-zoom position="bottom-right"></arcgis-zoom>
+  </arcgis-map>
+
+  <!-- Map Container -->
+  <div id="map-container">
+    <div class="ui-container" id="legend1">
+      <calcite-label>
+        Choose Symbolization Field:
+        <calcite-select id="symbolFieldSelector">
+          <calcite-option value="Facil_Type">Facility Type</calcite-option>
+          <calcite-option value="Facil_Age">Facility Age</calcite-option>
+          <calcite-option value="Facil_Scop">Facility Scope</calcite-option>
+          <calcite-option value="Facil_Gend">Facility Gender</calcite-option>
+        </calcite-select>
+        <calcite-panel heading="Legend" id="legendPanel"></calcite-panel>
+      </calcite-label>
+    </div>
+  </div>
+
+  <div class="story-container">
+    <div class="story-section">
+      <h2>Louisiana</h2>
+      <p>Louisiana has the highest percentage of its population incarcerated in the United States. This means it also has a higher percentage of its population incarcerated than any country in the world.</p>
+      <img id="laNATO" src="NATO_LA_2024.webp" alt="NATO_LA_2024">
+    </div>
+    <div class="story-section" data-image="LA_racial_disparities_2021.webp">
+      <p>It also exemplifies many current issues with the prison system in the United States. One is the disproportionately large proportion of certain ethnic groups who are incarcerated.</p>
+      <img id="racdis" src="LA_racial_disparities_2021.webp" alt="LA_racial_disparities_2021">
+    </div>
+    <div class="story-section">
+      <p>Another is how many people are incarcerated before their trial.</p>
+      <img id="conv" src="LA_conviction_status_1978-2019.webp" alt="LA_conviction_status_1978-2019">
+    </div>
+  </div>
+
+  <div class="ui-container" id="legend2">
+    <calcite-label>
+      Select Year:
+      <calcite-slider id="yearSlider" min="1980" max="2020" step="1" value="2020" label-handles max-label="2020" min-label="1980" ticks="1"></calcite-slider>
+    </calcite-label>
+    <calcite-label>
+      Choose Category:
+      <calcite-select id="layerSelector"></calcite-select>
+      Choose Variable:
+      <calcite-select id="varSelector"></calcite-select>
+      <calcite-panel heading="Legend" id="legendPanel2"></calcite-panel>
+    </calcite-label>
+  </div>
+
+  <script>
+    var esriConfig = {
+      apiKey: "YOUR_API_KEY"
+    };
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
