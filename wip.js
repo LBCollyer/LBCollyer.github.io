@@ -7,7 +7,7 @@ require([
   "esri/views/navigation/Navigation"
 ], function(FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol, Color, Navigation) {
   my.arcgisMap = document.querySelector("arcgis-map");
-  my.sYear = 2020;
+  my.sYear = 2022;
   my.yearSlider = document.getElementById("yearSlider");
   my.sVar = "PVINM";
   my.selectVar = document.getElementById("varSelector");
