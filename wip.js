@@ -59,28 +59,6 @@ require([
         my.sYear = maxYear;
       }
     }).catch(error => console.error("Year query failed:", error));
-    /*let query = layer.createQuery();
-    // Only consider features where the chosen field has data
-    query.where = `${field} IS NOT NULL`;
-    query.outFields = [yearField];
-    query.returnGeometry = false;
-    
-    layer.queryFeatures(query).then(result => {
-      let years = result.features
-                      .map(f => f.attributes[yearField])
-                      .filter(year => year != null);
-      if (years.length > 0) {
-        let minYear = Math.min(...years);
-        let maxYear = Math.max(...years);
-        // Update the slider attributes
-        my.yearSlider.min = minYear;
-        my.yearSlider.max = maxYear;
-        my.yearSlider.value = maxYear;
-        my.yearSlider.setAttribute("min-label", minYear);
-        my.yearSlider.setAttribute("max-label", maxYear);
-        my.sYear = maxYear;
-      }
-    }).catch(error => console.error("Year query failed:", error));*/
   }
   //update legend2
   function updateLegend2(classBreakInfos, field) {
