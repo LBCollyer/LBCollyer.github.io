@@ -1,7 +1,7 @@
 window.my = {};
 my.varDesc = {};
 
-fetch("path/to/varList.csv")
+fetch("varList.csv")
   .then(response => response.text())
   .then(csv => {
     const lines = csv.split("\n").filter(line => line.trim() !== "");
