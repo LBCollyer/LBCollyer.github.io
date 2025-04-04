@@ -247,8 +247,32 @@
     // Function to update the year slider range based on available data for the chosen variable
     function updateYearSlider(layer, field) {
       // Determine the appropriate year field name
-      const yearField = layer.name === "Layer 9" ? "Year" : "YEAR";
-      let query = layer.createQuery();
+      //const yearField = layer.name === "Layer 9" ? "Year" : "YEAR";
+      const potentialYearFields = ["Year", "YEAR", "year"];
+      const yearField = potentialYearFields.find(f => 
+        layer.fields.some(fieldInfo => fieldInfo.name === f)
+      );
+      const query = layer.createQuery();
+      query.where = `${field} IS NOT NULL`;
+      query.outFields = [yearField];
+      query.returnGeometry = false;
+    
+      layer.queryFeatures(query).then(result => {
+        const years = result.features
+                            .map(f => f.attributes[yearField])
+                            .filter(year => year != null);
+        if (years.length > 0) {
+          const minYear = Math.min(...years);
+          const maxYear = Math.max(...years);
+          my.yearSlider.min = minYear;
+          my.yearSlider.max = maxYear;
+          my.yearSlider.value = maxYear;
+          my.yearSlider.setAttribute("min-label", minYear);
+          my.yearSlider.setAttribute("max-label", maxYear);
+          my.sYear = maxYear;
+        }
+      }).catch(error => console.error("Year query failed:", error));
+      /*let query = layer.createQuery();
       // Only consider features where the chosen field has data
       query.where = `${field} IS NOT NULL`;
       query.outFields = [yearField];
@@ -269,7 +293,7 @@
           my.yearSlider.setAttribute("max-label", maxYear);
           my.sYear = maxYear;
         }
-      }).catch(error => console.error("Year query failed:", error));
+      }).catch(error => console.error("Year query failed:", error));*/
     }
     //update legend2
     function updateLegend2(classBreakInfos, field) {
@@ -583,7 +607,7 @@
       my.arcgisMap.basemap = null;
     });
   });
-  //Complete draft: correct defaults, add explanation on side
+  //Complete draft: correct defaults, add explanation on side, facility types only 2022
   //professional look: it scrolls after you've read it, smooth scrolling, smaller images, fix zoom, round numbers, random colors, prison and jail population symbology(not default), hiv legend/symbology, background black outline
   //extra features: create timelapse animation, normalize data, go backwards/use on phone(buttons), sources/references, add prison bars, favicon
 </script>
