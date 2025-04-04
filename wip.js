@@ -1,7 +1,7 @@
 window.my = {};
 my.varDesc = {};
 
-fetch("varList.csv")
+fetch("https://lbcollyer.github.io/varList.csv")
   .then(response => response.text())
   .then(csv => {
     const lines = csv.split("\n").filter(line => line.trim() !== "");
