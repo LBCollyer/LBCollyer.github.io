@@ -172,6 +172,7 @@ require([
           my.legend2 = document.querySelector("#legend2");
           my.legend2.style.display = "block";
           my.legend2.style.opacity = "1";
+          updateUI2("Facility_Types");
         }
       });
     }, { threshold: 1.0 }); // Trigger when the last section is fully in view
