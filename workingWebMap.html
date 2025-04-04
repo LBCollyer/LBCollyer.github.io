@@ -361,10 +361,10 @@
             my.legend2 = document.querySelector("#legend2");
             my.legend2.style.display = "block";
             my.legend2.style.opacity = "1";
-            updateUI2("Facility_Types");
           }
         });
       }, { threshold: 1.0 }); // Trigger when the last section is fully in view
+      my.sections.forEach(section => my.observer.observe(section));
       
       //Get Random Color
       function getRandomColor() {
@@ -581,7 +581,6 @@
 
       my.arcgisMap.addLayer(my.corFacil);
       my.arcgisMap.basemap = null;
-      my.sections.forEach(section => my.observer.observe(section));
     });
   });
   //Complete draft: correct defaults, add explanation on side
