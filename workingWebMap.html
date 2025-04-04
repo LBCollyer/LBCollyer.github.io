@@ -306,7 +306,7 @@
         listItem.innerHTML = `
           <div slot="content" style="display: flex; align-items: center;">
             ${colorBox.outerHTML}
-            <span>${info.minValue.toFixed(2)} - ${info.maxValue.toFixed(2)}</span>
+            <span>${Math.round(info.minValue.toFixed(2))} - ${Math.round(info.maxValue.toFixed(2))}</span>
           </div>
         `;
         legendList.appendChild(listItem);
