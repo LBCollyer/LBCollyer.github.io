@@ -1,4 +1,20 @@
 window.my = {};
+my.varDesc = {};
+
+fetch("path/to/varList.csv")
+  .then(response => response.text())
+  .then(csv => {
+    const lines = csv.split("\n").filter(line => line.trim() !== "");
+    lines.shift(); // remove header
+    lines.forEach(line => {
+      const [variable, description] = line.split(/,(.+)/); // split only on first comma
+      if (variable && description) {
+        my.varDesc[variable.trim()] = description.trim().replace(/^"|"$/g, "");
+      }
+    });
+  })
+  .catch(err => console.error("Failed to load descriptions:", err));
+
 require([
   "esri/layers/FeatureLayer",
   "esri/renderers/UniqueValueRenderer",
@@ -335,11 +351,12 @@ require([
     });
     
     document.getElementById("varSelector").addEventListener("calciteSelectChange", (event) => {
-        my.sVar = event.target.value;
-        // Update the slider range based on the newly selected field
-        updateYearSlider(my.lays[my.layerName], my.sVar);
-        if (my.yearSlider.value) { my.sYear = my.yearSlider.value; }
-        applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
+      my.sVar = event.target.value;
+      // Update the slider range based on the newly selected field
+      updateYearSlider(my.lays[my.layerName], my.sVar);
+      if (my.yearSlider.value) { my.sYear = my.yearSlider.value; }
+      applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
+      document.getElementById("varDescription").textContent = my.vareDesc[my.sVar] || "No description available.";
     });
 
     document.getElementById("yearSlider").addEventListener("calciteSliderInput", (event) => {
