@@ -356,7 +356,7 @@ require([
       updateYearSlider(my.lays[my.layerName], my.sVar);
       if (my.yearSlider.value) { my.sYear = my.yearSlider.value; }
       applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
-      document.getElementById("varDescription").textContent = my.vareDesc[my.sVar] || "No description available.";
+      document.getElementById("varDescription").textContent = my.varDesc[my.sVar] || "No description available.";
     });
 
     document.getElementById("yearSlider").addEventListener("calciteSliderInput", (event) => {
