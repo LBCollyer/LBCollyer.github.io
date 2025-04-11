@@ -271,7 +271,7 @@ require([
       if (filteredFields.length > 0) {
         my.selectVar.value = filteredFields[0];
       }
-      my. = my.selectVar.value || my.fieldNames[0];
+      my.sVar = my.selectVar.value || my.fieldNames[0];
       if (my.yearSlider.value) {my.sYear = my.yearSlider.value;}
       document.getElementById("varDescription").textContent = `${my.fullName[my.sVar]}: ${my.varDesc[my.sVar]}` || "No description available.";
       // Update the slider range based on available year values for the selected field
