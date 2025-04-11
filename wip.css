@@ -128,4 +128,6 @@ body {
   max-height: 150px;
   white-space: normal;
   overflow-y: auto;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
