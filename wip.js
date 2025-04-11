@@ -6,10 +6,17 @@ fetch("https://lbcollyer.github.io/varList.csv")
   .then(csv => {
     const lines = csv.split("\n").filter(line => line.trim() !== "");
     lines.shift(); // remove header
+
     lines.forEach(line => {
-      const [variable, description] = line.split(/,(.+)/); // split only on first comma
-      if (variable && description) {
-        my.varDesc[variable.trim()] = description.trim().replace(/^"|"$/g, "");
+      const [shortName, fullName, description] = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); // split by comma outside quotes
+
+      if (shortName && description) {
+        const cleanShort = shortName.trim();
+        const cleanDesc = description.trim().replace(/^"|"$/g, "");
+        my.varDesc[cleanShort] = cleanDesc;
+        // optionally store the full name too:
+        my.fullName = my.fullName || {};
+        my.fullName[cleanShort] = fullName.trim().replace(/^"|"$/g, "");
       }
     });
   })
