@@ -32,7 +32,7 @@ require([
   my.arcgisMap = document.querySelector("arcgis-map");
   my.sYear = 2022;
   my.yearSlider = document.getElementById("yearSlider");
-  my.sVar = "PVINM";
+  my. = "PVINM";
   my.selectVar = document.getElementById("varSelector");
   my.sLay = "Facility_Types"
   // Button click event to lift the intro page
@@ -271,9 +271,9 @@ require([
       if (filteredFields.length > 0) {
         my.selectVar.value = filteredFields[0];
       }
-      my.sVar = my.selectVar.value || my.fieldNames[0];
+      my. = my.selectVar.value || my.fieldNames[0];
       if (my.yearSlider.value) {my.sYear = my.yearSlider.value;}
-      document.getElementById("varDescription").textContent = `${my.fullName[sVar]}: ${my.varDesc[sVar]}` || "No description available.";
+      document.getElementById("varDescription").textContent = `${my.fullName[my.sVar]}: ${my.varDesc[my.sVar]}` || "No description available.";
       // Update the slider range based on available year values for the selected field
       updateYearSlider(my.lays[my.layerName], my.sVar);
       applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
