@@ -122,3 +122,8 @@ body {
   padding: 0px;
   color: white;
 }
+
+#varDescription {
+  max-height: 150px;
+  overflow-y: auto;
+}
