@@ -32,7 +32,7 @@ require([
   my.arcgisMap = document.querySelector("arcgis-map");
   my.sYear = 2022;
   my.yearSlider = document.getElementById("yearSlider");
-  my. = "PVINM";
+  my.sVar = "PVINM";
   my.selectVar = document.getElementById("varSelector");
   my.sLay = "Facility_Types"
   // Button click event to lift the intro page
