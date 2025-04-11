@@ -30,10 +30,12 @@ body {
   opacity: 0;
   z-index: 10;
   max-width: 300px;
+  width: 300px;
   white-space: normal;
   overflow-y: auto;
   overflow-wrap: break-word;
   word-wrap: break-word;
+  box-sizing: border-box;
 }
 
 #intro {
