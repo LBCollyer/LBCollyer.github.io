@@ -124,6 +124,8 @@ body {
 }
 
 #varDescription {
+  max-width: 300px;
   max-height: 150px;
+  white-space: normal;
   overflow-y: auto;
 }
