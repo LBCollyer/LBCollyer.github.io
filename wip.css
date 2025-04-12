@@ -138,3 +138,8 @@ body {
   overflow-wrap: break-word;
   word-break: break-word;
 }
+
+#popVarDesc {
+  max-width: 300px;
+  word-wrap: break-word;
+}
