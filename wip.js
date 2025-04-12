@@ -278,7 +278,8 @@ require([
       pop.heading = "Variable Description";
       pop.placement = "right";
       pop.referenceElement = "varDescription";
-      pop.innerHTML = `${my.varDesc[my.sVar]}`
+      pop.innerHTML = `${my.varDesc[my.sVar]}`;
+      document.getElementById("varDescription").appendChild(pop);
       // Update the slider range based on available year values for the selected field
       updateYearSlider(my.lays[my.layerName], my.sVar);
       applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
