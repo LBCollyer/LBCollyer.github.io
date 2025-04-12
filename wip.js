@@ -280,24 +280,19 @@ require([
       }
       
       // Then create and add the new one
-      document.getElementById("varDescription").textContent = `${my.fullName[my.sVar]}` || "No description available.";
       let varDescElement = document.getElementById("varDescription");
+      varDescElement.textContent = `${my.fullName[my.sVar]}` || "No description available.";
       let pop = document.createElement("calcite-popover");
+      pop.id = "popVarDesc";
       pop.heading = "Variable Description";
       pop.placement = "right";
-      pop.innerHTML = `${my.varDesc[my.sVar]}`;
+      pop.innerHTML = `${my.varDesc[my.sVar]}`|| "No description available.";
       
       // Set reference directly to the element
       pop.referenceElement = varDescElement;
       
       // Add to document body
-      document.body.appendChild(pop);/*
-      let pop = document.createElement("calcite-popover")
-      pop.heading = "Variable Description";
-      pop.placement = "right";
-      pop.referenceElement = "varDescription";
-      pop.innerHTML = `${my.varDesc[my.sVar]}`;
-      document.getElementById("varDescription").appendChild(pop);*/
+      document.body.appendChild(pop);
       // Update the slider range based on available year values for the selected field
       updateYearSlider(my.lays[my.layerName], my.sVar);
       applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
