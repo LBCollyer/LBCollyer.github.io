@@ -286,8 +286,12 @@ require([
       pop.id = "popVarDesc";
       pop.heading = "Variable Description";
       pop.placement = "right";
-      pop.innerHTML = `${my.varDesc[my.sVar]}`|| "No description available.";
-      
+      //pop.innerHTML = `${my.varDesc[my.sVar]}`|| "No description available.";
+      pop.innerHTML = `
+        <div style="max-width: 300px; word-wrap: break-word; hyphens: auto;">
+          ${my.varDesc[my.sVar]} || "No description available."
+        </div>
+      `;
       // Set reference directly to the element
       pop.referenceElement = varDescElement;
       
