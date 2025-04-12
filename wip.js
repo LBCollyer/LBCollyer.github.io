@@ -287,14 +287,28 @@ require([
       pop.heading = "Variable Description";
       pop.placement = "right";
       //pop.innerHTML = `${my.varDesc[my.sVar]}`|| "No description available.";
-      pop.innerHTML = `
+     /* pop.innerHTML = `
         <div style="max-width: 300px; word-wrap: break-word; hyphens: auto;">
           ${my.varDesc[my.sVar]} || "No description available."
         </div>
-      `;
+      `;*/
       // Set reference directly to the element
       pop.referenceElement = varDescElement;
-      pop.style.maxWidth = "300px";
+      //pop.style.maxWidth = "300px";
+      // Create a wrapper div with comprehensive text wrapping properties
+      pop.innerHTML = `
+        <div style="
+          width: 100%; 
+          max-width: 300px;
+          overflow-wrap: break-word; 
+          word-wrap: break-word;
+          word-break: break-word;
+          white-space: normal;
+          hyphens: auto;
+        ">
+          ${my.varDesc[my.sVar]}
+        </div>
+      `;
       // Add to document body
       document.body.appendChild(pop);
       // Update the slider range based on available year values for the selected field
