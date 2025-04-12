@@ -284,9 +284,11 @@ require([
       varDescElement.textContent = `${my.fullName[my.sVar]}` || "No description available.";
       let pop = document.createElement("calcite-popover");
       pop.id = "popVarDesc";
-      pop.heading = "Variable Description";
+      pop.heading = `${my.sVar} Description`;
+      pop.headingLevel = 3;
       pop.placement = "right";
       pop.autoClose = true;
+      pop.closable = true;
       // Set reference directly to the element
       pop.referenceElement = varDescElement;
       //pop.style.maxWidth = "300px";
