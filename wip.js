@@ -387,7 +387,7 @@ require([
         url: `${baseURL}${i}`,
         outFields: ["*"],
         popupTemplate:{
-        title: "{NAME}"}
+        title: `{NAME}${my.sYear}`}
       })
       my.arcgisMap.addLayer(my.lays[`Layer ${i}`]);
       my.lays[`Layer ${i}`].visible = false;
