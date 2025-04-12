@@ -294,7 +294,7 @@ require([
       `;
       // Set reference directly to the element
       pop.referenceElement = varDescElement;
-      
+      pop.style.maxWidth = "300px";
       // Add to document body
       document.body.appendChild(pop);
       // Update the slider range based on available year values for the selected field
