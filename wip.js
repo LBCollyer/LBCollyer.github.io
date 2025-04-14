@@ -141,7 +141,7 @@ require([
         const targetLongitude = -75.0000;
         my.view.goTo({
           center: [targetLongitude, targetLatitude],
-          zoom: 2  // Set zoom level as needed
+          scale: 4000000   
         }).then(() => {
           alert(my.view.zoom);
           my.view.zoom = 10;
