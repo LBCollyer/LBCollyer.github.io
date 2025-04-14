@@ -137,14 +137,11 @@ require([
     //zoom to Louisiana and show sidebar
     document.addEventListener("wheel", (event) => {
       if (!my.scrolled) {
-        const targetLatitude = 31.0667;
-        const targetLongitude = -75.0000;
+        const targetLatitude = 31.22130138800436;
+        const targetLongitude = -88.6333091760584;
         my.view.goTo({
           center: [targetLongitude, targetLatitude],
-          scale: 4000000   
-        }).then(() => {
-          alert(my.view.zoom);
-          my.view.zoom = 10;
+          scale: 5000000   
         });
         my.scrolled = true;
         my.storyContainer.style.display = "block"; // Show the container
