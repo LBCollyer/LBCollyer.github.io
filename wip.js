@@ -141,9 +141,9 @@ require([
         const targetLongitude = -75.0000;
         my.view.goTo({
           center: [targetLongitude, targetLatitude],
-          zoom: 7  // Set zoom level as needed
+          zoom: 2  // Set zoom level as needed
         }).then(() => {
-          my.view.zoom = 7;
+          my.view.zoom = 10;
         });
         my.scrolled = true;
         my.storyContainer.style.display = "block"; // Show the container
