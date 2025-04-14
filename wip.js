@@ -143,7 +143,7 @@ require([
           center: [targetLongitude, targetLatitude],
           zoom: 2  // Set zoom level as needed
         }).then(() => {
-          alert("Zooming in to ten");
+          alert(my.view.zoom);
           my.view.zoom = 10;
         });
         my.scrolled = true;
