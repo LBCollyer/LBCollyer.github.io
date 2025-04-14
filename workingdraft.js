@@ -196,49 +196,122 @@ require([
         })
       });
     }
-    //Update Choropleth symbology
     function applyChoroplethSymbology(layer, field, year) {
       let query = layer.createQuery();
       const yearField = layer.name === "Layer 9" ? "Year" : "YEAR";
       query.where = `${yearField} = ${year}`;
-      query.outFields = [field];
+      
+      // Check if we're using the Prison_and_Jail_Population_Data layer
+      // and if we should normalize by Combined_Pop
+      const shouldNormalize = 
+        my.sLay === "Prison_and_Jail_Population_Data" && 
+        field !== "Combined_Pop" &&
+        layer.fields.some(f => f.name === "Combined_Pop");
+        
+      // Include Combined_Pop in the query if we're normalizing
+      query.outFields = shouldNormalize ? [field, "Combined_Pop"] : [field];
       query.returnGeometry = false;
-  
+    
       layer.queryFeatures(query).then(result => {
-        let values = result.features.map(f => f.attributes[field]).filter(v => v !== null);
+        // Get values and filter out nulls
+        let values = result.features.map(f => {
+          const val = f.attributes[field];
+          
+          // If we're normalizing and have valid values for both fields
+          if (shouldNormalize && 
+              val !== null && 
+              f.attributes["Combined_Pop"] !== null &&
+              f.attributes["Combined_Pop"] > 0) {
+            // Calculate rate per 100,000 population
+            return (val / f.attributes["Combined_Pop"]) * 100000;
+          }
+          
+          return val;
+        }).filter(v => v !== null);
         
         if (values.length === 0) return;
-
+    
         let min = Math.min(...values);
         let max = Math.max(...values);
         let step = (max - min) / 5;
-
+    
         let classBreakInfos = [
-            { minValue: min, maxValue: min + step, color: "#fef0d9" },
-            { minValue: min + step, maxValue: min + 2 * step, color: "#fdcc8a" },
-            { minValue: min + 2 * step, maxValue: min + 3 * step, color: "#fc8d59" },
-            { minValue: min + 3 * step, maxValue: min + 4 * step, color: "#e34a33" },
-            { minValue: min + 4 * step, maxValue: max, color: "#b30000" }
+          { minValue: min, maxValue: min + step, color: "#fef0d9" },
+          { minValue: min + step, maxValue: min + 2 * step, color: "#fdcc8a" },
+          { minValue: min + 2 * step, maxValue: min + 3 * step, color: "#fc8d59" },
+          { minValue: min + 3 * step, maxValue: min + 4 * step, color: "#e34a33" },
+          { minValue: min + 4 * step, maxValue: max, color: "#b30000" }
         ];
-
+    
+        // Create renderer with normalization if needed
         let renderer = {
-            type: "class-breaks",
-            field: field,
-            classBreakInfos: classBreakInfos.map(info => ({
-                minValue: info.minValue,
-                maxValue: info.maxValue,
-                symbol: { type: "simple-fill", color: info.color }
-            }))
+          type: "class-breaks",
+          field: field,
+          classBreakInfos: classBreakInfos.map(info => ({
+            minValue: info.minValue,
+            maxValue: info.maxValue,
+            symbol: { type: "simple-fill", color: info.color }
+          }))
         };
+        
+        // If normalizing, use valueExpression instead of just the field
+        if (shouldNormalize) {
+          renderer = {
+            type: "class-breaks",
+            valueExpression: `
+              var value = $feature["${field}"];
+              var pop = $feature["Combined_Pop"];
+              return (pop > 0 && value != null) ? (value / pop) * 100000 : null;
+            `,
+            classBreakInfos: classBreakInfos.map(info => ({
+              minValue: info.minValue,
+              maxValue: info.maxValue,
+              symbol: { type: "simple-fill", color: info.color }
+            }))
+          };
+        }
+        
         layer.renderer = renderer;
       
-        // Update popup template dynamically
+        // Update popup template dynamically with normalization info
+        const fieldLabel = field.replace(/_/g, " ");
+        let popupContent = `<b>${fieldLabel}:</b> {${field}}`;
+        
+        if (shouldNormalize) {
+          popupContent = `
+            <b>${fieldLabel}:</b> {${field}}<br>
+            <b>Combined Population:</b> {Combined_Pop}<br>
+            <b>Rate per 100,000:</b> ${getExpressionInfoForPopup(field)}
+          `;
+        }
+        
         layer.popupTemplate = {
-            title: "{NAME}",
-            content: `<b>${field.replace(/_/g, " ")}:</b> {${field}}`
+          title: "{NAME}",
+          content: popupContent,
+          expressionInfos: shouldNormalize ? [{
+            name: "normalizedRate",
+            expression: `
+              var value = $feature["${field}"];
+              var pop = $feature["Combined_Pop"];
+              return (pop > 0 && value != null) ? (value / pop) * 100000 : 0;
+            `
+          }] : []
         };
-        updateLegend2(classBreakInfos, field);
+        
+        // Update legend title to indicate normalization
+        const legendTitle = shouldNormalize ? 
+          `${fieldLabel} (Rate per 100,000)` : 
+          fieldLabel;
+          
+        updateLegend2(classBreakInfos, legendTitle);
       }).catch(error => console.error("Query failed:", error));
+    }
+    
+    // Helper function to format the normalized rate expression for the popup
+    function getExpressionInfoForPopup(field) {
+      return `
+        <span>{expression/normalizedRate}</span>
+      `;
     }
 
     //Update UI2 when new layer selected
@@ -364,6 +437,19 @@ require([
         if (my.selectVar.value) { my.sVar = my.selectVar.value; }
         applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
     });
+    // Add a toggle for normalization to your HTML
+    // <calcite-switch id="normalizeToggle" label="Normalize by Population"></calcite-switch>
+    
+    // Then update your event listeners:
+    document.getElementById("normalizeToggle").addEventListener("calciteSwitchChange", (event) => {
+      my.shouldNormalize = event.target.checked;
+      if (my.selectVar.value) { my.sVar = my.selectVar.value; }
+      if (my.yearSlider.value) { my.sYear = my.yearSlider.value; }
+      applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
+    });
+    
+    // Make sure to initialize the normalization setting in your initial setup
+    my.shouldNormalize = document.getElementById("normalizeToggle").checked;
     // Adding base and data layers
     const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
     const baseLayers = [33, 34, 10]; 
