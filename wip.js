@@ -160,7 +160,7 @@ require([
           my.storyContainer.style.pointerEvents = "none"; // Disable interaction
           my.view.goTo({
             center:[-98, 39],
-            scale: 10000000 
+            scale: 17000000 
           })
           if (my.corFacil) {
             my.corFacil.visible = false;
