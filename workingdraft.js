@@ -204,7 +204,7 @@ require([
       // Check if we're using the Prison_and_Jail_Population_Data layer
       // and if we should normalize by Combined_Pop
       const shouldNormalize = 
-        my.sLay === "Prison_and_Jail_Population_Data" && 
+        my.sLay !== "Prison_and_Jail_Population_Data" && 
         field !== "Combined_Pop" &&
         layer.fields.some(f => f.name === "Combined_Pop");
         
