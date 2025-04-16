@@ -205,8 +205,9 @@ require([
       // and if we should normalize by Combined_Pop
       const shouldNormalize = 
         my.sLay !== "Prison_and_Jail_Population_Data" && 
-        field !== "Combined_Pop" &&
-        layer.fields.some(f => f.name === "Combined_Pop");
+        field !== "Combined_Pop";
+        //&&
+        //layer.fields.some(f => f.name === "Combined_Pop");
         
       // Include Combined_Pop in the query if we're normalizing
       query.outFields = shouldNormalize ? [field, "Combined_Pop"] : [field];
