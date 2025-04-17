@@ -276,7 +276,7 @@ require([
         const fieldLabel = field.replace(/_/g, " ");
         let popupContent = `<b>${fieldLabel}:</b> {${field}}`;
         
-        if (my.rmalize) {
+        if (my.shouldNormalize) {
           popupContent = `
             <b>${fieldLabel}:</b> {${field}}<br>
             <b>Combined Population:</b> {Combined_Pop}<br>
