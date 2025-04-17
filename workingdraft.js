@@ -196,42 +196,65 @@ require([
         })
       });
     }
+//---------------------------------------------------------------------------------------------------------------------------------------    
     function applyChoroplethSymbology(layer, field, year) {
-      let query = layer.createQuery();
       const yearField = layer.name === "Layer 9" ? "Year" : "YEAR";
-      query.where = `${yearField} = ${year}`;
       
-      // Check if we're using the Prison_and_Jail_Population_Data layer
-      // and if we should normalize by Combined_Pop
-      my.shouldNormalize = 
-        my.sLay !== "Prison_and_Jail_Population_Data" && 
-        field !== "Combined_Pop";
-        
-      // Include Combined_Pop in the query if we're normalizing
-      query.outFields = my.shouldNormalize ? [field, "Combined_Pop"] : [field];
+      // First, check if we should normalize (user has toggled normalization on)
+      const shouldNormalize = my.shouldNormalize && field !== "Combined_Pop";
+      
+      // Step 1: Get the current layer data
+      let query = layer.createQuery();
+      query.where = `${yearField} = ${year}`;
+      query.outFields = ["NAME", field];
       query.returnGeometry = false;
-    
-      layer.queryFeatures(query).then(result => {
-        // Get values and filter out nulls
-        my.values = result.features.map(f => {
+      
+      // Step 2: If normalizing, also get population data from Layer 9 (assuming it's Prison_and_Jail_Population_Data)
+      let populationPromise;
+      if (shouldNormalize) {
+        const popLayer = my.lays["Layer 9"]; // Prison_and_Jail_Population_Data layer
+        let popQuery = popLayer.createQuery();
+        popQuery.where = `Year = ${year}`;
+        popQuery.outFields = ["NAME", "Combined_Pop"];
+        popQuery.returnGeometry = false;
+        populationPromise = popLayer.queryFeatures(popQuery);
+      }
+      
+      // Execute queries and process results
+      Promise.all([
+        layer.queryFeatures(query),
+        shouldNormalize ? populationPromise : Promise.resolve(null)
+      ]).then(([result, popResult]) => {
+        // Create lookup map for population data if normalizing
+        let popMap = {};
+        
+        if (shouldNormalize && popResult) {
+          popResult.features.forEach(feature => {
+            const stateName = feature.attributes.NAME;
+            const pop = feature.attributes.Combined_Pop;
+            if (pop && pop > 0) {
+              popMap[stateName] = pop;
+            }
+          });
+        }
+        
+        // Process values with normalization if needed
+        let values = result.features.map(f => {
           const val = f.attributes[field];
+          const stateName = f.attributes.NAME;
           
-          // If we're normalizing and have valid values for both fields
-          if (my.shouldNormalize && 
-              val !== null && 
-              f.attributes["Combined_Pop"] !== null &&
-              f.attributes["Combined_Pop"] > 0) {
+          if (shouldNormalize && val !== null && popMap[stateName]) {
             // Calculate rate per 100,000 population
-            return (val / f.attributes["Combined_Pop"]) * 100000;
+            return (val / popMap[stateName]) * 100000;
           }
           
           return val;
         }).filter(v => v !== null);
         
-        if (my.values.length === 0) return;
+        if (values.length === 0) return;
     
-        let min = Math.min(...my.values);
-        let max = Math.max(...my.values);
+        let min = Math.min(...values);
+        let max = Math.max(...values);
         let step = (max - min) / 5;
     
         let classBreakInfos = [
@@ -242,26 +265,43 @@ require([
           { minValue: min + 4 * step, maxValue: max, color: "#b30000" }
         ];
     
-        // Create renderer with normalization if needed
-        let renderer = {
-          type: "class-breaks",
-          field: field,
-          classBreakInfos: classBreakInfos.map(info => ({
-            minValue: info.minValue,
-            maxValue: info.maxValue,
-            symbol: { type: "simple-fill", color: info.color }
-          }))
-        };
-        
-        // If normalizing, use valueExpression instead of just the field
-        if (my.shouldNormalize) {
-          renderer = {
+        // Update renderer
+        if (shouldNormalize) {
+          // For normalization we need to use a function renderer
+          // Convert popMap to a JSON string for use in valueExpression
+          const popMapJSON = JSON.stringify(popMap);
+          
+          layer.renderer = {
+            type: "simple",
+            symbol: { type: "simple-fill", color: "#AAAAAA" },
+            visualVariables: [{
+              type: "color",
+              valueExpression: `
+                var stateName = $feature.NAME;
+                var value = $feature["${field}"];
+                var popMap = ${popMapJSON};
+                var pop = popMap[stateName];
+                
+                // Return normalized value if we have population data
+                if (pop > 0 && value != null) {
+                  return (value / pop) * 100000;
+                }
+                return null;
+              `,
+              stops: [
+                { value: min, color: "#fef0d9" },
+                { value: min + step, color: "#fdcc8a" },
+                { value: min + 2 * step, color: "#fc8d59" },
+                { value: min + 3 * step, color: "#e34a33" },
+                { value: max, color: "#b30000" }
+              ]
+            }]
+          };
+        } else {
+          // Standard renderer without normalization
+          layer.renderer = {
             type: "class-breaks",
-            valueExpression: `
-              var value = $feature["${field}"];
-              var pop = $feature["Combined_Pop"];
-              return (pop > 0 && value != null) ? (value / pop) * 100000 : null;
-            `,
+            field: field,
             classBreakInfos: classBreakInfos.map(info => ({
               minValue: info.minValue,
               maxValue: info.maxValue,
@@ -270,41 +310,47 @@ require([
           };
         }
         
-        layer.renderer = renderer;
-      
-        // Update popup template dynamically with normalization info
+        // Update popup template to include normalized values if applicable
         const fieldLabel = field.replace(/_/g, " ");
         let popupContent = `<b>${fieldLabel}:</b> {${field}}`;
         
-        if (my.shouldNormalize) {
-          popupContent = `
-            <b>${fieldLabel}:</b> {${field}}<br>
-            <b>Combined Population:</b> {Combined_Pop}<br>
-            <b>Rate per 100,000:</b> ${getExpressionInfoForPopup(field)}
-          `;
+        if (shouldNormalize) {
+          // Add expression that will calculate normalized value in popup
+          layer.popupTemplate = {
+            title: "{NAME}",
+            content: `
+              <b>${fieldLabel}:</b> {${field}}<br>
+              <b>Rate per 100,000:</b> {expression/normalizedRate}
+            `,
+            expressionInfos: [{
+              name: "normalizedRate",
+              expression: `
+                var stateName = $feature.NAME;
+                var value = $feature["${field}"];
+                var popMap = ${popMapJSON};
+                var pop = popMap[stateName];
+                
+                if (pop > 0 && value != null) {
+                  return Text.FormatNumber((value / pop) * 100000, "#,##0.00");
+                }
+                return "N/A";
+              `
+            }]
+          };
+        } else {
+          layer.popupTemplate = {
+            title: "{NAME}",
+            content: popupContent
+          };
         }
         
-        layer.popupTemplate = {
-          title: "{NAME}",
-          content: popupContent,
-          expressionInfos: my.shouldNormalize ? [{
-            name: "normalizedRate",
-            expression: `
-              var value = $feature["${field}"];
-              var pop = $feature["Combined_Pop"];
-              return (pop > 0 && value != null) ? (value / pop) * 100000 : 0;
-            `
-          }] : []
-        };
-        
         // Update legend title to indicate normalization
-        const legendTitle = my.shouldNormalize ? 
+        const legendTitle = shouldNormalize ? 
           `${fieldLabel} (Rate per 100,000)` : 
           fieldLabel;
           
         updateLegend2(classBreakInfos, legendTitle);
-      })
-                                     //).catch(error => console.error("Query failed:", error));
+      }).catch(error => console.error("Queries failed:", error));
     }
     
     // Helper function to format the normalized rate expression for the popup
@@ -313,7 +359,7 @@ require([
         <span>{expression/normalizedRate}</span>
       `;
     }
-
+//---------------------------------------------------------------------------------------------------
     //Update UI2 when new layer selected
     function updateUI2(chosenLayer) {
       my.layerName = "Layer " + (my.layerNames.indexOf(chosenLayer) + 1)
