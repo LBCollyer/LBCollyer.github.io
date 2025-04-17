@@ -451,7 +451,7 @@ require([
     my.shouldNormalize = document.getElementById("normalizeToggle").checked;
     // Adding base and data layers
     const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
-    const baseLayers = [33, 34, 10]; 
+    const baseLayers = [34, 10]; 
     baseLayers.forEach(id => {
       my.arcgisMap.addLayer(new FeatureLayer({
         url: `${baseURL}${id}`,
