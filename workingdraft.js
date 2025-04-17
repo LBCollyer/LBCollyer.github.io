@@ -213,7 +213,7 @@ require([
     
       layer.queryFeatures(query).then(result => {
         // Get values and filter out nulls
-        let values = result.features.map(f => {
+        my.values = result.features.map(f => {
           const val = f.attributes[field];
           
           // If we're normalizing and have valid values for both fields
@@ -228,10 +228,10 @@ require([
           return val;
         }).filter(v => v !== null);
         
-        if (values.length === 0) return;
+        if (my.values.length === 0) return;
     
-        let min = Math.min(...values);
-        let max = Math.max(...values);
+        let min = Math.min(...my.values);
+        let max = Math.max(...my.values);
         let step = (max - min) / 5;
     
         let classBreakInfos = [
