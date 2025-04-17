@@ -206,45 +206,64 @@ require([
         field !== "Prison_population" && 
         field !== "Jail_Population__Adjusted_";
       
-      // Step 1: Get the current layer data with all potential population fields
+      // Step 1: Get the current layer data
       let query = layer.createQuery();
       query.where = `${yearField} = ${year}`;
-      
-      // Add all needed fields to the query
-      const popFields = ["Combined_Pop", "Prison_population", "Jail_Population__Adjusted_"];
-      query.outFields = ["NAME", field, ...popFields];
+      query.outFields = ["NAME", field];
       query.returnGeometry = false;
       
-      layer.queryFeatures(query).then(result => {
-        // Process values with normalization if needed
-        let values = [];
-        let dataMap = {}; // Store normalized values for renderer
-        let popMap = {};  // Store population values for each state
+      // Step 2: If normalizing, also get population data from Layer 9
+      let populationPromise;
+      if (shouldNormalize) {
+        const popLayer = my.lays["Layer 9"]; // Prison_and_Jail_Population_Data layer
+        let popQuery = popLayer.createQuery();
+        popQuery.where = `Year = ${year}`;
+        popQuery.outFields = ["NAME", "Combined_Pop", "Prison_population", "Jail_Population__Adjusted_"];
+        popQuery.returnGeometry = false;
+        populationPromise = popLayer.queryFeatures(popQuery);
+      }
+      
+      // Execute queries and process results
+      Promise.all([
+        layer.queryFeatures(query),
+        shouldNormalize ? populationPromise : Promise.resolve(null)
+      ]).then(([result, popResult]) => {
+        // Create lookup map for population data if normalizing
+        let popMap = {};
+        let popSourceMap = {}; // Which field was used for each state
         
-        // First, create a population map with fallback logic
-        if (shouldNormalize) {
-          result.features.forEach(feature => {
+        if (shouldNormalize && popResult) {
+          // Process population data with fallback logic
+          popResult.features.forEach(feature => {
             const stateName = feature.attributes.NAME;
             
-            // Try each population field in order of preference
+            // Try each population field in order
+            const popFields = ["Combined_Pop", "Prison_population", "Jail_Population__Adjusted_"];
             let populationValue = null;
+            let sourceField = null;
+            
             for (const popField of popFields) {
               const val = feature.attributes[popField];
               if (val !== null && val > 0) {
                 populationValue = val;
+                sourceField = popField;
                 break; // Use the first valid population value we find
               }
             }
             
             if (populationValue !== null) {
               popMap[stateName] = populationValue;
+              popSourceMap[stateName] = sourceField;
             }
           });
           
           console.log("Population data available for states:", Object.keys(popMap));
+          console.log("Population sources used:", popSourceMap);
         }
         
-        // Now process the data with our population values
+        // Process values with normalization if needed
+        let values = [];
+        
         result.features.forEach(f => {
           const val = f.attributes[field];
           const stateName = f.attributes.NAME;
@@ -253,14 +272,8 @@ require([
             if (shouldNormalize && popMap[stateName]) {
               const normalizedVal = (val / popMap[stateName]) * 100000;
               values.push(normalizedVal);
-              dataMap[stateName] = {
-                original: val,
-                normalized: normalizedVal,
-                population: popMap[stateName]
-              };
             } else {
               values.push(val);
-              dataMap[stateName] = { original: val };
               if (shouldNormalize) {
                 console.log(`No population data for: ${stateName}`);
               }
@@ -285,45 +298,47 @@ require([
           { minValue: min + 4 * step, maxValue: max, color: "#b30000" }
         ];
     
-        // Update renderer with fallback logic for population
+        // Create a JSON string of the population data to use in expressions
+        const popMapJSON = JSON.stringify(popMap);
+        const popSourceMapJSON = JSON.stringify(popSourceMap);
+        
+        // Create a pretty label for each population source field
+        const sourceLabels = {
+          "Combined_Pop": "Combined Population",
+          "Prison_population": "Prison Population",
+          "Jail_Population__Adjusted_": "Jail Population (Adjusted)"
+        };
+        const sourceLabelsJSON = JSON.stringify(sourceLabels);
+    
+        // Update renderer
         if (shouldNormalize) {
           layer.renderer = {
-            type: "class-breaks",
-            field: field,
-            classBreakInfos: classBreakInfos.map(info => ({
-              minValue: info.minValue,
-              maxValue: info.maxValue,
-              symbol: { type: "simple-fill", color: info.color }
-            })),
-            valueExpression: `
-              // Get the original value
-              var value = $feature["${field}"];
-              
-              // Try to find a matching state in our population data
-              var stateName = $feature.NAME;
-              
-              // Check each population field in order
-              var population = 0;
-              
-              // Use the population data we've already collected
-              var populationValue = Dictionary(
-                ${Object.keys(popMap).map(state => 
-                  `"${state}", ${popMap[state]}`
-                ).join(', ')}
-              )[stateName];
-              
-              if (populationValue > 0) {
-                population = populationValue;
-              }
+            type: "simple",
+            symbol: { type: "simple-fill", color: "#AAAAAA" },
+            visualVariables: [{
+              type: "color",
+              valueExpression: `
+                var stateName = $feature.NAME;
+                var value = $feature["${field}"];
                 
-              // Return normalized value if we have population, otherwise null
-              if (population > 0) {
-                return (value / population) * 100000;
-              }
-              
-              // Return undefined to use default symbol for states without data
-              return null;
-            `
+                // Use our pre-computed population map
+                var popMap = ${popMapJSON};
+                var pop = popMap[stateName];
+                
+                // Return normalized value if we have population data
+                if (pop > 0 && value != null) {
+                  return (value / pop) * 100000;
+                }
+                return null;
+              `,
+              stops: [
+                { value: min, color: "#fef0d9" },
+                { value: min + step, color: "#fdcc8a" },
+                { value: min + 2 * step, color: "#fc8d59" },
+                { value: min + 3 * step, color: "#e34a33" },
+                { value: max, color: "#b30000" }
+              ]
+            }]
           };
         } else {
           // Standard renderer without normalization
@@ -338,16 +353,15 @@ require([
           };
         }
         
-        // Update popup template with fallback population logic
+        // Update popup template
         const fieldLabel = field.replace(/_/g, " ");
         
         if (shouldNormalize) {
-          // Determine which population field was used for the popup
           layer.popupTemplate = {
             title: "{NAME}",
             content: `
               <b>${fieldLabel}:</b> {${field}}<br>
-              <b>Population Used:</b> {expression/populationSource}<br>
+              <b>Population Data Source:</b> {expression/populationSource}<br>
               <b>Population Value:</b> {expression/population}<br>
               <b>Rate per 100,000:</b> {expression/normalizedRate}
             `,
@@ -359,14 +373,11 @@ require([
                   var stateName = $feature.NAME;
                   
                   // Get population from our lookup
-                  var population = Dictionary(
-                    ${Object.keys(popMap).map(state => 
-                      `"${state}", ${popMap[state]}`
-                    ).join(', ')}
-                  )[stateName];
+                  var popMap = ${popMapJSON};
+                  var pop = popMap[stateName];
                   
-                  if (population > 0) {
-                    return Text.FormatNumber((value / population) * 100000, "#,##0.00");
+                  if (pop > 0 && value != null) {
+                    return Text.FormatNumber((value / pop) * 100000, "#,##0.00");
                   }
                   return "No population data";
                 `
@@ -377,14 +388,11 @@ require([
                   var stateName = $feature.NAME;
                   
                   // Get population from our lookup
-                  var population = Dictionary(
-                    ${Object.keys(popMap).map(state => 
-                      `"${state}", ${popMap[state]}`
-                    ).join(', ')}
-                  )[stateName];
+                  var popMap = ${popMapJSON};
+                  var pop = popMap[stateName];
                   
-                  if (population > 0) {
-                    return Text.FormatNumber(population, "#,##0");
+                  if (pop > 0) {
+                    return Text.FormatNumber(pop, "#,##0");
                   }
                   return "No data";
                 `
@@ -394,14 +402,16 @@ require([
                 expression: `
                   var stateName = $feature.NAME;
                   
-                  // Check each field in sequence to determine which one was used
-                  if ($feature["Combined_Pop"] > 0) {
-                    return "Combined Population";
-                  } else if ($feature["Prison_population"] > 0) {
-                    return "Prison Population";
-                  } else if ($feature["Jail_Population__Adjusted_"] > 0) {
-                    return "Jail Population (Adjusted)";
+                  // Get the source field that was used
+                  var sourceMap = ${popSourceMapJSON};
+                  var source = sourceMap[stateName];
+                  
+                  if (source) {
+                    // Convert to a friendly name
+                    var labels = ${sourceLabelsJSON};
+                    return labels[source] || source;
                   }
+                  
                   return "None (Data Unavailable)";
                 `
               }
@@ -420,7 +430,7 @@ require([
           fieldLabel;
           
         updateLegend2(classBreakInfos, legendTitle);
-      }).catch(error => console.error("Query failed:", error));
+      }).catch(error => console.error("Queries failed:", error));
     }
 //---------------------------------------------------------------------------------------------------
     //Update UI2 when new layer selected
