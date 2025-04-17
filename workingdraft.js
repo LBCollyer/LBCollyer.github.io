@@ -303,7 +303,8 @@ require([
           fieldLabel;
           
         updateLegend2(classBreakInfos, legendTitle);
-      }).catch(error => console.error("Query failed:", error));
+      })
+                                     //).catch(error => console.error("Query failed:", error));
     }
     
     // Helper function to format the normalized rate expression for the popup
