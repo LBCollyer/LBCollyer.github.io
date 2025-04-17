@@ -266,11 +266,10 @@ require([
         ];
     
         // Update renderer
+        const popMapJSON = JSON.stringify(popMap);
         if (shouldNormalize) {
           // For normalization we need to use a function renderer
-          // Convert popMap to a JSON string for use in valueExpression
-          const popMapJSON = JSON.stringify(popMap);
-          
+          // Convert popMap to a JSON string for use in valueExpression  
           layer.renderer = {
             type: "simple",
             symbol: { type: "simple-fill", color: "#AAAAAA" },
