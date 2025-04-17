@@ -203,13 +203,13 @@ require([
       
       // Check if we're using the Prison_and_Jail_Population_Data layer
       // and if we should normalize by Combined_Pop
-      const shouldNormalize = 
+      my.shouldNormalize = 
         my.sLay !== "Prison_and_Jail_Population_Data" && 
         field !== "Combined_Pop" &&
         layer.fields.some(f => f.name === "Combined_Pop");
         
       // Include Combined_Pop in the query if we're normalizing
-      query.outFields = shouldNormalize ? [field, "Combined_Pop"] : [field];
+      query.outFields = my.shouldNormalize ? [field, "Combined_Pop"] : [field];
       query.returnGeometry = false;
     
       layer.queryFeatures(query).then(result => {
@@ -218,7 +218,7 @@ require([
           const val = f.attributes[field];
           
           // If we're normalizing and have valid values for both fields
-          if (shouldNormalize && 
+          if (my.shouldNormalize && 
               val !== null && 
               f.attributes["Combined_Pop"] !== null &&
               f.attributes["Combined_Pop"] > 0) {
@@ -255,7 +255,7 @@ require([
         };
         
         // If normalizing, use valueExpression instead of just the field
-        if (shouldNormalize) {
+        if (my.shouldNormalize) {
           renderer = {
             type: "class-breaks",
             valueExpression: `
@@ -277,7 +277,7 @@ require([
         const fieldLabel = field.replace(/_/g, " ");
         let popupContent = `<b>${fieldLabel}:</b> {${field}}`;
         
-        if (shouldNormalize) {
+        if (my.shouldNormalize) {
           popupContent = `
             <b>${fieldLabel}:</b> {${field}}<br>
             <b>Combined Population:</b> {Combined_Pop}<br>
@@ -288,7 +288,7 @@ require([
         layer.popupTemplate = {
           title: "{NAME}",
           content: popupContent,
-          expressionInfos: shouldNormalize ? [{
+          expressionInfos: my.shouldNormalize ? [{
             name: "normalizedRate",
             expression: `
               var value = $feature["${field}"];
@@ -299,7 +299,7 @@ require([
         };
         
         // Update legend title to indicate normalization
-        const legendTitle = shouldNormalize ? 
+        const legendTitle = my.shouldNormalize ? 
           `${fieldLabel} (Rate per 100,000)` : 
           fieldLabel;
           
