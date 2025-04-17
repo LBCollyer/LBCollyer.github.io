@@ -287,7 +287,7 @@ require([
         layer.popupTemplate = {
           title: "{NAME}",
           content: popupContent,
-          expressionInfos: my.rmalize ? [{
+          expressionInfos: my.shouldNormalize ? [{
             name: "normalizedRate",
             expression: `
               var value = $feature["${field}"];
