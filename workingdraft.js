@@ -312,6 +312,7 @@ require([
     
         // Update renderer
         if (shouldNormalize) {
+          // Replace the current renderer with this:
           layer.renderer = {
             type: "simple",
             symbol: { type: "simple-fill", color: "#AAAAAA" },
@@ -336,6 +337,7 @@ require([
                 { value: min + step, color: "#fdcc8a" },
                 { value: min + 2 * step, color: "#fc8d59" },
                 { value: min + 3 * step, color: "#e34a33" },
+                { value: min + 4 * step, color: "#e34a33" },
                 { value: max, color: "#b30000" }
               ]
             }]
