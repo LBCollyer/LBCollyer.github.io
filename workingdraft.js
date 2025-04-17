@@ -205,8 +205,7 @@ require([
       // and if we should normalize by Combined_Pop
       my.shouldNormalize = 
         my.sLay !== "Prison_and_Jail_Population_Data" && 
-        field !== "Combined_Pop" &&
-        layer.fields.some(f => f.name === "Combined_Pop");
+        field !== "Combined_Pop";
         
       // Include Combined_Pop in the query if we're normalizing
       query.outFields = my.shouldNormalize ? [field, "Combined_Pop"] : [field];
@@ -277,7 +276,7 @@ require([
         const fieldLabel = field.replace(/_/g, " ");
         let popupContent = `<b>${fieldLabel}:</b> {${field}}`;
         
-        if (my.shouldNormalize) {
+        if (my.rmalize) {
           popupContent = `
             <b>${fieldLabel}:</b> {${field}}<br>
             <b>Combined Population:</b> {Combined_Pop}<br>
@@ -288,7 +287,7 @@ require([
         layer.popupTemplate = {
           title: "{NAME}",
           content: popupContent,
-          expressionInfos: my.shouldNormalize ? [{
+          expressionInfos: my.rmalize ? [{
             name: "normalizedRate",
             expression: `
               var value = $feature["${field}"];
