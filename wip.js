@@ -6,17 +6,10 @@ fetch("https://lbcollyer.github.io/varList.csv")
   .then(csv => {
     const lines = csv.split("\n").filter(line => line.trim() !== "");
     lines.shift(); // remove header
-
     lines.forEach(line => {
-      const [shortName, fullName, description] = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); // split by comma outside quotes
-
-      if (shortName && description) {
-        const cleanShort = shortName.trim();
-        const cleanDesc = description.trim().replace(/^"|"$/g, "");
-        my.varDesc[cleanShort] = cleanDesc;
-        // optionally store the full name too:
-        my.fullName = my.fullName || {};
-        my.fullName[cleanShort] = fullName.trim().replace(/^"|"$/g, "");
+      const [variable, description] = line.split(/,(.+)/); // split only on first comma
+      if (variable && description) {
+        my.varDesc[variable.trim()] = description.trim().replace(/^"|"$/g, "");
       }
     });
   })
@@ -137,11 +130,13 @@ require([
     //zoom to Louisiana and show sidebar
     document.addEventListener("wheel", (event) => {
       if (!my.scrolled) {
-        const targetLatitude = 31.22130138800436;
-        const targetLongitude = -88.6333091760584;
+        const targetLatitude = 31.0667;
+        const targetLongitude = -75.0000;
         my.view.goTo({
           center: [targetLongitude, targetLatitude],
-          scale: 5000000   
+          zoom: 7  // Set zoom level as needed
+        }).then(() => {
+          my.view.zoom = 7;
         });
         my.scrolled = true;
         my.storyContainer.style.display = "block"; // Show the container
@@ -160,7 +155,7 @@ require([
           my.storyContainer.style.pointerEvents = "none"; // Disable interaction
           my.view.goTo({
             center:[-98, 39],
-            scale: 20000000 
+            zoom: 5
           })
           if (my.corFacil) {
             my.corFacil.visible = false;
@@ -201,51 +196,245 @@ require([
         })
       });
     }
-    //Update Choropleth symbology
+//---------------------------------------------------------------------------------------------------------------------------------------    
     function applyChoroplethSymbology(layer, field, year) {
-      let query = layer.createQuery();
       const yearField = layer.name === "Layer 9" ? "Year" : "YEAR";
+      
+      // First, check if we should normalize
+      const shouldNormalize = my.shouldNormalize && 
+        field !== "Combined_Pop" && 
+        field !== "Prison_population" && 
+        field !== "Jail_Population__Adjusted_";
+      
+      // Step 1: Get the current layer data
+      let query = layer.createQuery();
       query.where = `${yearField} = ${year}`;
-      query.outFields = [field];
+      query.outFields = ["NAME", field];
       query.returnGeometry = false;
-  
-      layer.queryFeatures(query).then(result => {
-        let values = result.features.map(f => f.attributes[field]).filter(v => v !== null);
+      
+      // Step 2: If normalizing, also get population data from Layer 9
+      let populationPromise;
+      if (shouldNormalize) {
+        const popLayer = my.lays["Layer 9"]; // Prison_and_Jail_Population_Data layer
+        let popQuery = popLayer.createQuery();
+        popQuery.where = `Year = ${year}`;
+        popQuery.outFields = ["NAME", "Combined_Pop", "Prison_population", "Jail_Population__Adjusted_"];
+        popQuery.returnGeometry = false;
+        populationPromise = popLayer.queryFeatures(popQuery);
+      }
+      
+      // Execute queries and process results
+      Promise.all([
+        layer.queryFeatures(query),
+        shouldNormalize ? populationPromise : Promise.resolve(null)
+      ]).then(([result, popResult]) => {
+        // Create lookup map for population data if normalizing
+        let popMap = {};
+        let popSourceMap = {}; // Which field was used for each state
         
-        if (values.length === 0) return;
-
+        if (shouldNormalize && popResult) {
+          // Process population data with fallback logic
+          popResult.features.forEach(feature => {
+            const stateName = feature.attributes.NAME;
+            
+            // Try each population field in order
+            const popFields = ["Combined_Pop", "Prison_population", "Jail_Population__Adjusted_"];
+            let populationValue = null;
+            let sourceField = null;
+            
+            for (const popField of popFields) {
+              const val = feature.attributes[popField];
+              if (val !== null && val > 0) {
+                populationValue = val;
+                sourceField = popField;
+                break; // Use the first valid population value we find
+              }
+            }
+            
+            if (populationValue !== null) {
+              popMap[stateName] = populationValue;
+              popSourceMap[stateName] = sourceField;
+            }
+          });
+          
+          console.log("Population data available for states:", Object.keys(popMap));
+          console.log("Population sources used:", popSourceMap);
+        }
+        
+        // Process values with normalization if needed
+        let values = [];
+        
+        result.features.forEach(f => {
+          const val = f.attributes[field];
+          const stateName = f.attributes.NAME;
+          
+          if (val !== null) {
+            if (shouldNormalize && popMap[stateName]) {
+              const normalizedVal = (val / popMap[stateName]) * 100000;
+              values.push(normalizedVal);
+            } else {
+              values.push(val);
+              if (shouldNormalize) {
+                console.log(`No population data for: ${stateName}`);
+              }
+            }
+          }
+        });
+        
+        if (values.length === 0) {
+          console.warn("No valid values to display after normalization");
+          return;
+        }
+    
         let min = Math.min(...values);
         let max = Math.max(...values);
         let step = (max - min) / 5;
-
+    
         let classBreakInfos = [
-            { minValue: min, maxValue: min + step, color: "#fef0d9" },
-            { minValue: min + step, maxValue: min + 2 * step, color: "#fdcc8a" },
-            { minValue: min + 2 * step, maxValue: min + 3 * step, color: "#fc8d59" },
-            { minValue: min + 3 * step, maxValue: min + 4 * step, color: "#e34a33" },
-            { minValue: min + 4 * step, maxValue: max, color: "#b30000" }
+          { minValue: min, maxValue: min + step, color: "#fef0d9" },
+          { minValue: min + step, maxValue: min + 2 * step, color: "#fdcc8a" },
+          { minValue: min + 2 * step, maxValue: min + 3 * step, color: "#fc8d59" },
+          { minValue: min + 3 * step, maxValue: min + 4 * step, color: "#e34a33" },
+          { minValue: min + 4 * step, maxValue: max, color: "#b30000" }
         ];
-
-        let renderer = {
+    
+        // Create a JSON string of the population data to use in expressions
+        const popMapJSON = JSON.stringify(popMap);
+        const popSourceMapJSON = JSON.stringify(popSourceMap);
+        
+        // Create a pretty label for each population source field
+        const sourceLabels = {
+          "Combined_Pop": "Combined Population",
+          "Prison_population": "Prison Population",
+          "Jail_Population__Adjusted_": "Jail Population (Adjusted)"
+        };
+        const sourceLabelsJSON = JSON.stringify(sourceLabels);
+    
+        // Update renderer
+        if (shouldNormalize) {
+          // Replace the current renderer with this:
+          layer.renderer = {
+            type: "simple",
+            symbol: { type: "simple-fill", color: "#AAAAAA" },
+            visualVariables: [{
+              type: "color",
+              valueExpression: `
+                var stateName = $feature.NAME;
+                var value = $feature["${field}"];
+                
+                // Use our pre-computed population map
+                var popMap = ${popMapJSON};
+                var pop = popMap[stateName];
+                
+                // Return normalized value if we have population data
+                if (pop > 0 && value != null) {
+                  return (value / pop) * 100000;
+                }
+                return null;
+              `,
+              stops: [
+                { value: min, color: "#fef0d9" },
+                { value: min + step, color: "#fdcc8a" },
+                { value: min + 2 * step, color: "#fc8d59" },
+                { value: min + 3 * step, color: "#e34a33" },
+                { value: min + 4 * step, color: "#e34a33" },
+                { value: max, color: "#b30000" }
+              ]
+            }]
+          };
+        } else {
+          // Standard renderer without normalization
+          layer.renderer = {
             type: "class-breaks",
             field: field,
             classBreakInfos: classBreakInfos.map(info => ({
-                minValue: info.minValue,
-                maxValue: info.maxValue,
-                symbol: { type: "simple-fill", color: info.color }
+              minValue: info.minValue,
+              maxValue: info.maxValue,
+              symbol: { type: "simple-fill", color: info.color }
             }))
-        };
-        layer.renderer = renderer;
-      
-        // Update popup template dynamically
-        layer.popupTemplate = {
+          };
+        }
+        
+        // Update popup template
+        const fieldLabel = field.replace(/_/g, " ");
+        
+        if (shouldNormalize) {
+          layer.popupTemplate = {
             title: "{NAME}",
-            content: `<b>${field.replace(/_/g, " ")}:</b> {${field}}`
-        };
-        updateLegend2(classBreakInfos, field);
-      }).catch(error => console.error("Query failed:", error));
+            content: `
+              <b>${fieldLabel}:</b> {${field}}<br>
+              <b>Population Data Source:</b> {expression/populationSource}<br>
+              <b>Population Value:</b> {expression/population}<br>
+              <b>Rate per 100,000:</b> {expression/normalizedRate}
+            `,
+            expressionInfos: [
+              {
+                name: "normalizedRate",
+                expression: `
+                  var value = $feature["${field}"];
+                  var stateName = $feature.NAME;
+                  
+                  // Get population from our lookup
+                  var popMap = ${popMapJSON};
+                  var pop = popMap[stateName];
+                  
+                  if (pop > 0 && value != null) {
+                    return Text.FormatNumber((value / pop) * 100000, "#,##0.00");
+                  }
+                  return "No population data";
+                `
+              },
+              {
+                name: "population",
+                expression: `
+                  var stateName = $feature.NAME;
+                  
+                  // Get population from our lookup
+                  var popMap = ${popMapJSON};
+                  var pop = popMap[stateName];
+                  
+                  if (pop > 0) {
+                    return Text.FormatNumber(pop, "#,##0");
+                  }
+                  return "No data";
+                `
+              },
+              {
+                name: "populationSource",
+                expression: `
+                  var stateName = $feature.NAME;
+                  
+                  // Get the source field that was used
+                  var sourceMap = ${popSourceMapJSON};
+                  var source = sourceMap[stateName];
+                  
+                  if (source) {
+                    // Convert to a friendly name
+                    var labels = ${sourceLabelsJSON};
+                    return labels[source] || source;
+                  }
+                  
+                  return "None (Data Unavailable)";
+                `
+              }
+            ]
+          };
+        } else {
+          layer.popupTemplate = {
+            title: "{NAME}",
+            content: `<b>${fieldLabel}:</b> {${field}}`
+          };
+        }
+        
+        // Update legend title to indicate normalization
+        const legendTitle = shouldNormalize ? 
+          `${fieldLabel} (Rate per 100,000)` : 
+          fieldLabel;
+          
+        updateLegend2(classBreakInfos, legendTitle);
+      }).catch(error => console.error("Queries failed:", error));
     }
-
+//---------------------------------------------------------------------------------------------------
     //Update UI2 when new layer selected
     function updateUI2(chosenLayer) {
       my.layerName = "Layer " + (my.layerNames.indexOf(chosenLayer) + 1)
@@ -271,41 +460,6 @@ require([
       }
       my.sVar = my.selectVar.value || my.fieldNames[0];
       if (my.yearSlider.value) {my.sYear = my.yearSlider.value;}
-      // Remove existing popover if present
-      const existingPopover = document.getElementById("varDescriptionPopover");
-      if (existingPopover) {
-        existingPopover.remove();
-      }
-      
-      // Then create and add the new one
-      let varDescElement = document.getElementById("varDescription");
-      varDescElement.textContent = `${my.fullName[my.sVar]}` || "No description available.";
-      let pop = document.createElement("calcite-popover");
-      pop.id = "popVarDesc";
-      pop.heading = `${my.sVar} Description`;
-      pop.headingLevel = 3;
-      pop.placement = "right";
-      pop.autoClose = true;
-      pop.closable = true;
-      // Set reference directly to the element
-      pop.referenceElement = varDescElement;
-      //pop.style.maxWidth = "300px";
-      // Create a wrapper div with comprehensive text wrapping properties
-      pop.innerHTML = `
-        <div style="
-          width: 100%; 
-          max-width: 300px;
-          overflow-wrap: break-word; 
-          word-wrap: break-word;
-          word-break: break-word;
-          white-space: normal;
-          hyphens: auto;
-        ">
-          ${my.varDesc[my.sVar]}
-        </div>
-      `;
-      // Add to document body
-      document.body.appendChild(pop);
       // Update the slider range based on available year values for the selected field
       updateYearSlider(my.lays[my.layerName], my.sVar);
       applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
@@ -396,6 +550,7 @@ require([
       updateYearSlider(my.lays[my.layerName], my.sVar);
       if (my.yearSlider.value) { my.sYear = my.yearSlider.value; }
       applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
+      document.getElementById("varDescription").textContent = my.varDesc[my.sVar] || "No description available.";
     });
 
     document.getElementById("yearSlider").addEventListener("calciteSliderInput", (event) => {
@@ -403,9 +558,22 @@ require([
         if (my.selectVar.value) { my.sVar = my.selectVar.value; }
         applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
     });
+    // Add a toggle for normalization to your HTML
+    // <calcite-switch id="normalizeToggle" label="Normalize by Population"></calcite-switch>
+    
+    // Then update your event listeners:
+    document.getElementById("normalizeToggle").addEventListener("calciteSwitchChange", (event) => {
+      my.shouldNormalize = event.target.checked;
+      if (my.selectVar.value) { my.sVar = my.selectVar.value; }
+      if (my.yearSlider.value) { my.sYear = my.yearSlider.value; }
+      applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
+    });
+    
+    // Make sure to initialize the normalization setting in your initial setup
+    my.shouldNormalize = document.getElementById("normalizeToggle").checked;
     // Adding base and data layers
     const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
-    const baseLayers = [33, 34, 10]; 
+    const baseLayers = [34, 10]; 
     baseLayers.forEach(id => {
       my.arcgisMap.addLayer(new FeatureLayer({
         url: `${baseURL}${id}`,
@@ -419,7 +587,7 @@ require([
         url: `${baseURL}${i}`,
         outFields: ["*"],
         popupTemplate:{
-        title: `{NAME}${my.sYear}`}
+        title: "{NAME}"}
       })
       my.arcgisMap.addLayer(my.lays[`Layer ${i}`]);
       my.lays[`Layer ${i}`].visible = false;
