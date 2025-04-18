@@ -363,28 +363,36 @@ require([
       try {
         const result = await layer.queryFeatures(query);
     
-        // Extract values (normalized if needed)
-        const values = result.features
-          .map(f => {
-            const val = f.attributes[field];
-            const state = f.attributes.NAME;
-            const normalized = (val != null && shouldNormalize && popMap[state])
-              ? (val / popMap[state]) * 100
-              : val;
+        let valueMap = {};
+        let popSourceMap = {};
+        let classValues = [];
         
-            return normalized != null ? { state, value: normalized } : null;
-          })
-          .filter(v => v !== null);
-
+        result.features.forEach(f => {
+          const val = f.attributes[field];
+          const state = f.attributes.NAME;
+        
+          if (val != null) {
+            if (!popMap[state]) {
+              valueMap[state] = None;
+              classValues.push(None);
+            } else if (shouldNormalize) {
+              const normalizedVal = (val / popMap[state]) * 100;
+              valueMap[state] = normalizedVal;
+              classValues.push(normalizedVal);
+            } else {
+              valueMap[state] = val;
+              classValues.push(val);
+            }
+          }
+        });
     
-        if (!values.length) {
+        if (!valuesMap.length) {
           console.warn("No valid values to display");
           return;
         }
-    
-        const allValues = values.map(v => v.value);
-        const min = Math.min(...allValues);
-        const max = Math.max(...allValues);
+        
+        const min = Math.min(...classValues);
+        const max = Math.max(...classValues);
         const step = (max - min) / 5;
     
         const classBreakInfos = [
@@ -410,10 +418,10 @@ require([
     
         // Update popup
         layer.popupTemplate = shouldNormalize
-          ? getNormalizedPopupTemplate(field, values, popMap, popSourceMap)
+          ? getNormalizedPopupTemplate(field, valueMap, popMap, popSourceMap)
           : {
               title: "{NAME}",
-              content: `<b>${fieldLabel}:</b> {${field}}<br><b>Population Value:</b> {}<br>`
+              content: `<b>${fieldLabel}:</b> {${field}}`
             };
     
         updateLegend2(classBreakInfos, shouldNormalize ? `${fieldLabel} (Rate per 100,000)` : fieldLabel);
