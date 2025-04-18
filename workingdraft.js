@@ -161,7 +161,7 @@ require([
         const targetLongitude = -75.0000;
         my.view.goTo({
           center: [targetLongitude, targetLatitude],
-          zoom: 7  // Set initial zoom level
+          scale: 1000000  // Set initial zoom level
         }).then(() => {
           my.view.zoom = 7;
         });
@@ -186,7 +186,7 @@ require([
           // Zoom out to national view
           my.view.goTo({
             center:[-98, 39], // Center of continental US
-            zoom: 5
+            zoom: 1700000
           })
           
           // Hide facility layer if it exists
