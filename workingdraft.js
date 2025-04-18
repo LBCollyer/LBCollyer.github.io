@@ -354,10 +354,10 @@ require([
       return {
         title: "{NAME}",
         content: `
-          <b>${fieldLabel}:</b> {${field}}<br>
+          <b>${fieldLabel} Total Number:</b> {${field}}<br>
           <b>Population Data Source:</b> {expression/populationSource}<br>
-          <b>Population Value:</b> {expression/population}<br>
-          <b>Percentage of incarcerated individuals:</b> {expression/normalizedRate}
+          <b>Total Number of Incarcerated Individuals:</b> {expression/population}<br>
+          <b>Percentage of Incarcerated Individuals counted in ${fieldLabel}:</b> {expression/normalizedRate}
         `,
         // Expressions to calculate values for the popup
         expressionInfos: [
