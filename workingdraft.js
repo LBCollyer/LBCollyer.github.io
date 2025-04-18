@@ -373,8 +373,8 @@ require([
         
           if (val != null) {
             if (!popMap[state]) {
-              valueMap[state] = None;
-              classValues.push(None);
+              valueMap[state] = null;
+              classValues.push(null);
             } else if (shouldNormalize) {
               const normalizedVal = (val / popMap[state]) * 100;
               valueMap[state] = normalizedVal;
