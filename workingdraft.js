@@ -277,7 +277,7 @@ require([
               var pop = popMap[stateName];
         
               if (pop > 0 && value != null) {
-                return Text.FormatNumber((value / pop) * 100000, "#,##0.00");
+                return Text((value / pop) * 100000, "#,##0.00");
               }
               return "No population data";
             `
@@ -290,7 +290,7 @@ require([
               var pop = popMap[stateName];
         
               if (pop > 0) {
-                return Text.FormatNumber(pop, "#,##0");
+                returen Text(pop, "#,##0");
               }
               return "No data";
             `
