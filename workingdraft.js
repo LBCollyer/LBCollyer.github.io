@@ -228,7 +228,11 @@ require([
             var value = $feature["${field}"];
             var popMap = ${popMapJSON};
             var pop = popMap[stateName];
-            return (pop > 0 && value != null) ? (value / pop) * 100000 : null;
+          
+            if (pop > 0 && value != null) {
+              return (value / pop) * 100000;
+            }
+            return null;
           `,
           stops: [
             { value: min, color: "#fef0d9" },
@@ -271,9 +275,11 @@ require([
               var stateName = $feature.NAME;
               var popMap = ${popMapJSON};
               var pop = popMap[stateName];
-              return (pop > 0 && value != null)
-                ? Text.FormatNumber((value / pop) * 100000, "#,##0.00")
-                : "No population data";
+        
+              if (pop > 0 && value != null) {
+                return Text.FormatNumber((value / pop) * 100000, "#,##0.00");
+              }
+              return "No population data";
             `
           },
           {
@@ -282,22 +288,32 @@ require([
               var stateName = $feature.NAME;
               var popMap = ${popMapJSON};
               var pop = popMap[stateName];
-              return (pop > 0)
-                ? Text.FormatNumber(pop, "#,##0")
-                : "No data";
+        
+              if (pop > 0) {
+                return Text.FormatNumber(pop, "#,##0");
+              }
+              return "No data";
             `
           },
           {
             name: "populationSource",
             expression: `
               var stateName = $feature.NAME;
-              var sourceMap = ${sourceMapJSON};
-              var labels = ${labelsJSON};
+              var sourceMap = ${popSourceMapJSON};
+              var labels = ${sourceLabelsJSON};
               var source = sourceMap[stateName];
-              return source ? (labels[source] || source) : "None (Data Unavailable)";
+        
+              if (HasKey(labels, source)) {
+                return labels[source];
+              } else if (source != null) {
+                return source;
+              } else {
+                return "None (Data Unavailable)";
+              }
             `
           }
         ]
+
       };
     }
 
