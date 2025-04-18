@@ -158,10 +158,10 @@ require([
       if (!my.scrolled) {
         // Zoom to Louisiana on first scroll
         const targetLatitude = 31.0667;
-        const targetLongitude = -77.0000;
+        const targetLongitude = -75.0000;
         my.view.goTo({
           center: [targetLongitude, targetLatitude],
-          scale: 1000000  // Set initial zoom level
+          scale: 7000000  // Set initial zoom level
         }).then(() => {
           my.view.zoom = 7;
         });
@@ -186,7 +186,7 @@ require([
           // Zoom out to national view
           my.view.goTo({
             center:[-98, 39], // Center of continental US
-            zoom: 16000000
+            scale: 16000000
           })
           
           // Hide facility layer if it exists
