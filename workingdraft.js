@@ -299,7 +299,7 @@ require([
             name: "populationSource",
             expression: `
               var stateName = $feature.NAME;
-              var sourceMap = ${popSourceMapJSON};
+              var sourceMap = ${sourceMapJSON};
               var labels = ${sourceLabelsJSON};
               var source = sourceMap[stateName];
         
