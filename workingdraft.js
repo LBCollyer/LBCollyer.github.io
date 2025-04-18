@@ -397,7 +397,8 @@ require([
           { minValue: min + 3 * step, maxValue: min + 4 * step, color: "#e34a33" },
           { minValue: min + 4 * step, maxValue: max, color: "#b30000" }
         ];
-    
+        
+        const valueMapJSON = JSON.stringify(valueMap);
         const popMapJSON = JSON.stringify(popMap);
         const popSourceMapJSON = JSON.stringify(popSourceMap);
         const sourceLabelsJSON = JSON.stringify({
