@@ -300,7 +300,7 @@ require([
             expression: `
               var stateName = $feature.NAME;
               var sourceMap = ${sourceMapJSON};
-              var labels = ${sourceLabelsJSON};
+              var labels = ${labelsJSON};
               var source = sourceMap[stateName];
         
               if (HasKey(labels, source)) {
