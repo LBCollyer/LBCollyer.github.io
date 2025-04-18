@@ -290,7 +290,7 @@ require([
               var pop = popMap[stateName];
         
               if (pop > 0) {
-                returen Text(pop, "#,##0");
+                return Text(pop, "#,##0");
               }
               return "No data";
             `
