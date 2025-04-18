@@ -230,7 +230,7 @@ require([
             var pop = popMap[stateName];
           
             if (pop > 0 && value != null) {
-              return (value / pop) * 100000;
+              return (value / pop) * 100;
             }
             return null;
           `,
@@ -277,7 +277,7 @@ require([
               var pop = popMap[stateName];
         
               if (pop > 0 && value != null) {
-                return Text((value / pop) * 100000, "#,##0.00");
+                return Text((value / pop) * 100, "#,##0.00");
               }
               return "No population data";
             `
@@ -356,7 +356,7 @@ require([
           const val = f.attributes[field];
           const state = f.attributes.NAME;
           return (val != null && shouldNormalize && popMap[state])
-            ? (val / popMap[state]) * 100000
+            ? (val / popMap[state]) * 100
             : val;
         }).filter(v => v != null);
     
