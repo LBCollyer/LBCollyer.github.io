@@ -158,7 +158,7 @@ require([
       if (!my.scrolled) {
         // Zoom to Louisiana on first scroll
         const targetLatitude = 31.0667;
-        const targetLongitude = -77.0000;
+        const targetLongitude = -80.0000;
         my.view.goTo({
           center: [targetLongitude, targetLatitude],
           scale: 6000000  // Set initial zoom level
