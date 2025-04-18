@@ -258,14 +258,26 @@ require([
       };
     }
     
-    function getNormalizedPopupTemplate(field, fieldLabel, popMapJSON, sourceMapJSON, labelsJSON) {
+    function getNormalizedPopupTemplate(field, values, popMap, sourceMap) {
+      const fieldLabel = field.replace(/_/g, " ");
+    
+      // Build Arcade-compatible stringified maps
+      const popMapJSON = JSON.stringify(popMap);
+      const popSourceMapJSON = JSON.stringify(sourceMap);
+      const sourceLabels = {
+        "Combined_Pop": "Combined Population",
+        "Prison_population": "Prison Population",
+        "Jail_Population__Adjusted_": "Jail Population (Adjusted)"
+      };
+      const sourceLabelsJSON = JSON.stringify(sourceLabels);
+    
       return {
         title: "{NAME}",
         content: `
           <b>${fieldLabel}:</b> {${field}}<br>
           <b>Population Data Source:</b> {expression/populationSource}<br>
           <b>Population Value:</b> {expression/population}<br>
-          <b>Rate per 100,000:</b> {expression/normalizedRate}
+          <b>Percentage of incarcerated individuals:</b> {expression/normalizedRate}
         `,
         expressionInfos: [
           {
@@ -275,7 +287,7 @@ require([
               var stateName = $feature.NAME;
               var popMap = ${popMapJSON};
               var pop = popMap[stateName];
-        
+              
               if (pop > 0 && value != null) {
                 return Text((value / pop) * 100, "#,##0.00");
               }
@@ -288,7 +300,7 @@ require([
               var stateName = $feature.NAME;
               var popMap = ${popMapJSON};
               var pop = popMap[stateName];
-        
+              
               if (pop > 0) {
                 return Text(pop, "#,##0");
               }
@@ -299,10 +311,10 @@ require([
             name: "populationSource",
             expression: `
               var stateName = $feature.NAME;
-              var sourceMap = ${sourceMapJSON};
-              var labels = ${labelsJSON};
+              var sourceMap = ${popSourceMapJSON};
+              var labels = ${sourceLabelsJSON};
               var source = sourceMap[stateName];
-        
+              
               if (HasKey(labels, source)) {
                 return labels[source];
               } else if (source != null) {
@@ -313,9 +325,9 @@ require([
             `
           }
         ]
-
       };
     }
+
 
 //---------------------------------------------------------------------------------------------------------------------------------------    
     async function applyChoroplethSymbology(layer, field, year) {
@@ -352,21 +364,27 @@ require([
         const result = await layer.queryFeatures(query);
     
         // Extract values (normalized if needed)
-        const values = result.features.map(f => {
-          const val = f.attributes[field];
-          const state = f.attributes.NAME;
-          return (val != null && shouldNormalize && popMap[state])
-            ? (val / popMap[state]) * 100
-            : val;
-        }).filter(v => v != null);
+        const values = result.features
+          .map(f => {
+            const val = f.attributes[field];
+            const state = f.attributes.NAME;
+            const normalized = (val != null && shouldNormalize && popMap[state])
+              ? (val / popMap[state]) * 100
+              : val;
+        
+            return normalized != null ? { state, value: normalized } : null;
+          })
+          .filter(v => v !== null);
+
     
         if (!values.length) {
           console.warn("No valid values to display");
           return;
         }
     
-        const min = Math.min(...values);
-        const max = Math.max(...values);
+        const allValues = values.map(v => v.value);
+        const min = Math.min(...allValues);
+        const max = Math.max(...allValues);
         const step = (max - min) / 5;
     
         const classBreakInfos = [
@@ -392,10 +410,10 @@ require([
     
         // Update popup
         layer.popupTemplate = shouldNormalize
-          ? getNormalizedPopupTemplate(field, fieldLabel, popMapJSON, popSourceMapJSON, sourceLabelsJSON)
+          ? getNormalizedPopupTemplate(field, values, popMap, popSourceMap)
           : {
               title: "{NAME}",
-              content: `<b>${fieldLabel}:</b> {${field}}`
+              content: `<b>${fieldLabel}:</b> {${field}}<br><b>Population Value:</b> {}<br>`
             };
     
         updateLegend2(classBreakInfos, shouldNormalize ? `${fieldLabel} (Rate per 100,000)` : fieldLabel);
