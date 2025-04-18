@@ -386,7 +386,7 @@ require([
           }
         });
     
-        if (!valuesMap.length) {
+        if (!valueMap.length) {
           console.warn("No valid values to display");
           return;
         }
