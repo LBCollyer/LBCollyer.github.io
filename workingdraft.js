@@ -385,11 +385,6 @@ require([
             }
           }
         });
-    
-        if (!valueMap.length) {
-          console.warn("No valid values to display");
-          return;
-        }
         
         const min = Math.min(...classValues);
         const max = Math.max(...classValues);
