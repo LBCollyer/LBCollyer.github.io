@@ -20,6 +20,10 @@ body {
   z-index: 10;
 }
 
+.title {
+  z-index: 100;
+}
+
 #legend1 {
   display: block;
   opacity: 1;
