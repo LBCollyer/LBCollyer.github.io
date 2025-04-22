@@ -94,6 +94,7 @@ body {
 
 #up {  
   top: 20px;
+  bottom: auto;
 }
   
 
