@@ -21,7 +21,18 @@ body {
 }
 
 .title {
-  z-index: 100;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  color: white;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 10px 20px;
+  border-radius: 10px;
+  z-index: 50;
+  font-family: Arial, sans-serif;
+  pointer-events: none; /* Let clicks pass through to the map */
 }
 
 #legend1 {
