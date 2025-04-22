@@ -20,7 +20,7 @@ body {
   z-index: 10;
 }
 
-.title {
+#title {
   position: absolute;
   top: 20px;
   left: 50%;
