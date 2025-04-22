@@ -74,7 +74,7 @@ body {
   margin-bottom: 20px;
 }
 
-#startButton {
+.upButtons {
   padding: 8px 15px;
   font-size: 1.5rem;
   background: black;
@@ -88,9 +88,28 @@ body {
   z-index: 999;
 }
 
-#startButton:hover {
+.upButtons:hover {
   background: #333;
 }
+
+.downButtons {  
+  padding: 8px 15px;
+  font-size: 1.5rem;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+  border-radius: 30px;
+  position: fixed;
+  top: 20px;
+  z-index: 999;
+}
+
+.downButtons:hover {
+  background: #333;
+}
+  
 
 #map-container {
   height: 100vh;
