@@ -23,7 +23,7 @@
       <p>Explore correctional facilities across the U.S. with interactive symbology.</p>
       <p>Scroll to go through each section.</p>
     </div>
-    <button id="startButton">⇩</button>
+    <button class = "downButtons" id="startButton">⇩</button>
   </div>
 
   <!-- ArcGIS Map -->
@@ -33,6 +33,7 @@
 
   <!-- Map Container -->
   <div id="map-container">
+    <button class = "upButtons"></button>
     <div class="ui-container" id="legend1">
       <calcite-label>
         Choose Symbolization Field:
@@ -45,6 +46,7 @@
         <calcite-panel heading="Legend" id="legendPanel"></calcite-panel>
       </calcite-label>
     </div>
+    <button class ="downButtons"></button>
   </div>
 
   <div class="story-container">
