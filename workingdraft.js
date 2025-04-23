@@ -366,15 +366,14 @@ require([
           {
             name: "normalizedRate",
             expression: `
-              var value = $feature["${field}"];
               var stateName = $feature.NAME;
-              var popMap = ${popMapJSON};
-              var pop = popMap[stateName];
+              var valueMap = ${valueMapJSON};
+              var value = valueMap[stateName];
               
-              if (pop > 0 && value != null) {
-                return Text((value / pop) * 100, "#,##0.00");
+              if (pop > 0) {
+                return Text(value, "#,##0");
               }
-              return "No population data";
+              return "No data";
             `
           },
           {
