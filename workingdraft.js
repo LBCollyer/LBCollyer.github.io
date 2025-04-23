@@ -345,19 +345,23 @@ require([
      * @param {Object} popSourceMap - Population source by state
      * @returns {Object} Popup template configuration
      */
-    function getNormalizedPopupTemplate(field, values, popMap, popSourceMap) {
+    function getNormalizedPopupTemplate(field, valueMapJSON, popMapJSON, popSourceMapJSON) {
       const fieldLabel = field.replace(/_/g, " ");
-    
-      // Build Arcade-compatible stringified maps
-      const popMapJSON = JSON.stringify(popMap);
-      my.popSourceMapJSON = JSON.stringify(popSourceMap);
       const sourceLabels = {
         "Combined_Pop": "Combined Population",
         "Prison_population": "Prison Population",
         "Jail_Population__Adjusted_": "Jail Population (Adjusted)"
       };
       const sourceLabelsJSON = JSON.stringify(sourceLabels);
-    
+                  /*var value = $feature["${field}"];
+              var stateName = $feature.NAME;
+              var popMap = ${popMapJSON};
+              var pop = popMap[stateName];
+              
+              if (pop > 0 && value != null) {
+                return Text((value / pop) * 100, "#,##0.00");
+              }
+              return "No population data";*/
       return {
         title: "{NAME} in {Year}",
         content: `
@@ -371,15 +375,14 @@ require([
           {
             name: "normalizedRate",
             expression: `
-              var value = $feature["${field}"];
               var stateName = $feature.NAME;
-              var popMap = ${popMapJSON};
-              var pop = popMap[stateName];
+              var valueMap = ${valueMapJSON};
+              var value = valueMap[stateName];
               
-              if (pop > 0 && value != null) {
-                return Text((value / pop) * 100, "#,##0.00");
+              if (value > 0) {
+                return Text(value, "#,##0");
               }
-              return "No population data";
+              return "No data";
             `
           },
           {
@@ -518,9 +521,9 @@ require([
     
         // Update popup template based on normalization setting
         layer.popupTemplate = shouldNormalize
-          ? getNormalizedPopupTemplate(field, valueMap, popMap, popSourceMap)
+          ? getNormalizedPopupTemplate(field, valueMapJSON, popMapJSON, popSourceMapJSON)
           : {
-              title: "{NAME}",
+              title: "{NAME} {Year}",
               content: `<b>${fieldLabel}:</b> {${field}}`
             };
     
