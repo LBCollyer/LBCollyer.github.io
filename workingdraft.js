@@ -35,6 +35,9 @@ require([
   my.sVar = "PVINM"; // Default selected variable
   my.selectVar = document.getElementById("varSelector"); // Variable selector dropdown
   my.sLay = "Facility_Types"; // Default selected layer
+  customElements.whenDefined("calcite-switch").then(() => {
+    my.shouldNormalize = document.getElementById("normalizeToggle").checked;
+  });
   
   // Set up intro page dismissal animation
   document.getElementById("startButton").addEventListener("click", () => {
@@ -699,7 +702,7 @@ require([
     });
     
     // Initialize normalization setting
-    my.shouldNormalize = document.getElementById("normalizeToggle").checked;
+    //my.shouldNormalize = document.getElementById("normalizeToggle").checked;
     
     // Add base layers for context
     const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
