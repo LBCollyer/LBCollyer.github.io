@@ -460,7 +460,7 @@ require([
         const result = await layer.queryFeatures(query);
     
         let valueMap = {};
-        let popSourceMap = {};
+        //let popSourceMap = {};
         let classValues = [];
         
         // Process features to get normalized or raw values
