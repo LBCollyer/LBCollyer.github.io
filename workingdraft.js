@@ -349,7 +349,7 @@ require([
     
       // Build Arcade-compatible stringified maps
       const popMapJSON = JSON.stringify(popMap);
-      const popSourceMapJSON = JSON.stringify(sourceMap);
+      my.popSourceMapJSON = JSON.stringify(sourceMap);
       const sourceLabels = {
         "Combined_Pop": "Combined Population",
         "Prison_population": "Prison Population",
@@ -398,7 +398,7 @@ require([
             name: "populationSource",
             expression: `
               var stateName = $feature.NAME;
-              var sourceMap = ${popSourceMapJSON};
+              var sourceMap = ${my.popSourceMapJSON};
               var labels = ${sourceLabelsJSON};
               var source = sourceMap[stateName];
               
