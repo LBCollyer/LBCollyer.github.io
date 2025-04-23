@@ -702,7 +702,8 @@ require([
     });
     
     // Initialize normalization setting
-    //my.shouldNormalize = document.getElementById("normalizeToggle").checked;
+    my.shouldNormalize = document.getElementById("normalizeToggle")
+    my.shouldNormalize.checked = true;
     
     // Add base layers for context
     const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
