@@ -353,15 +353,6 @@ require([
         "Jail_Population__Adjusted_": "Jail Population (Adjusted)"
       };
       const sourceLabelsJSON = JSON.stringify(sourceLabels);
-                  /*var value = $feature["${field}"];
-              var stateName = $feature.NAME;
-              var popMap = ${popMapJSON};
-              var pop = popMap[stateName];
-              
-              if (pop > 0 && value != null) {
-                return Text((value / pop) * 100, "#,##0.00");
-              }
-              return "No population data";*/
       return {
         title: "{NAME} in {Year}",
         content: `
@@ -375,14 +366,15 @@ require([
           {
             name: "normalizedRate",
             expression: `
+              var value = $feature["${field}"];
               var stateName = $feature.NAME;
-              var valueMap = ${valueMapJSON};
-              var value = valueMap[stateName];
+              var popMap = ${popMapJSON};
+              var pop = popMap[stateName];
               
-              if (value > 0) {
-                return Text(value, "#,##0");
+              if (pop > 0 && value != null) {
+                return Text((value / pop) * 100, "#,##0.00");
               }
-              return "No data";
+              return "No population data";
             `
           },
           {
