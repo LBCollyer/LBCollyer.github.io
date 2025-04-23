@@ -36,6 +36,14 @@ body {
   pointer-events: none; /* Let clicks pass through to the map */
   text-align: center;
 }
+#title h2 {
+  margin-bottom: 0.3rem; /* reduce space under heading */
+}
+
+#title p {
+  margin-top: 0.2rem; /* reduce space above subheading */
+}
+
 
 #legend1 {
   display: block;
