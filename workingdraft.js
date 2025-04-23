@@ -266,7 +266,7 @@ require([
         const state = attributes.NAME;
         // Use the first valid population value found
         for (const i of popFields) {
-          const val = attributes[field];
+          const val = attributes[i];
           if (val != null && val > 0) {
             popMap[state] = val;
             popSourceMap[state] = i; // Track which field was used
