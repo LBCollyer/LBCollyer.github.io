@@ -291,7 +291,7 @@ require([
     function getNormalizedRenderer(field, popMapJSON, min, max, step) {
       return {
         type: "simple",
-        symbol: { type: "simple-fill", color: "#AAAAAA" },
+        symbol: { type: "simple-fill", color: "#ffffff" },
         visualVariables: [{
           type: "color",
           // Arcade expression to normalize values by population
