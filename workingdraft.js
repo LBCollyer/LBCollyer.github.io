@@ -6,15 +6,19 @@ my.varDesc = {}; // Will store variable descriptions from CSV
 fetch("https://lbcollyer.github.io/varList.csv")
   .then(response => response.text())
   .then(csv => {
-    // Parse CSV data
-    const lines = csv.split("\n").filter(line => line.trim() !== ""); // Get non-empty lines
-    lines.shift(); // Remove header row
+    const lines = csv.split("\n").filter(line => line.trim() !== "");
+    lines.shift(); // remove header
+
     lines.forEach(line => {
-      // Split on first comma only (to handle descriptions with commas)
-      const [variable, description] = line.split(/,(.+)/);
-      if (variable && description) {
-        // Store cleaned variable and description (remove quotes)
-        my.varDesc[variable.trim()] = description.trim().replace(/^"|"$/g, "");
+      const [shortName, fullName, description] = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); // split by comma outside quotes
+
+      if (shortName && description) {
+        const cleanShort = shortName.trim();
+        const cleanDesc = description.trim().replace(/^"|"$/g, "");
+        my.varDesc[cleanShort] = cleanDesc;
+        // optionally store the full name too:
+        my.fullName = my.fullName || {};
+        my.fullName[cleanShort] = fullName.trim().replace(/^"|"$/g, "");
       }
     });
   })
