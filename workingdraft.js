@@ -265,11 +265,11 @@ require([
       popResult.features.forEach(({ attributes }) => {
         const state = attributes.NAME;
         // Use the first valid population value found
-        for (const field of popFields) {
+        for (const i of popFields) {
           const val = attributes[field];
           if (val != null && val > 0) {
             popMap[state] = val;
-            popSourceMap[state] = field; // Track which field was used
+            popSourceMap[state] = i; // Track which field was used
             break;
           }
         }
