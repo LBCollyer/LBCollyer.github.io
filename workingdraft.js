@@ -113,14 +113,14 @@ require([
     legendPanel.heading = `Percent of individuals in the ${field} category out of total Incarcerated individuals in ${my.sYear}`;
     const legendList = document.createElement("calcite-list");
     
-    // Add white box for "No Data" category
+    // Add grey box for "No Data" category
     let listItem1 = document.createElement("calcite-list-item");        
     // Create color box for visualization
     const colorBox1 = document.createElement("span");
     colorBox1.style.display = "inline-block";
     colorBox1.style.width = "16px";
     colorBox1.style.height = "16px";
-    colorBox1.style.backgroundColor = "white";
+    colorBox1.style.backgroundColor = "#AAAAAA";
     colorBox1.style.marginRight = "8px";
     colorBox1.style.border = "1px solid black";
     listItem1.innerHTML = `
@@ -291,7 +291,7 @@ require([
     function getNormalizedRenderer(field, popMapJSON, min, max, step) {
       return {
         type: "simple",
-        symbol: { type: "simple-fill", color: "#ffffff" },
+        symbol: { type: "simple-fill", color: "#AAAAAA" },
         visualVariables: [{
           type: "color",
           // Arcade expression to normalize values by population
