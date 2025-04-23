@@ -198,7 +198,7 @@ require([
           my.legend2.style.display = "block";
           my.legend2.style.opacity = "1";
           document.getElementById("title").innerHTML = `
-            <h2>Choropleth Map of National Prisoner Statistics (1978-2022)</h2>
+            <h2>National Prisoner Statistics Map (1978-2022)</h2>
             <p>Data from United States Bureau of Justice Statistics</p>
           `;
           // Initialize the UI with the default layer
@@ -567,6 +567,7 @@ require([
       // Update current selections
       my.sVar = my.selectVar.value || my.fieldNames[0];
       if (my.yearSlider.value) {my.sYear = my.yearSlider.value;}
+      document.getElementById("varDescription").textContent = my.varDesc[my.sVar] || "No description available.";
       
       // Update the year slider based on available data
       updateYearSlider(my.lays[my.layerName], my.sVar);
@@ -663,7 +664,8 @@ require([
     document.getElementById("symbolFieldSelector").addEventListener("calciteSelectChange", (event) => {
       updateSymbology(event.target.value);
     });
-    
+
+    //Event listeners for choropleth map
     // Event listener for changing data layer
     document.getElementById("layerSelector").addEventListener("calciteSelectChange", (event) => {
       updateUI2(event.target.value);
@@ -726,7 +728,7 @@ require([
     // Add correctional facilities layer last so it's on top
     my.arcgisMap.addLayer(my.corFacil);
     
-    // Remove default basemap since we're using our own layers
+    // Remove default basemap since I'm using my own layers
     my.arcgisMap.basemap = null;
   });
 });
