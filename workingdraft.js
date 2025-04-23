@@ -574,7 +574,8 @@ require([
       // Update current selections
       my.sVar = my.selectVar.value || my.fieldNames[0];
       if (my.yearSlider.value) {my.sYear = my.yearSlider.value;}
-      document.getElementById("varDescription").textContent = my.varDesc[my.sVar] || "No description available.";
+      document.getElementById("varDescription").textContent = my.fullName[my.sVar] || "No full name available.";
+      document.getElementById("descToolTip").textContent = my.varDesc[my.sVar] || "No description available.";
       
       // Update the year slider based on available data
       updateYearSlider(my.lays[my.layerName], my.sVar);
@@ -687,7 +688,8 @@ require([
       // Update map symbology
       applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
       // Update variable description
-      document.getElementById("varDescription").textContent = my.varDesc[my.sVar] || "No description available.";
+      document.getElementById("varDescription").textContent = my.fullName[my.sVar] || "No full name available.";
+      document.getElementById("descToolTip").textContent = my.varDesc[my.sVar] || "No description available.";
     });
 
     // Event listener for year slider changes
