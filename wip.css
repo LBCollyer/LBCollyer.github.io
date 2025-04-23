@@ -9,6 +9,16 @@ body {
   overflow: hidden;
 }
 
+a {
+  color: orange;
+  text-decoration: none;
+}
+
+a:hover {
+  color: pink;
+  text-decoration: underline;
+}
+
 .ui-container {
   position: absolute;
   top: 10px;
