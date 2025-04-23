@@ -338,21 +338,15 @@ require([
     }
     
     /**
-     * Creates a popup template for normalized data
+     * Creates a  template for normalized data
      * @param {string} field - Data field
      * @param {Object} values - Data values
      * @param {Object} popMap - Population values by state
      * @param {Object} popSourceMap - Population source by state
      * @returns {Object} Popup template configuration
      */
-    function getNormalizedPopupTemplate(field, valueMapJSON, popMapJSON, popSourceMapJSON) {
+    function getNormalizedPopupTemplate(field, valueMapJSON, popMapJSON, popSourceMapJSON, sourceLabelsJSON) {
       const fieldLabel = field.replace(/_/g, " ");
-      const sourceLabels = {
-        "Combined_Pop": "Combined Population",
-        "Prison_population": "Prison Population",
-        "Jail_Population__Adjusted_": "Jail Population (Adjusted)"
-      };
-      const sourceLabelsJSON = JSON.stringify(sourceLabels);
       return {
         title: "{NAME} in {Year}",
         content: `
@@ -512,7 +506,7 @@ require([
     
         // Update popup template based on normalization setting
         layer.popupTemplate = shouldNormalize
-          ? getNormalizedPopupTemplate(field, valueMapJSON, popMapJSON, popSourceMapJSON)
+          ? getNormalizedPopupTemplate(field, valueMapJSON, popMapJSON, popSourceMapJSON, sourceLabelsJSON)
           : {
               title: "{NAME} {Year}",
               content: `<b>${fieldLabel}:</b> {${field}}`
