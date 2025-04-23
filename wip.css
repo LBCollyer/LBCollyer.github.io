@@ -24,7 +24,6 @@ body {
   position: absolute;
   top: 0px;
   left: 50%;
-  width: 50%;
   transform: translateX(-50%);
   font-size: 1rem;
   color: white;
@@ -35,6 +34,7 @@ body {
   font-family: Arial, sans-serif;
   pointer-events: none; /* Let clicks pass through to the map */
   text-align: center;
+  display: inline-block;
 }
 #title h2 {
   margin-bottom: 0.3rem; /* reduce space under heading */
