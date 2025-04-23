@@ -35,9 +35,9 @@ require([
   my.sVar = "PVINM"; // Default selected variable
   my.selectVar = document.getElementById("varSelector"); // Variable selector dropdown
   my.sLay = "Facility_Types"; // Default selected layer
-  customElements.whenDefined("calcite-switch").then(() => {
-    my.shouldNormalize = document.getElementById("normalizeToggle").checked;
-  });
+  // Initialize normalization setting
+  my.shouldNormalize = document.getElementById("normalizeToggle")
+  my.shouldNormalize.checked = true;
   
   // Set up intro page dismissal animation
   document.getElementById("startButton").addEventListener("click", () => {
@@ -700,10 +700,6 @@ require([
       if (my.yearSlider.value) { my.sYear = my.yearSlider.value; }
       applyChoroplethSymbology(my.lays[my.layerName], my.sVar, my.sYear);
     });
-    
-    // Initialize normalization setting
-    my.shouldNormalize = document.getElementById("normalizeToggle")
-    my.shouldNormalize.checked = true;
     
     // Add base layers for context
     const baseURL = "https://services.arcgis.com/FvF9MZKp3JWPrSkg/arcgis/rest/services/Prison_Map/FeatureServer/";
