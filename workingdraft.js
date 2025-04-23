@@ -364,7 +364,7 @@ require([
               var valueMap = ${valueMapJSON};
               var value = valueMap[stateName];
               
-              if (pop > 0) {
+              if (value > 0) {
                 return Text(value, "#,##0");
               }
               return "No data";
