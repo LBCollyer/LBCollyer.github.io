@@ -22,9 +22,9 @@ body {
 
 #title {
   position: absolute;
-  top: 10px;
+  top: 0px;
   left: 50%;
-  width: 70%;
+  width: 50%;
   transform: translateX(-50%);
   font-size: 1rem;
   color: white;
