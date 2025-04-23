@@ -341,15 +341,15 @@ require([
      * @param {string} field - Data field
      * @param {Object} values - Data values
      * @param {Object} popMap - Population values by state
-     * @param {Object} sourceMap - Population source by state
+     * @param {Object} popSourceMap - Population source by state
      * @returns {Object} Popup template configuration
      */
-    function getNormalizedPopupTemplate(field, values, popMap, sourceMap) {
+    function getNormalizedPopupTemplate(field, values, popMap, popSourceMap) {
       const fieldLabel = field.replace(/_/g, " ");
     
       // Build Arcade-compatible stringified maps
       const popMapJSON = JSON.stringify(popMap);
-      my.popSourceMapJSON = JSON.stringify(sourceMap);
+      my.popSourceMapJSON = JSON.stringify(popSourceMap);
       const sourceLabels = {
         "Combined_Pop": "Combined Population",
         "Prison_population": "Prison Population",
@@ -398,9 +398,9 @@ require([
             name: "populationSource",
             expression: `
               var stateName = $feature.NAME;
-              var sourceMap = ${my.popSourceMapJSON};
+              var popSourceMap = ${my.popSourceMapJSON};
               var labels = ${sourceLabelsJSON};
-              var source = sourceMap[stateName];
+              var source = popSourceMap[stateName];
               
               if (HasKey(labels, source)) {
                 return labels[source];
