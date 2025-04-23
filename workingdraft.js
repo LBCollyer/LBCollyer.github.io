@@ -359,7 +359,7 @@ require([
       const sourceLabelsJSON = JSON.stringify(sourceLabels);
     
       return {
-        title: `${NAME} in ${my.sYear}`,
+        title: "{NAME} in {Year}",
         content: `
           <b>${fieldLabel} Total Number:</b> {${field}}<br>
           <b>Population Data Source:</b> {expression/populationSource}<br>
