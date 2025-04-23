@@ -186,13 +186,9 @@ require([
           // Zoom out to national view
           my.view.goTo({
             center:[-96, 39], // Center of continental US
-            scale: 16000000
+            scale: 20000000
           })
-          
-          // Hide facility layer if it exists
-          if (my.corFacil) {
-            my.corFacil.visible = false;
-          }
+          my.corFacil.visible = false;
           
           // Switch from legend 1 to legend 2
           my.legend1 = document.querySelector("#legend1");
@@ -201,7 +197,10 @@ require([
           my.legend2 = document.querySelector("#legend2");
           my.legend2.style.display = "block";
           my.legend2.style.opacity = "1";
-          
+          document.getElementById("title").innerHTML = `
+            <h2>Choropleth Map of National Prisoner Statistics (1978-2022)</h2>
+            <p>Data from United States Bureau of Justice Statistics</p>
+          `;
           // Initialize the UI with the default layer
           updateUI2("Facility_Types");
         }
