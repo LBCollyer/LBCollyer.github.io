@@ -518,7 +518,7 @@ require([
             };
     
         // Update legend with class breaks
-        updateLegend2(classBreakInfos, shouldNormalize ? `${fieldLabel} (Rate per 100,000)` : fieldLabel);
+        updateLegend2(classBreakInfos, fieldLabel);
       } catch (err) {
         console.error("Queries failed:", err);
       }
