@@ -300,7 +300,7 @@ require([
               var valueMap = ${valueMapJSON};
               var value = valueMap[stateName];
               
-              if (value) {
+              if (value!=null) {
                 return Text(value, "#,##0");
               }
               return "No data";
