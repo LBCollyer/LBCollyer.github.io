@@ -418,6 +418,7 @@ require([
     async function applyChoroplethSymbology(layer, field, year) {
       // Determine which field holds year data
       const yearField = layer.name === "Layer 9" ? "Year" : "YEAR";
+      layer.definitionExpression = `${yearField} = ${year}`;
       const fieldLabel = field.replace(/_/g, " ");
     
       // Check if we should normalize by population
@@ -430,7 +431,7 @@ require([
       query.where = `${yearField} = ${year}`; // Filter by year 
       query.outFields = ["NAME", field]; // Only get needed fields
       query.returnGeometry = false; // No need for geometry
-    
+      
       // Optional query for population data if normalizing
       let popMap = {}, popSourceMap = {};
       if (shouldNormalize) {
