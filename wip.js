@@ -110,7 +110,7 @@ require([
   function updateLegend2(classBreakInfos, field) {
     const legendPanel = document.getElementById("legendPanel2");
     legendPanel.innerHTML = ""; // Clear existing legend
-    legendPanel.heading = `Percent of individuals in the ${field} category out of total Incarcerated individuals in ${my.sYear}`;
+    legendPanel.heading = `% of individuals in ${field} category`;
     const legendList = document.createElement("calcite-list");
     
     // Add grey box for "No Data" category
