@@ -332,7 +332,12 @@ require([
           minValue: info.minValue,
           maxValue: info.maxValue,
           symbol: { type: "simple-fill", color: info.color }
-        }))
+        })),
+        defaultSymbol: { 
+          type: "simple-fill", 
+          color: "#AAAAAA",  // Gray color for no data
+          outline: { color: "#999999", width: 0.5 } 
+        }
       };
     }
     
