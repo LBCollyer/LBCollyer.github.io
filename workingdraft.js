@@ -131,7 +131,7 @@ require([
   function updateLegend2(classBreakInfos, field) {
     const legendPanel = document.getElementById("legendPanel2");
     legendPanel.innerHTML = ""; // Clear existing legend
-    legendPanel.heading = `% of individuals in the ${field} category out of total incarcerated`;
+    legendPanel.heading = `% individuals in ${field}`;
     const legendList = document.createElement("calcite-list");
     
     // Add grey box for "No Data" category
@@ -280,58 +280,6 @@ require([
      * @param {Object} popResult - Query result with population data
      * @returns {Object} Maps with population data by state
      */
-    /*function getPopulationLookup(popResult, year) {
-      const popMap = {};
-      const popSourceMap = {};
-    
-      popResult.features.forEach(f => {
-        const state = f.attributes.NAME;
-        popMap[state] = f.attributes["Combined_Pop"];
-        popSourceMap[state] = getMostCompleteSource(f.attributes);
-      });
-    
-      // Override Iowa’s population with Indiana’s, if available
-      const indianaData = my.indianaPopMap?.[year];
-      if (indianaData) {
-        popMap["Iowa"] = indianaData["Combined_Pop"];
-        popSourceMap["Iowa"] = getMostCompleteSource(indianaData);
-      }
-    
-      return { popMap, popSourceMap };
-    }*/
-    /*function getPopulationLookup(popResult) {
-      const popMap = {}, popSourceMap = {};
-      const popFields = ["Combined_Pop", "Prison_population", "Jail_Population__Adjusted_"];
-      popResult.features.forEach(({ attributes }) => {
-        const state = attributes.NAME;
-        if (state == "Indiana") {
-          const indianaData = my.indianaPopMap?.[year];
-          popMap[state], popSourceMap[state] = getMostCompleteSource(indianaData);
-        } else {
-          if (state == "Iowa") {
-            state = "Indiana"
-          } 
-          // Use the first valid population value found
-          for (const i of popFields) {
-            const val = attributes[i];
-            if (val != null && val > 0) {
-              popMap[state] = val;
-              popSourceMap[state] = i; // Track which field was used
-              break;
-            }
-          }
-        }
-      });
-      return { popMap, popSourceMap };
-    }
-    
-    function getMostCompleteSource(attrs) {
-      // Return whichever source has a non-null value, prioritize Combined
-      if (attrs["Combined_Pop"]) return {attrs["Combined_Pop"], "Combined_Pop"};
-      if (attrs["Prison_population"]) return {attrs["Prison_population"], "Prison_population"};
-      if (attrs["Jail_Population__Adjusted_"]) return {attrs["Jail_Population__Adjusted_"], "Jail_Population__Adjusted_"};
-      return null;
-    }*/
     function getPopulationLookup(popResult, year) {
       const popMap = {}, popSourceMap = {};
       const popFields = ["Combined_Pop", "Prison_population", "Jail_Population__Adjusted_"];
