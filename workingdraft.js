@@ -542,9 +542,10 @@ require([
         });
     
         // Update layer renderer based on normalization setting
-        layer.renderer = shouldNormalize
+        layer.renderer = getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step);
+        /*layer.renderer = shouldNormalize
           ? getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step)
-          : getClassBreakRenderer(field, classBreakInfos);
+          : getClassBreakRenderer(field, classBreakInfos);*/
     
         // Update popup template based on normalization setting
         layer.popupTemplate = shouldNormalize
