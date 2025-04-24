@@ -131,7 +131,7 @@ require([
   function updateLegend2(classBreakInfos, field) {
     const legendPanel = document.getElementById("legendPanel2");
     legendPanel.innerHTML = ""; // Clear existing legend
-    legendPanel.heading = `Percent of individuals in the ${field} category out of total Incarcerated individuals in ${my.sYear}`;
+    legendPanel.heading = `% of individuals in the ${field} category out of total incarcerated`;
     const legendList = document.createElement("calcite-list");
     
     // Add grey box for "No Data" category
@@ -608,7 +608,7 @@ require([
             };
     
         // Update legend with class breaks
-        updateLegend2(classBreakInfos, shouldNormalize ? `${fieldLabel} (Rate per 100,000)` : fieldLabel);
+        updateLegend2(classBreakInfos, fieldLabel);
       } catch (err) {
         console.error("Queries failed:", err);
       }
