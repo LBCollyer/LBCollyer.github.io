@@ -24,6 +24,27 @@ fetch("https://lbcollyer.github.io/varList.csv")
   })
   .catch(err => console.error("Failed to load descriptions:", err));
 
+//parse Indiana population
+fetch("Indiana Prison Population.csv")
+  .then(response => response.text())
+  .then(csv => {
+    const lines = csv.split("\n").filter(line => line.trim() !== "");
+    const headers = lines[0].split(",");
+    const data = lines.slice(1);
+    
+    my.indianaPopMap = {};
+    
+    data.forEach(line => {
+      const [Year, Jail, Prison, Combined] = line.split(",");
+      my.indianaPopMap[Year.trim()] = {
+        Jail_Population__Adjusted_: parseFloat(Jail),
+        Prison_population: parseFloat(Prison),
+        Combined_Pop: parseFloat(Combined)
+      };
+    });
+  })
+  .catch(err => console.error("Failed to load Indiana CSV", err));
+
 // Load required ArcGIS modules
 require([
   "esri/layers/FeatureLayer",
@@ -259,24 +280,32 @@ require([
      * @param {Object} popResult - Query result with population data
      * @returns {Object} Maps with population data by state
      */
-    function getPopulationLookup(popResult) {
-      const popMap = {}, popSourceMap = {};
-      const popFields = ["Combined_Pop", "Prison_population", "Jail_Population__Adjusted_"];
+    function getPopulationLookup(popResult, year) {
+      const popMap = {};
+      const popSourceMap = {};
     
-      popResult.features.forEach(({ attributes }) => {
-        const state = attributes.NAME;
-        // Use the first valid population value found
-        for (const i of popFields) {
-          const val = attributes[i];
-          if (val != null && val > 0) {
-            popMap[state] = val;
-            popSourceMap[state] = i; // Track which field was used
-            break;
-          }
-        }
+      popResult.features.forEach(f => {
+        const state = f.attributes.NAME;
+        popMap[state] = f.attributes["Combined_Pop"];
+        popSourceMap[state] = getMostCompleteSource(f.attributes);
       });
     
+      // Override Iowa’s population with Indiana’s, if available
+      const indianaData = my.indianaPopMap?.[year];
+      if (indianaData) {
+        popMap["Iowa"] = indianaData["Combined_Pop"];
+        popSourceMap["Iowa"] = getMostCompleteSource(indianaData);
+      }
+    
       return { popMap, popSourceMap };
+    }
+    
+    function getMostCompleteSource(attrs) {
+      // Return whichever source has a non-null value, prioritize Combined
+      if (attrs["Combined_Pop"]) return "Combined_Pop";
+      if (attrs["Prison_population"]) return "Prison_population";
+      if (attrs["Jail_Population__Adjusted_"]) return "Jail_Population__Adjusted_";
+      return null;
     }
     
     /**
@@ -443,7 +472,7 @@ require([
     
         try {
           const popResult = await popLayer.queryFeatures(popQuery);
-          ({ popMap, popSourceMap } = getPopulationLookup(popResult));
+          ({ popMap, popSourceMap } = getPopulationLookup(popResult, year));
         } catch (err) {
           console.error("Failed to load population data", err);
         }
