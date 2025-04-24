@@ -299,7 +299,7 @@ require([
     
       return { popMap, popSourceMap };
     }*/
-    function getPopulationLookup(popResult) {
+    /*function getPopulationLookup(popResult) {
       const popMap = {}, popSourceMap = {};
       const popFields = ["Combined_Pop", "Prison_population", "Jail_Population__Adjusted_"];
       popResult.features.forEach(({ attributes }) => {
@@ -331,6 +331,42 @@ require([
       if (attrs["Prison_population"]) return {attrs["Prison_population"], "Prison_population"};
       if (attrs["Jail_Population__Adjusted_"]) return {attrs["Jail_Population__Adjusted_"], "Jail_Population__Adjusted_"};
       return null;
+    }*/
+    function getPopulationLookup(popResult, year) {
+      const popMap = {}, popSourceMap = {};
+      const popFields = ["Combined_Pop", "Prison_population", "Jail_Population__Adjusted_"];
+      
+      popResult.features.forEach(({ attributes }) => {
+        const state = attributes.NAME;
+        if (state == "Indiana") {
+          const indianaData = my.indianaPopMap?.[year];
+          if (indianaData) {
+            const result = getMostCompleteSource(indianaData);
+            popMap[state] = result.value;
+            popSourceMap[state] = result.source;
+          }
+        } else {
+          const stateKey = (state == "Iowa") ? "Indiana" : state;
+          // Use the first valid population value found
+          for (const field of popFields) {
+            const val = attributes[field];
+            if (val != null && val > 0) {
+              popMap[stateKey] = val;
+              popSourceMap[stateKey] = field; // Track which field was used
+              break;
+            }
+          }
+        }
+      });
+      return { popMap, popSourceMap };
+    }
+    
+    function getMostCompleteSource(attrs) {
+      // Return whichever source has a non-null value, prioritize Combined
+      if (attrs["Combined_Pop"]) return { value: attrs["Combined_Pop"], source: "Combined_Pop" };
+      if (attrs["Prison_population"]) return { value: attrs["Prison_population"], source: "Prison_population" };
+      if (attrs["Jail_Population__Adjusted_"]) return { value: attrs["Jail_Population__Adjusted_"], source: "Jail_Population__Adjusted_" };
+      return { value: null, source: null };
     }
     
     /**
