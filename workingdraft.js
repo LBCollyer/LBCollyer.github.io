@@ -359,7 +359,7 @@ require([
     function getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step) {
       return {
         type: "simple",
-        symbol: { type: "simple-fill", color: "#AAAAAA", outline: { width: 0.5, color: "white" } },
+        symbol: { type: "simple-fill", color: "#AAAAAA" },
         visualVariables: [{
           type: "color",
           valueExpression: `
