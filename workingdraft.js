@@ -288,7 +288,7 @@ require([
      * @param {number} step - Step size for classification
      * @returns {Object} Renderer configuration
      */
-    function getNormalizedRenderer(field, popMapJSON, min, max, step) {
+    function getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step) {
       return {
         type: "simple",
         symbol: { type: "simple-fill", color: "#AAAAAA" },
@@ -296,16 +296,15 @@ require([
           type: "color",
           // Arcade expression to normalize values by population
           valueExpression: `
-            var stateName = $feature.NAME;
-            var value = $feature["${field}"];
-            var popMap = ${popMapJSON};
-            var pop = popMap[stateName];
-          
-            if (pop > 0 && value != null) {
-              return (value / pop) * 100;
-            }
-            return null;
-          `,
+              var stateName = $feature.NAME;
+              var valueMap = ${valueMapJSON};
+              var value = valueMap[stateName];
+              
+              if (value > 0) {
+                return Text(value, "#,##0");
+              }
+              return "No data";
+            `,
           // Color ramp for visualization
           stops: [
             { value: min, color: "#fef0d9" },
@@ -501,7 +500,7 @@ require([
     
         // Update layer renderer based on normalization setting
         layer.renderer = shouldNormalize
-          ? getNormalizedRenderer(field, popMapJSON, min, max, step)
+          ? getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step)
           : getClassBreakRenderer(field, classBreakInfos);
     
         // Update popup template based on normalization setting
