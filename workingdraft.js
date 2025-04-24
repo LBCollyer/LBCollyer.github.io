@@ -280,7 +280,7 @@ require([
      * @param {Object} popResult - Query result with population data
      * @returns {Object} Maps with population data by state
      */
-    function getPopulationLookup(popResult, year) {
+    /*function getPopulationLookup(popResult, year) {
       const popMap = {};
       const popSourceMap = {};
     
@@ -298,13 +298,38 @@ require([
       }
     
       return { popMap, popSourceMap };
+    }*/
+    function getPopulationLookup(popResult) {
+      const popMap = {}, popSourceMap = {};
+      const popFields = ["Combined_Pop", "Prison_population", "Jail_Population__Adjusted_"];
+      popResult.features.forEach(({ attributes }) => {
+        const state = attributes.NAME;
+        if (state == "Indiana") {
+          const indianaData = my.indianaPopMap?.[year];
+          popMap[state], popSourceMap[state] = getMostCompleteSource(indianaData);
+        } else {
+          if (state == "Iowa") {
+            state = "Indiana"
+          } 
+          // Use the first valid population value found
+          for (const i of popFields) {
+            const val = attributes[i];
+            if (val != null && val > 0) {
+              popMap[state] = val;
+              popSourceMap[state] = i; // Track which field was used
+              break;
+            }
+          }
+      });
+    
+      return { popMap, popSourceMap };
     }
     
     function getMostCompleteSource(attrs) {
       // Return whichever source has a non-null value, prioritize Combined
-      if (attrs["Combined_Pop"]) return "Combined_Pop";
-      if (attrs["Prison_population"]) return "Prison_population";
-      if (attrs["Jail_Population__Adjusted_"]) return "Jail_Population__Adjusted_";
+      if (attrs["Combined_Pop"]) return {attrs["Combined_Pop"], "Combined_Pop"};
+      if (attrs["Prison_population"]) return {attrs["Prison_population"], "Prison_population"};
+      if (attrs["Jail_Population__Adjusted_"]) return {attrs["Jail_Population__Adjusted_"], "Jail_Population__Adjusted_"};
       return null;
     }
     
