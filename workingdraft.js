@@ -324,38 +324,7 @@ require([
      * @param {number} max - Maximum data value
      * @param {number} step - Step size for classification
      * @returns {Object} Renderer configuration
-     
-    function getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step) {
-      console.log(valueMapJSON);
-      console.log(
-      return {
-        type: "simple",
-        symbol: { type: "simple-fill", color: "#AAAAAA" },
-        visualVariables: [{
-          type: "color",
-          // Arcade expression to normalize values by population
-          valueExpression: `
-              var stateName = $feature.NAME;
-              var valueMap = ${valueMapJSON};
-              var value = valueMap[stateName];
-              
-              if (value!=null) {
-                return Text(value, "#,##0");
-              }
-              return "No data";
-            `,
-          // Color ramp for visualization
-          stops: [
-            { value: min, color: "#fef0d9" },
-            { value: min + step, color: "#fdcc8a" },
-            { value: min + 2 * step, color: "#fc8d59" },
-            { value: min + 3 * step, color: "#e34a33" },
-            { value: min + 4 * step, color: "#e34a33" },
-            { value: max, color: "#b30000" }
-          ]
-        }]
-      };
-    }*/
+    */
     function getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step) {
       return {
         type: "simple",
@@ -381,30 +350,6 @@ require([
             { value: max, color: "#b30000" }
           ]
         }]
-      };
-    }
-
-    
-    /**
-     * Creates a class breaks renderer for choropleth maps
-     * @param {string} field - Data field
-     * @param {Array} classBreakInfos - Class break information
-     * @returns {Object} Renderer configuration
-     */
-    function getClassBreakRenderer(field, classBreakInfos) {
-      return {
-        type: "class-breaks",
-        field,
-        classBreakInfos: classBreakInfos.map(info => ({
-          minValue: info.minValue,
-          maxValue: info.maxValue,
-          symbol: { type: "simple-fill", color: info.color }
-        })),
-        defaultSymbol: { 
-          type: "simple-fill", 
-          color: "#AAAAAA",  // Gray color for no data
-          outline: { color: "#999999", width: 0.5 } 
-        }
       };
     }
     
@@ -573,12 +518,8 @@ require([
           "Jail_Population__Adjusted_": "Jail Population (Adjusted)"
         });
     
-        // Update layer renderer based on normalization setting
+        // Update layer renderer
         layer.renderer = getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step);
-        /*layer.renderer = shouldNormalize
-          ? getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step)
-          : getClassBreakRenderer(field, classBreakInfos);*/
-    
         // Update popup template based on normalization setting
         layer.popupTemplate = shouldNormalize
           ? getNormalizedPopupTemplate(field, valueMapJSON, popMapJSON, popSourceMapJSON, sourceLabelsJSON)
