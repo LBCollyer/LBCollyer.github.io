@@ -113,14 +113,14 @@ require([
     legendPanel.heading = `Percent of individuals in the ${field} category out of total Incarcerated individuals in ${my.sYear}`;
     const legendList = document.createElement("calcite-list");
     
-    // Add white box for "No Data" category
+    // Add grey box for "No Data" category
     let listItem1 = document.createElement("calcite-list-item");        
     // Create color box for visualization
     const colorBox1 = document.createElement("span");
     colorBox1.style.display = "inline-block";
     colorBox1.style.width = "16px";
     colorBox1.style.height = "16px";
-    colorBox1.style.backgroundColor = "white";
+    colorBox1.style.backgroundColor = "#AAAAAA";
     colorBox1.style.marginRight = "8px";
     colorBox1.style.border = "1px solid black";
     listItem1.innerHTML = `
@@ -288,7 +288,7 @@ require([
      * @param {number} step - Step size for classification
      * @returns {Object} Renderer configuration
      */
-    function getNormalizedRenderer(field, popMapJSON, min, max, step) {
+    function getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step) {
       return {
         type: "simple",
         symbol: { type: "simple-fill", color: "#AAAAAA" },
@@ -296,16 +296,15 @@ require([
           type: "color",
           // Arcade expression to normalize values by population
           valueExpression: `
-            var stateName = $feature.NAME;
-            var value = $feature["${field}"];
-            var popMap = ${popMapJSON};
-            var pop = popMap[stateName];
-          
-            if (pop > 0 && value != null) {
-              return (value / pop) * 100;
-            }
-            return null;
-          `,
+              var stateName = $feature.NAME;
+              var valueMap = ${valueMapJSON};
+              var value = valueMap[stateName];
+              
+              if (value!=null) {
+                return Text(value, "#,##0");
+              }
+              return "No data";
+            `,
           // Color ramp for visualization
           stops: [
             { value: min, color: "#fef0d9" },
@@ -333,26 +332,25 @@ require([
           minValue: info.minValue,
           maxValue: info.maxValue,
           symbol: { type: "simple-fill", color: info.color }
-        }))
+        })),
+        defaultSymbol: { 
+          type: "simple-fill", 
+          color: "#AAAAAA",  // Gray color for no data
+          outline: { color: "#999999", width: 0.5 } 
+        }
       };
     }
     
     /**
-     * Creates a popup template for normalized data
+     * Creates a  template for normalized data
      * @param {string} field - Data field
      * @param {Object} values - Data values
      * @param {Object} popMap - Population values by state
      * @param {Object} popSourceMap - Population source by state
      * @returns {Object} Popup template configuration
      */
-    function getNormalizedPopupTemplate(field, valueMapJSON, popMapJSON, popSourceMapJSON) {
+    function getNormalizedPopupTemplate(field, valueMapJSON, popMapJSON, popSourceMapJSON, sourceLabelsJSON) {
       const fieldLabel = field.replace(/_/g, " ");
-      const sourceLabels = {
-        "Combined_Pop": "Combined Population",
-        "Prison_population": "Prison Population",
-        "Jail_Population__Adjusted_": "Jail Population (Adjusted)"
-      };
-      const sourceLabelsJSON = JSON.stringify(sourceLabels);
       return {
         title: "{NAME} in {Year}",
         content: `
@@ -366,15 +364,14 @@ require([
           {
             name: "normalizedRate",
             expression: `
-              var value = $feature["${field}"];
               var stateName = $feature.NAME;
-              var popMap = ${popMapJSON};
-              var pop = popMap[stateName];
+              var valueMap = ${valueMapJSON};
+              var value = valueMap[stateName];
               
-              if (pop > 0 && value != null) {
-                return Text((value / pop) * 100, "#,##0.00");
+              if (value > 0) {
+                return Text(value, "#,##0");
               }
-              return "No population data";
+              return "No data";
             `
           },
           {
@@ -421,6 +418,7 @@ require([
     async function applyChoroplethSymbology(layer, field, year) {
       // Determine which field holds year data
       const yearField = layer.name === "Layer 9" ? "Year" : "YEAR";
+      layer.definitionExpression = `${yearField} = ${year}`;
       const fieldLabel = field.replace(/_/g, " ");
     
       // Check if we should normalize by population
@@ -433,7 +431,7 @@ require([
       query.where = `${yearField} = ${year}`; // Filter by year 
       query.outFields = ["NAME", field]; // Only get needed fields
       query.returnGeometry = false; // No need for geometry
-    
+      
       // Optional query for population data if normalizing
       let popMap = {}, popSourceMap = {};
       if (shouldNormalize) {
@@ -508,12 +506,12 @@ require([
     
         // Update layer renderer based on normalization setting
         layer.renderer = shouldNormalize
-          ? getNormalizedRenderer(field, popMapJSON, min, max, step)
+          ? getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step)
           : getClassBreakRenderer(field, classBreakInfos);
     
         // Update popup template based on normalization setting
         layer.popupTemplate = shouldNormalize
-          ? getNormalizedPopupTemplate(field, valueMapJSON, popMapJSON, popSourceMapJSON)
+          ? getNormalizedPopupTemplate(field, valueMapJSON, popMapJSON, popSourceMapJSON, sourceLabelsJSON)
           : {
               title: "{NAME} {Year}",
               content: `<b>${fieldLabel}:</b> {${field}}`
