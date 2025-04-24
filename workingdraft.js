@@ -320,8 +320,8 @@ require([
               break;
             }
           }
+        }
       });
-    
       return { popMap, popSourceMap };
     }
     
