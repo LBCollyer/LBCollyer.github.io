@@ -294,13 +294,12 @@ require([
             popSourceMap[state] = result.source;
           }
         } else {
-          const stateKey = (state == "Iowa") ? "Indiana" : state;
           // Use the first valid population value found
           for (const field of popFields) {
             const val = attributes[field];
             if (val != null && val > 0) {
-              popMap[stateKey] = val;
-              popSourceMap[stateKey] = field; // Track which field was used
+              popMap[state] = val;
+              popSourceMap[state] = field; // Track which field was used
               break;
             }
           }
@@ -325,57 +324,32 @@ require([
      * @param {number} max - Maximum data value
      * @param {number} step - Step size for classification
      * @returns {Object} Renderer configuration
-     */
+    */
     function getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step) {
       return {
         type: "simple",
         symbol: { type: "simple-fill", color: "#AAAAAA" },
         visualVariables: [{
           type: "color",
-          // Arcade expression to normalize values by population
           valueExpression: `
-              var stateName = $feature.NAME;
-              var valueMap = ${valueMapJSON};
-              var value = valueMap[stateName];
-              
-              if (value!=null) {
-                return Text(value, "#,##0");
-              }
-              return "No data";
-            `,
-          // Color ramp for visualization
+            var stateName = $feature.NAME;
+            var valueMap = ${valueMapJSON};
+            var value = valueMap[stateName];
+    
+            // Return as number for rendering (not text)
+            if (value != null) {
+              return value;
+            }
+            return null;
+          `,
           stops: [
             { value: min, color: "#fef0d9" },
             { value: min + step, color: "#fdcc8a" },
             { value: min + 2 * step, color: "#fc8d59" },
             { value: min + 3 * step, color: "#e34a33" },
-            { value: min + 4 * step, color: "#e34a33" },
             { value: max, color: "#b30000" }
           ]
         }]
-      };
-    }
-    
-    /**
-     * Creates a class breaks renderer for choropleth maps
-     * @param {string} field - Data field
-     * @param {Array} classBreakInfos - Class break information
-     * @returns {Object} Renderer configuration
-     */
-    function getClassBreakRenderer(field, classBreakInfos) {
-      return {
-        type: "class-breaks",
-        field,
-        classBreakInfos: classBreakInfos.map(info => ({
-          minValue: info.minValue,
-          maxValue: info.maxValue,
-          symbol: { type: "simple-fill", color: info.color }
-        })),
-        defaultSymbol: { 
-          type: "simple-fill", 
-          color: "#AAAAAA",  // Gray color for no data
-          outline: { color: "#999999", width: 0.5 } 
-        }
       };
     }
     
@@ -501,15 +475,17 @@ require([
           const state = f.attributes.NAME;
         
           if (val != null) {
-            if (!popMap[state]) {
-              // No population data available
-              valueMap[state] = null;
-              classValues.push(null);
-            } else if (shouldNormalize) {
-              // Calculate normalized values
-              const normalizedVal = (val / popMap[state]) * 100;
-              valueMap[state] = normalizedVal;
-              classValues.push(normalizedVal);
+            if (shouldNormalize) {
+              if (!popMap[state]) {
+                // No population data available
+                valueMap[state] = null;
+                classValues.push(null);
+              } else {
+                // Calculate normalized values
+                const normalizedVal = (val / popMap[state]) * 100;
+                valueMap[state] = normalizedVal;
+                classValues.push(normalizedVal);
+              }
             } else {
               // Use raw values
               valueMap[state] = val;
@@ -542,11 +518,8 @@ require([
           "Jail_Population__Adjusted_": "Jail Population (Adjusted)"
         });
     
-        // Update layer renderer based on normalization setting
-        layer.renderer = shouldNormalize
-          ? getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step)
-          : getClassBreakRenderer(field, classBreakInfos);
-    
+        // Update layer renderer
+        layer.renderer = getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step);
         // Update popup template based on normalization setting
         layer.popupTemplate = shouldNormalize
           ? getNormalizedPopupTemplate(field, valueMapJSON, popMapJSON, popSourceMapJSON, sourceLabelsJSON)
