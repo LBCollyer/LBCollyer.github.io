@@ -500,15 +500,17 @@ require([
           const state = f.attributes.NAME;
         
           if (val != null) {
-            if (!popMap[state]) {
-              // No population data available
-              valueMap[state] = null;
-              classValues.push(null);
-            } else if (shouldNormalize) {
-              // Calculate normalized values
-              const normalizedVal = (val / popMap[state]) * 100;
-              valueMap[state] = normalizedVal;
-              classValues.push(normalizedVal);
+            if (shouldNormalize) {
+              if (!popMap[state]) {
+                // No population data available
+                valueMap[state] = null;
+                classValues.push(null);
+              } else {
+                // Calculate normalized values
+                const normalizedVal = (val / popMap[state]) * 100;
+                valueMap[state] = normalizedVal;
+                classValues.push(normalizedVal);
+              }
             } else {
               // Use raw values
               valueMap[state] = val;
