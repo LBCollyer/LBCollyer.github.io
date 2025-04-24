@@ -294,7 +294,11 @@ require([
             popSourceMap[state] = result.source;
           }
         } else {
-          const stateKey = (state == "Iowa") ? "Indiana" : state;
+          let stateKey = state;
+          if (state == "Iowa") {
+            stateKey = "Indiana";
+          }
+          //const stateKey = (state == "Iowa") ? "Indiana" : state;
           // Use the first valid population value found
           for (const field of popFields) {
             const val = attributes[field];
