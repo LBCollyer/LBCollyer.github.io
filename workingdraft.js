@@ -324,8 +324,10 @@ require([
      * @param {number} max - Maximum data value
      * @param {number} step - Step size for classification
      * @returns {Object} Renderer configuration
-     */
+     
     function getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step) {
+      console.log(valueMapJSON);
+      console.log(
       return {
         type: "simple",
         symbol: { type: "simple-fill", color: "#AAAAAA" },
@@ -353,7 +355,35 @@ require([
           ]
         }]
       };
+    }*/
+    function getNormalizedRenderer(field, popMapJSON, valueMapJSON, min, max, step) {
+      return {
+        type: "simple",
+        symbol: { type: "simple-fill", color: "#AAAAAA", outline: { width: 0.5, color: "white" } },
+        visualVariables: [{
+          type: "color",
+          valueExpression: `
+            var stateName = $feature.NAME;
+            var valueMap = ${valueMapJSON};
+            var value = valueMap[stateName];
+    
+            // Return as number for rendering (not text)
+            if (value != null) {
+              return value;
+            }
+            return null;
+          `,
+          stops: [
+            { value: min, color: "#fef0d9" },
+            { value: min + step, color: "#fdcc8a" },
+            { value: min + 2 * step, color: "#fc8d59" },
+            { value: min + 3 * step, color: "#e34a33" },
+            { value: max, color: "#b30000" }
+          ]
+        }]
+      };
     }
+
     
     /**
      * Creates a class breaks renderer for choropleth maps
