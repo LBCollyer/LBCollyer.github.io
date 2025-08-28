@@ -242,10 +242,10 @@ require([
     // Define your list of colors
     const colorList = [
       new Color([235, 159, 69]),     // Nuclear Mango
-      new Color([107, 199, 153]),     // Celadon Porcelain
-      new Color([117, 232, 240]),     // Shallow Water
+      new Color([25, 216, 230]),     // Shallow Water
       new Color([240, 104, 66]),   // Firewatch
-      new Color([220, 190, 108]),   // Crisps
+      new Color([235, 207, 71]),   // Crisps
+      new Color([77, 203, 140]),     // Celadon Porcelain
       new Color([128, 0, 128])    // Purple
     ];
     
