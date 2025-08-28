@@ -239,13 +239,25 @@ require([
     // Observe all story sections
     my.sections.forEach(section => my.observer.observe(section));
     
-    /**
-     * Returns a random color for symbology
-     * @returns {Color} Random RGB color
-     */
-    function getRandomColor() {
-      return new Color([Math.random() * 255, Math.random() * 255, Math.random() * 255]);
+    // Define your list of colors
+    const colorList = [
+      new Color([235, 159, 69]),     // Nuclear Mango
+      new Color([144, 245, 252]),     // Shallow Water
+      new Color([118, 193, 168]),     // Celadon Porcelain
+      new Color([243, 139, 110]),   // Firewatch
+      new Color([220, 190, 108]),   // Crisps
+      new Color([128, 0, 128])    // Purple
+    ];
+    
+    let colorIndex = 0;
+    
+    // Function to return the next color in the list
+    function getNextColor() {
+      const color = colorList[colorIndex % colorList.length];
+      colorIndex++;
+      return color;
     }
+
     
     /**
      * Creates a unique value renderer for facility symbology
@@ -658,10 +670,10 @@ require([
         let values = result.features.map(f => f.attributes[field]);
         let uniqueValues = values.filter((value, index, self) => self.indexOf(value) === index);
         
-        // Assign random colors to each unique value
+        // Assign colors to each unique value
         let uniqueValueInfos = uniqueValues.map(value => ({
           value,
-          color: getRandomColor()
+          color: getNextColor()
         }));
         
         // Set renderer and update legend
